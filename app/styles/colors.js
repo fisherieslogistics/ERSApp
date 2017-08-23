@@ -1,0 +1,25 @@
+export default {
+  white: "white",
+  transparent: 'rgba(0, 0, 0, 0)',
+  lightestGray: "#DEDEDE",
+  midGray: "#CED1D5",
+  grey: "#CECED2",
+  red: "#FF2D55",
+  blue: "#426BF2",
+  highlightBlue: "#3E95FF",
+  lightBlue: "#b6daf0",
+  darkBlue: "#0C5071",
+  orange: "#FF9500",
+  green: "#0DD03C",
+  pastelGreen: "#78F7C6",
+  darkGray: "#8c8c8c",
+  pink: "#FF2D55",
+  black: "#000000",
+  backgrounds: {
+    dark: '#efeff4',
+    light: "#F9F9F9",
+    veryLight: '#F5FBFD',
+    veryDark: "#999999",
+    shadow: 'rgba(0, 0, 0, 0.5)',
+  }
+}
