@@ -12,6 +12,11 @@ const amountField = {
 
 const commonAttrs = [
   {
+    id: 'serverID',
+    default: null,
+    realm: { type: 'string', optional: true },
+  },
+  {
     label: 'Type', id: 'type', valid: valid.anyValue, default: "", type: 'string',
     realm: { type: 'string', optional: true },
   },

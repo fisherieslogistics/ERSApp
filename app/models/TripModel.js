@@ -7,6 +7,11 @@ import FORM_TYPE from '../constants/MPIFormType';
 
 const TCERFields = [
   {
+    id: 'serverID',
+    default: null,
+    realm: { type: 'string', optional: true },
+  },
+  {
     label: 'Wing Spread',
     id: 'wingSpread',
     valid: Validator.valid.greaterThanZero,

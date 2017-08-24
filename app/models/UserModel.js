@@ -7,6 +7,11 @@ const valid = Validator.valid;
 
 const UserModel = [
   {
+    id: 'serverID',
+    default: null,
+    realm: { type: 'string', optional: true },
+  },
+  {
     id: 'firstName', default: "4", label: "First Name", valid: valid.anyValue,
     display:  { type: 'single'},
     realm: { type: 'string', optional: true },
