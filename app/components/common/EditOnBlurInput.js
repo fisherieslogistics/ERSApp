@@ -86,7 +86,7 @@ class EditOnBlurInput extends Component {
 
   render(){
     /* eslint-disable react/jsx-handler-names */
-    const editable = !!this.props.editable;
+    const editable = true;//!!this.props.editable;
     const keypadType = this.getKeypad();
     return (
       <FocusOnDemandTextInput

@@ -22,6 +22,7 @@ import {
   commitFishingEvent,
 } from '../../actions/FishingEventActions';
 
+import { createFishingEvent } from '../../api/RestApi';
 import { setSelectedFishingDetail } from '../../actions/ViewActions';
 
 const toBind = [
@@ -168,7 +169,12 @@ class EventEditor extends Component {
       [
         {text: 'Cancel', onPress: () => null, style: 'cancel'},
         {text: 'Commit', onPress: () => {
-          this.props.dispatch(commitFishingEvent(this.props.fishingEvent));
+          createFishingEvent(this.props.fishingEvent).then(res => {
+            console.log(res);
+          }).catch(err => {
+            console.log(err);
+          })
+          //this.props.dispatch(commitFishingEvent(this.props.fishingEvent));
         }}
       ]
     );

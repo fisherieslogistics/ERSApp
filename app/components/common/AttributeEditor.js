@@ -62,6 +62,7 @@ class AttributeEditor extends Component {
         val = parseFloat(value);
         break;
     }
+    console.log(val, "on change")
     this.props.onChange(this.props.attribute.id, val);
   }
 
