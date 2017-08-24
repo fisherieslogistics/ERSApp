@@ -73,7 +73,7 @@ export default class EventProductsEditor extends CatchesEditor {
       });
       return stateCodes;
     }
-    return speciesDesc;
+    return this.props.species.map(s => ({ value: s.code, description: s.fullName }));
   }
 
   getEditorProps(attribute, item, index) {

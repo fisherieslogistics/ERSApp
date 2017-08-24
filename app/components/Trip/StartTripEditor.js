@@ -67,7 +67,7 @@ class StartTripEditor extends Component {
       case "leavingPort":
       case "endPort":
         extraProps.view = 'ports';
-        extraProps.choices = ports;
+        extraProps.choices = this.props.ports;
       break;
       case "RAStart_date":
         extraProps.mode = "date";

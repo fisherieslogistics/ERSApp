@@ -6,7 +6,7 @@ import EventProductsEditor from './EventProductsEditor';
 import EventProtectedsEditor from './EventProtectedsEditor';
 import ProductModel, { DiscardModel } from '../../models/ProductModel';
 import ProtectedModel from '../../models/ProtectedModel';
-import { getRecord } from '../../database/RealmHelper';
+import { getRecord, getRecords } from '../../database/RealmHelper';
 
 class FishingEventCatchesEditor extends Component {
 
@@ -32,6 +32,7 @@ class FishingEventCatchesEditor extends Component {
           <EventProductsEditor
             { ...props }
             model={ ProductModel }
+            species={ this.props.species }
             dispatch={ this.props.dispatch }
             items={ this.props.fishingEvent.estimatedCatch }
             viewLastUpdated={ this.props.viewLastUpdated }
@@ -42,6 +43,7 @@ class FishingEventCatchesEditor extends Component {
           <EventDiscardsEditor
             { ...props }
             model={ DiscardModel }
+            species={ this.props.species }
             items={ this.props.fishingEvent.discards }
             viewLastUpdated={ this.props.viewLastUpdated }
           />
@@ -68,6 +70,7 @@ const select = (state) => {
     lastUpdated: state.fishingEvents.lastUpdated,
     fishingEvent,
     viewLastUpdated: state.view.lastUpdated,
+    species: getRecords('species'),
   };
 }
 

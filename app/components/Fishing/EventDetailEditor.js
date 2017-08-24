@@ -18,9 +18,13 @@ import {
   getLastRecord,
   getRecord,
 } from '../../database/RealmHelper';
+import RealmHelper from '../../database/RealmHelper';
+
 /* eslint-disable */
 import speciesCodesDesc from '../../constants/species/speciesDesc';
 /* eslint-enable */
+const speciesDB = new RealmHelper('species');
+
 
 class EventDetailEditor extends Component{
 
@@ -63,7 +67,7 @@ class EventDetailEditor extends Component{
     const extraProps = {};
     const inputId = `${attribute.id}_${this.props.fishingEvent.RAId}`;
     if(attribute.id === 'targetSpecies') {
-      extraProps.choices = speciesCodesDesc;
+      extraProps.choices = this.props.species;
       extraProps.autoCapitalize = 'characters';
       extraProps.maxLength = 3;
     }
@@ -146,6 +150,7 @@ const select = (state) => {
     viewLastUpdated: state.view.lastUpdated,
     fishingEventUpdated: state.fishingEvents.lastUpdated,
     showOptionalFields: state.fishingEvents.showOptionalFields,
+    species: speciesDB.findAll('species').map(s => ({ value: s.code, description: s.fullName })),
   };
   return props;
 }

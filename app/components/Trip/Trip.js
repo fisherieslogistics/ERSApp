@@ -32,11 +32,14 @@ import {
   queryRecord,
   getLastRecord,
 } from '../../database/RealmHelper';
+import AsyncStorage from 'AsyncStorage';
+import RealmHelper from '../../database/RealmHelper';
 
 import { colors, textStyles } from '../../styles/styles';
 import { MasterToolbar } from '../layout/Toolbar';
 import { BigButton } from '../common/Buttons';
 
+const portDB = new RealmHelper('port');
 
 const masterChoices = [
  'Trip',
@@ -272,9 +275,10 @@ class Trip extends RealmMasterDetail {
   onMasterButtonPress() {
     if(this.props.trip.canStart) {
       return this.startTrip();
-    }
-    if(this.props.trip.canEnd) {
+    } else if(this.props.trip.canEnd) {
       return this.endTrip();
+    } else {
+      AsyncStorage.removeItem('refreshToken', () => {})
     }
   }
 
@@ -315,7 +319,7 @@ class Trip extends RealmMasterDetail {
   }
 
   getDetail() {
-    if(!this.props.vessel) {
+    if(!this.props.vessel && this.props.vessel.serverID) {
       return (
         <VesselSelect
           auth={this.props.auth}
@@ -328,6 +332,7 @@ class Trip extends RealmMasterDetail {
       case 'Trip':
         return (
           <StartTripEditor
+            ports={this.props.ports}
             trip={this.props.trip}
             dispatch={this.props.dispatch}
           />
@@ -383,7 +388,7 @@ const select = (state) => {
     selectedTab: state.view.selectedTab,
     connectionSettings: queryRecord(
       'connectionSettings', 'active = true').slice(0),
-    ports,
+    ports: portDB.findAll().map(p => ({ value: p.name, description: "" })),
     auth: state.auth.auth,
   };
 }
