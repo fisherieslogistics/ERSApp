@@ -6,6 +6,8 @@ import { VesselRealm } from '../models/VesselModel';
 import { ProtectedSpeciesRealm } from '../models/ProtectedModel';
 import { UserRealm } from '../models/UserModel';
 import { ConnectionSettingsRealm } from '../models/ConnectionSettingsModel';
+import { PortRealm } from '../models/PortModel';
+import { SpeciesRealm } from '../models/SpeciesModel';
 
 const url = 'http://127.0.0.1:9080';
 let realm;
@@ -24,6 +26,8 @@ const realmSchema = {
     ProtectedSpeciesRealm,
     UserRealm,
     ConnectionSettingsRealm,
+    SpeciesRealm,
+    PortRealm,
   ],
 };
 
@@ -59,6 +63,8 @@ const classMapper = {
   protected: ProtectedSpeciesRealm,
   user: UserRealm,
   connectionSettings: ConnectionSettingsRealm,
+  port: PortRealm,
+  species: SpeciesRealm,
 };
 
 export {

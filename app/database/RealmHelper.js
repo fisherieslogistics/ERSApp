@@ -109,4 +109,10 @@ export default class RealmHelper {
     return deleteRecord(item);
   }
 
+  deleteAll() {
+    const realmClass = classMapper[this.name];
+    const allItems = getRealm().objects(realmClass.schema.name);
+    return getRealm().write(() => getRealm().delete(allItems));
+  }
+
 }

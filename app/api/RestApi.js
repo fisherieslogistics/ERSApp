@@ -1,13 +1,23 @@
 import request from 'superagent';
 import AsyncStorage from 'AsyncStorage';
+import RealmHelper from '../database/RealmHelper';
+
+const vesselDB = new RealmHelper('vessel');
+const portDB = new RealmHelper('port');
+
 const USER_NAME = 'testskipper';
 const PASSWORD = 'pwnallthefesh';
 
 const PERSON_IN_CHARGE = 'Skipper King';
-const VESSEL_ID = 'http://localhost:8000/vessels/161e0b38-7731-411d-ae3e-5b9e03adbcef/';
+const VESSEL_ID = 'http://localhost:8000/vessels/0a607198-e12d-4f6f-b054-b2524e32b29a/';
 const FISHING_EVENT_URI = 'http://localhost:8000/fishingEventWithCatches/';
 const TRIP_EVENT_URI = 'http://localhost:8000/trips/';
-const PORT_DUNEDIN_ID = 'http://localhost:8000/ports/394b6ff4-9ef3-487f-9e28-dd003761c8ba/';
+const PORT_DUNEDIN_ID = 'http://localhost:8000/ports/db1765a7-9de9-4533-a01f-74e31a4c549e/';
+//const VESSELS_URI = 'http://localhost:8000/vessels/0a607198-e12d-4f6f-b054-b2524e32b29a/';
+const VESSELS_URI = 'http://localhost:8000/vessels/';
+const PORTS_URI = 'http://localhost:8000/ports/';
+const SPECIES_URI = 'http://localhost:8000/species/';
+
 //const TOKEN = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoyLCJ1c2VybmFtZSI6InRlc3Rza2lwcGVyIiwiZXhwIjoxNTAzMzc3NzMwLCJlbWFpbCI6InNraXBzQHJlZ3VsYXJzaG93LmNvbSIsIm9yaWdfaWF0IjoxNTAzMzc0NzMwfQ.dIt0gBGXWSERN4mmLCE5P_pIwGK-tfh8kH3dJ1OtIJg'
 //const REFRESH_TOKEN = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoyLCJ1c2VybmFtZSI6InRlc3Rza2lwcGVyIiwiZXhwIjoxNTAzMzcyOTk4LCJlbWFpbCI6InNraXBzQHJlZ3VsYXJzaG93LmNvbSIsIm9yaWdfaWF0IjoxNTAzMzY5OTEzfQ.Pf2nupALO2jBlpN3w_EUhKEZwP1xhEECJ6SGb9GDnLo';
 
@@ -60,7 +70,13 @@ export function createTrip(tripObj) {
     RAId,
     RAStart_date,
     RAEnd_date,
+    leavingPort,
+    endPort,
   } = tripObj
+
+  const vessel = vesselDB.getFirst();
+  console.log(leavingPort, endPort, ` name = ${endPort} `);
+  const port = portDB.findOneWhere(` name = '${endPort}' `, 'createdTimestamp');
 
   const objectToSend = {
      id: RAId,
@@ -71,14 +87,47 @@ export function createTrip(tripObj) {
      endTime: RAEnd_date.toISOString(),
      startLocation: '{}',
      endLocation: '{}',
-     unloadPort: PORT_DUNEDIN_ID,
-     vessel: VESSEL_ID,
+     unloadPort: `${PORTS_URI}${port.serverID}/`,
+     vessel: `${VESSELS_URI}${vessel.serverID}/`,
   };
 
   console.log(JSON.stringify(objectToSend));
 
   return postToAPI(TRIP_EVENT_URI, objectToSend);
 
+}
+
+
+
+function getObjects(URI) {
+  return new Promise((resolve, reject) => {
+    AsyncStorage.getItem('refreshToken', (err, token) => {
+      console.log(token)
+      request
+        .get(URI)
+        .set('Authorization', `JWT ${token}`)
+        .set('Accept', 'application/json')
+        .end((err, res) => {
+          if(err) {
+            console.log(err);
+            return reject(err);
+          }
+          return resolve(res.body);
+        });
+    });
+  });
+}
+
+export function getPorts() {
+  return getObjects(PORTS_URI);
+}
+
+export function getSpecies() {
+  return getObjects(SPECIES_URI);
+}
+
+export function getVessels() {
+  return getObjects(VESSELS_URI);
 }
 
 function putToAPI(url, objectToSend) {

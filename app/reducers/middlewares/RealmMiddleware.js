@@ -13,6 +13,8 @@ const vesselDB = new RealmHelper('vessel');
 const protectedDB = new RealmHelper('protected');
 const userDB = new RealmHelper('user');
 const connectionSettingsDB = new RealmHelper('connectionSettings');
+const portDB = new RealmHelper('port');
+const speciesDB = new RealmHelper('species');
 
 const addItemToEvent = (fishingEvent, model, attributeName, realmDB) =>
   fishingEventDB.addToList(
@@ -32,6 +34,28 @@ export default function RealmMiddleware({ dispatch, getState }) {
   return (next) => (action, state) => {
     const { type, realm, payload } = action;
     switch (type) {
+      case 'updateSpecies':
+        speciesDB.deleteAll()
+        action.payload.species.forEach((s) => {
+          console.log("species", s);
+          speciesDB.deleteAll();
+          speciesDB.create({ code: s.code, fullName: s.fullName, serverID: s.id });
+        });
+        break;
+      case 'updatePorts':
+        action.payload.ports.forEach((p) => {
+          console.log("ports", p);
+          portDB.deleteAll();
+          portDB.create({ name: p.name, serverID: p.id });
+        });
+        break;
+      case 'updateVessels':
+        action.payload.vessels.forEach((v) => {
+          console.log("vessels", v);
+          vesselDB.deleteAll();
+          vesselDB.create({ name: v.name, serverID: v.id, registration: `${v.registration}` });
+        });
+        break;
       case 'updateUser':
         userDB.update(realm, payload.changes);
         break;

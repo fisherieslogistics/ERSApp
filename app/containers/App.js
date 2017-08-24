@@ -25,6 +25,10 @@ import { startRealm } from '../database/realmDB';
 import initialSetup from '../database/initialSetup';
 import { getLastRecord } from '../database/RealmHelper';
 import iOSLocation from '../api/location/iOSLocation';
+import { getPorts, getSpecies, getVessels } from '../api/RestApi';
+import { updatePorts } from '../actions/PortActions';
+import { updateSpecies } from '../actions/SpeciesActions';
+import { updateVessels } from '../actions/VesselActions';
 //import ErrorUtils from 'ErrorUtils';
 import { reducers } from '../reducers/main';
 const createStoreWithMiddleware = applyMiddleware(thunk, AddUsefulToActions, ConnectionMiddleware, RealmMiddleware)(createStore);
@@ -60,7 +64,7 @@ class App extends Component {
     this.login();
   }
 
-  onLoggedIn() {
+  onLoggedIn(token) {
     //store.dispatch(updateAuth(auth));
     //const user = getLastRecord('user');
     //store.dispatch(updateUser('firstName', user.firstName, user));
@@ -68,10 +72,20 @@ class App extends Component {
     //store.dispatch(updateUser('email', user.email, user));
     startRealm();
     initialSetup().then(() => {
-      this.setState({
-        loggedIn: true,
+      AsyncStorage.setItem('refreshToken', token, () => {
+        Promise.all([getPorts(), getSpecies(), getVessels()]).then((values) => {
+          console.log('ports', values[0]);
+          store.dispatch(updatePorts(values[0]));
+          console.log('species', values[1]);
+          store.dispatch(updateSpecies(values[1]));
+          console.log('vessels', values[2]);
+          store.dispatch(updateVessels(values[2]));
+          this.setState({
+            loggedIn: true,
+          });
+          store.dispatch(startConnection());
+        });
       });
-      store.dispatch(startConnection());
     });
 
   }
@@ -82,7 +96,7 @@ class App extends Component {
         this.promptUsername();
         console.log("all the things", this.state);
       } else {
-        this.onLoggedIn();
+        this.onLoggedIn(refreshToken);
       }
     });
   }
@@ -92,13 +106,10 @@ class App extends Component {
       .set("Content-Type", "application/json")
       .send({ username: this.state.username, password: this.state.password })
       .end((err, res) => {
-        console.log("ERROR", err);
         if(res && res.body && res.body.token) {
-          AsyncStorage.setItem('refreshToken', res.body.token, () => {
-            this.onLoggedIn()
-          });
+          this.onLoggedIn(res.body.token);
         }
-      })
+      });
   }
 
   promptUsername() {
