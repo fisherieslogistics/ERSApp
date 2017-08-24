@@ -35,10 +35,14 @@ export function createFishingEvent(fishingEventObj) {
     tripRAId,
     numberOfPeople,
     estimatedCatchKg,
+    estimatedCatch,
   } = fishingEventObj;
 
+  const vessel = vesselDB.getFirst();
+
   const objectToSend = {
-    fishCatches: estimatedCatchKg,
+    fishCatches: estimatedCatch.filter(f => !!f.code)
+      .map(f => ({ weight: f.amount, code: f.code })),
     numberInTrip: numberOfInTrip,
     targetSpecies,
     datetimeAtStart: RAStart_date.toISOString(),
@@ -47,15 +51,16 @@ export function createFishingEvent(fishingEventObj) {
     locationAtStart: locationStart,
     locationAtEnd: locationEnd,
     lineString: {},
-    eventSpecificDetails: {
+    eventSpecificDetails: JSON.stringify({
       fishingMethod: 'H',
       numberOfPeople,
-    },
-    mitigationDeviceCodes: {},
-    vesselNumber: 1,
+    }),
+    mitigationDeviceCodes: JSON.stringify([]),
+    vesselNumber: vessel.registration,
+    vesselId: vessel.serverID,
     isVesselUsed: true,
     completedDateTime: new Date().toISOString(),
-    trip: tripRAId,
+    tripRAId: tripRAId,
     RAId,
     id: RAId,
   }
@@ -158,7 +163,7 @@ function postToAPI(url, objectToSend) {
         .set('Accept', 'application/json')
         .end((err, res) => {
           if(err) {
-            console.log(err);
+            //console.log(err);
             return reject(err);
           }
           return resolve(res);
