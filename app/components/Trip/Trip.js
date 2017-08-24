@@ -147,13 +147,12 @@ class Trip extends RealmMasterDetail {
       [
         { text: 'Cancel', style: 'cancel' },
         { text: 'OK', onPress: () => {
-          createTrip(this.props.trip).then((err, res) => {
-            if(!err) {
-              this.props.dispatch(startTrip(this.props.trip));
-              this.props.dispatch(setSelectedTab('fishing'));
-            } else {
-              AlertIOS.alert('please try that again');
-            }
+          createTrip(this.props.trip).then(res => {
+            console.log("RESPONSE TRIPID", res.body.id);
+            this.props.dispatch(startTrip(this.props.trip, res.body.id));
+            this.props.dispatch(setSelectedTab('fishing'));
+          }).catch(err => {
+            AlertIOS.alert('please try that again');
           });
         }},
       ]

@@ -52,7 +52,7 @@ class App extends Component {
 
   componentDidMount() {
     this.iosLocation.addCallbacks((nmeStr) => {
-      console.log("messageCallback", nmeStr);
+      //console.log("messageCallback", nmeStr);
     },
     (err) => {
       console.log("locErr", err);
