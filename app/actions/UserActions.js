@@ -1,12 +1,10 @@
 
 
-export function updateUser(key, value, user) {
+export function updateUser(user) {
   return {
     type: 'updateUser',
-    realm: user,
     payload: {
-      auth0ID: user.auth0ID,
-      changes: {[key]: value },
+      changes: user,
     },
   };
 }
