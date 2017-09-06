@@ -22,7 +22,7 @@ import { createTrip } from '../../api/RestApi';
 import { setSelectedTab, setViewingEventId } from '../../actions/ViewActions';
 import StartTripEditor from './StartTripEditor';
 import TotalsList from './TotalsList';
-import ProfileEditor from '../User/ProfileEditor';
+//import ProfileEditor from '../User/ProfileEditor';
 import ConnectionSettingsEditor from '../VMS/ConnectionSettingsEditor';
 import TripsList from './TripsList';
 import ports from '../../constants/ports';
@@ -126,14 +126,8 @@ class Trip extends RealmMasterDetail {
   startTrip(){
     const title = `Please Confirm Correct`;
     const body = `
-      Skipper:
-      ${this.props.user.firstName} ${this.props.user.lastName}
-
-      Permit Holder Name:
-      ${this.props.user.permitHolderName}
-
-      Permit Holder Number:
-      ${this.props.user.permitHolderNumber}
+      Person in Charge:
+      ${this.props.user.username}
 
       Vessel Name:
       ${this.props.vessel.name}
@@ -151,6 +145,10 @@ class Trip extends RealmMasterDetail {
         { text: 'Cancel', style: 'cancel' },
         { text: 'OK', onPress: () => {
           createTrip(this.props.trip).then(res => {
+            if(!res.body && res.body.id) {
+              AlertIOS.alert('please try that again when you are online');
+              return;
+            }
             console.log("RESPONSE TRIPID", res.body.id);
             this.props.dispatch(startTrip(this.props.trip, res.body.id));
             this.props.dispatch(setSelectedTab('fishing'));
@@ -268,8 +266,9 @@ class Trip extends RealmMasterDetail {
 
   userReady() {
     const { user } = this.props;
-    const { firstName, lastName, permitHolderName, permitHolderNumber, email } = user;
-    return  firstName && lastName && permitHolderName && permitHolderNumber && email;
+    /*const { id, username, organisation, email } = user;
+    return  id && username && organisation && email;*/
+    return true;
   }
 
   onMasterButtonPress() {
@@ -327,7 +326,7 @@ class Trip extends RealmMasterDetail {
         />
       );
     }
-    const detail = this.userReady() ? this.props.selectedDetail : 'Profile';
+    const detail = this.props.selectedDetail;
     switch (detail) {
       case 'Trip':
         return (
@@ -339,14 +338,14 @@ class Trip extends RealmMasterDetail {
         );
       case 'Totals':
         return this.renderTotalsListView();
-      case 'Profile':
+      /*case 'Profile':
         return (
           <ProfileEditor
             user={this.props.user}
             vessel={this.props.vessel}
             dispatch={this.props.dispatch}
           />
-        );
+        );*/
       case 'Connection Settings':
         return (
           <ConnectionSettingsEditor
