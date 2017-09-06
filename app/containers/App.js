@@ -29,16 +29,18 @@ import { getPorts, getSpecies, getVessels } from '../api/RestApi';
 import { updatePorts } from '../actions/PortActions';
 import { updateSpecies } from '../actions/SpeciesActions';
 import { updateVessels } from '../actions/VesselActions';
+
 //import ErrorUtils from 'ErrorUtils';
 import { reducers } from '../reducers/main';
+import serverURL from '../constants/ServerURL';
+
 const createStoreWithMiddleware = applyMiddleware(thunk, AddUsefulToActions, ConnectionMiddleware, RealmMiddleware)(createStore);
 const reducer = combineReducers(reducers);
 const store = createStoreWithMiddleware(reducer);
 const blackBack = { backgroundColor: 'black' };
 const errorsStyle = { backgroundColor: 'red', height: 90, width: 768, paddingTop: 20 };
 
-
-const LOGIN_URI = 'http://localhost:8000/api-token-auth/';
+const LOGIN_URI = serverURL + 'api-token-auth/';
 /*function setUpErrorHandler(handleError) {
   //ErrorUtils.setGlobalHandler(handleError);
 }*/
@@ -51,6 +53,7 @@ class App extends Component {
     };
     this.renderErrors = this.renderErrors.bind(this);
     this.onLoggedIn = this.onLoggedIn.bind(this);
+    this.getRefreshToken = this.getRefreshToken.bind(this);
     this.iosLocation = new iOSLocation();
   }
 
@@ -59,31 +62,29 @@ class App extends Component {
       //console.log("messageCallback", nmeStr);
     },
     (err) => {
-      console.log("locErr", err);
+      //console.log("locErr", err);
     });
     this.login();
   }
 
-  onLoggedIn(token) {
-    //store.dispatch(updateAuth(auth));
-    //const user = getLastRecord('user');
-    //store.dispatch(updateUser('firstName', user.firstName, user));
-    //store.dispatch(updateUser('lastName', user.lastName, user));
-    //store.dispatch(updateUser('email', user.email, user));
     startRealm();
     initialSetup().then(() => {
       AsyncStorage.setItem('refreshToken', token, () => {
         Promise.all([getPorts(), getSpecies(), getVessels()]).then((values) => {
-          console.log('ports', values[0]);
           store.dispatch(updatePorts(values[0]));
-          console.log('species', values[1]);
           store.dispatch(updateSpecies(values[1]));
-          console.log('vessels', values[2]);
           store.dispatch(updateVessels(values[2]));
           this.setState({
             loggedIn: true,
           });
           store.dispatch(startConnection());
+        }).catch(err => {
+          AsyncStorage.removeItem('refreshToken', () => {
+            this.setState({
+              loggedIn: false,
+            });
+            this.login();
+          });
         });
       });
     });
@@ -106,6 +107,10 @@ class App extends Component {
       .set("Content-Type", "application/json")
       .send({ username: this.state.username, password: this.state.password })
       .end((err, res) => {
+        if(err) {
+          console.log('errr', err);
+          this.login();
+        }
         if(res && res.body && res.body.token) {
           this.onLoggedIn(res.body.token);
         }
@@ -115,7 +120,9 @@ class App extends Component {
   promptUsername() {
     AlertIOS.prompt(
       'Enter Username',
-      null,
+      () => {
+        console.log('was it cancelled ?')
+      },
       (username) => {
         this.setState({ username });
         this.promptPassword();
