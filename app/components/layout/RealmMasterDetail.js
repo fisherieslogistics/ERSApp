@@ -74,9 +74,9 @@ class RealmMasterDetail extends Component {
   renderMasterIcon(choice){
     const isSelected = this.isSelected(choice);
     const iconName = this.icons[choice];
-    let backgroundStyle = { backgroundColor: colors.blue, color: colors.white };
+    let backgroundStyle = { backgroundColor: colors.blue, color: colors.white, left: -50 };
     if(isSelected){
-      backgroundStyle = { backgroundColor: colors.white, color: colors.blue };
+      backgroundStyle = { backgroundColor: colors.white, color: colors.blue, left: -50 };
     }
     return (
       <Icon8
