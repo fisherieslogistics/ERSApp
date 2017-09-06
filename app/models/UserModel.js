@@ -7,38 +7,24 @@ const valid = Validator.valid;
 
 const UserModel = [
   {
-    id: 'serverID',
-    default: null,
-    realm: { type: 'string', optional: true },
+    id: 'id',
+    default: 0,
+    realm: { type: 'int', optional: false },
   },
   {
-    id: 'firstName', default: "4", label: "First Name", valid: valid.anyValue,
+    id: 'username', default: "4", label: "Username", valid: valid.anyValue,
     display:  { type: 'single'},
-    realm: { type: 'string', optional: true },
+    realm: { type: 'string', optional: false },
   },
   {
-    id: 'lastName', default: "4", label: "Last Name", valid: valid.anyValue,
+    id: 'organisation', default: "no organisation", label: "Organisation", valid: valid.anyValue,
     display: { type: 'single'},
-    realm: { type: 'string', optional: true },
+    realm: { type: 'string', optional: false },
   },
   {
-    id: 'permitHolderName', default: "4", label: "Permit Holder Name", valid: valid.anyValue,
+    id: 'email', default: "somename@someemail.com", label: "Email", valid: valid.anyValue,
     display: { type: 'single'},
-    realm: { type: 'string', optional: true },
-  },
-  {
-    id: 'permitHolderNumber', default: "4", label: "Permit Holder Number", valid: valid.anyValue,
-    display: { type: 'single'},
-    realm: { type: 'string', optional: true },
-  },
-  {
-    id: 'email', default: "4", label: "Email", valid: valid.anyValue,
-    display: { type: 'single'},
-    realm: { type: 'string', optional: true },
-  },
-  {
-    id: 'auth0ID',
-    realm: { type: 'string', optional: true },
+    realm: { type: 'string', optional: false },
   },
 ];
 
