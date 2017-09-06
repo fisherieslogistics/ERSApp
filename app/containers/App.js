@@ -67,6 +67,7 @@ class App extends Component {
     this.login();
   }
 
+  onLoggedIn(token, username) {
     startRealm();
     initialSetup().then(() => {
       AsyncStorage.setItem('refreshToken', token, () => {
