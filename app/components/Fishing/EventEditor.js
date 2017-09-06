@@ -170,11 +170,15 @@ class EventEditor extends Component {
         {text: 'Cancel', onPress: () => null, style: 'cancel'},
         {text: 'Commit', onPress: () => {
           createFishingEvent(this.props.fishingEvent).then(res => {
-            console.log(res);
+            if(res.body && res.body.id) {
+              this.props.dispatch(commitFishingEvent(this.props.fishingEvent));
+            } else {
+              AlertIOS.alert('please try that again when your connected to the internet');
+            }
           }).catch(err => {
             console.log(err);
-          })
-          //this.props.dispatch(commitFishingEvent(this.props.fishingEvent));
+            AlertIOS.alert('please try that again when your connected to the internet');
+          });
         }}
       ]
     );
