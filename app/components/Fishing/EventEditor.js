@@ -139,8 +139,8 @@ class EventEditor extends Component {
     return [
       this.renderDetailViewButton((catchesEnabled && !fEvent.detailsValid), 'detail', true, 0),
       this.renderDetailViewButton(!fEvent.estimatedCatchValid, 'catches', catchesEnabled, fEvent.estimatedCatch.length - 1),
-      this.renderDetailViewButton(!fEvent.discardsValid, 'discards', catchesEnabled, fEvent.discards.length),
-      this.renderDetailViewButton(false, 'protecteds', catchesEnabled, fEvent.protecteds.length),
+      //this.renderDetailViewButton(!fEvent.discardsValid, 'discards', catchesEnabled, fEvent.discards.length),
+      //this.renderDetailViewButton(false, 'protecteds', catchesEnabled, fEvent.protecteds.length),
       this.renderSubmitButton(),
     ];
   }
