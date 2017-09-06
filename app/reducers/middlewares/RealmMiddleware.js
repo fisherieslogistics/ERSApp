@@ -57,7 +57,8 @@ export default function RealmMiddleware({ dispatch, getState }) {
         });
         break;
       case 'updateUser':
-        userDB.update(realm, payload.changes);
+        userDB.deleteAll();
+        userDB.create(payload.changes);
         break;
       case 'updateVessel':
         vesselDB.update(realm, payload.changes);
