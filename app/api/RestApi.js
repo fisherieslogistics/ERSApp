@@ -2,21 +2,25 @@ import request from 'superagent';
 import AsyncStorage from 'AsyncStorage';
 import RealmHelper from '../database/RealmHelper';
 
+import SERVER_URL from '../constants/ServerURL';
 const vesselDB = new RealmHelper('vessel');
 const portDB = new RealmHelper('port');
+const userDB = new RealmHelper('user');
+const speciesDB = new RealmHelper('species');
 
 const USER_NAME = 'testskipper';
 const PASSWORD = 'pwnallthefesh';
 
 const PERSON_IN_CHARGE = 'Skipper King';
-const VESSEL_ID = 'http://localhost:8000/vessels/0a607198-e12d-4f6f-b054-b2524e32b29a/';
-const FISHING_EVENT_URI = 'http://localhost:8000/fishingEventWithCatches/';
-const TRIP_EVENT_URI = 'http://localhost:8000/trips/';
-const PORT_DUNEDIN_ID = 'http://localhost:8000/ports/db1765a7-9de9-4533-a01f-74e31a4c549e/';
-//const VESSELS_URI = 'http://localhost:8000/vessels/0a607198-e12d-4f6f-b054-b2524e32b29a/';
-const VESSELS_URI = 'http://localhost:8000/vessels/';
-const PORTS_URI = 'http://localhost:8000/ports/';
-const SPECIES_URI = 'http://localhost:8000/species/';
+const VESSEL_ID = SERVER_URL + 'rest-api/vessels/';
+const FISHING_EVENT_URI = SERVER_URL + 'fishingEventWithCatches/';
+const TRIP_EVENT_URI = SERVER_URL + 'rest-api/trips/';
+const PORT_DUNEDIN_ID = SERVER_URL + 'rest-api/ports/';
+//const VESSELS_URI = SERVER_URL + 'rest-api/vessels/0a607198-e12d-4f6f-b054-b2524e32b29a/';
+const VESSELS_URI = SERVER_URL + 'rest-api/vessels/';
+const PORTS_URI = SERVER_URL + 'rest-api/ports/';
+const SPECIES_URI = SERVER_URL + 'rest-api/species/';
+const USERS_URI = SERVER_URL + 'rest-api/users/';
 
 //const TOKEN = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoyLCJ1c2VybmFtZSI6InRlc3Rza2lwcGVyIiwiZXhwIjoxNTAzMzc3NzMwLCJlbWFpbCI6InNraXBzQHJlZ3VsYXJzaG93LmNvbSIsIm9yaWdfaWF0IjoxNTAzMzc0NzMwfQ.dIt0gBGXWSERN4mmLCE5P_pIwGK-tfh8kH3dJ1OtIJg'
 //const REFRESH_TOKEN = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoyLCJ1c2VybmFtZSI6InRlc3Rza2lwcGVyIiwiZXhwIjoxNTAzMzcyOTk4LCJlbWFpbCI6InNraXBzQHJlZ3VsYXJzaG93LmNvbSIsIm9yaWdfaWF0IjoxNTAzMzY5OTEzfQ.Pf2nupALO2jBlpN3w_EUhKEZwP1xhEECJ6SGb9GDnLo';
@@ -39,10 +43,17 @@ export function createFishingEvent(fishingEventObj) {
   } = fishingEventObj;
 
   const vessel = vesselDB.getFirst();
+  const fishCatches = estimatedCatch.filter(
+    f => (f.code && f.code.length === 3)).map(
+      f => {
+        const species = speciesDB.findOneWhere(` code = '${f.code}' `, 'createdTimestamp')
+        return { weightKgs: f.amount, species: species.serverID };
+    });
+
+  const port = portDB;
 
   const objectToSend = {
-    fishCatches: estimatedCatch.filter(f => !!f.code)
-      .map(f => ({ weight: f.amount, code: f.code })),
+    fishCatches,
     numberInTrip: numberOfInTrip,
     targetSpecies,
     datetimeAtStart: RAStart_date.toISOString(),
@@ -62,8 +73,9 @@ export function createFishingEvent(fishingEventObj) {
     completedDateTime: new Date().toISOString(),
     tripRAId: tripRAId,
     RAId,
-    id: RAId,
-  }
+  };
+
+  console.log(objectToSend);
 
   return postToAPI(FISHING_EVENT_URI, objectToSend);
 }
@@ -80,26 +92,24 @@ export function createTrip(tripObj) {
   } = tripObj
 
   const vessel = vesselDB.getFirst();
-  console.log(leavingPort, endPort, ` name = ${endPort} `);
+  const user = userDB.getFirst();
   const port = portDB.findOneWhere(` name = '${endPort}' `, 'createdTimestamp');
-
+  
   const objectToSend = {
-     id: RAId,
+     organisation: user.organisation,
      RAId,
-     personInCharge: PERSON_IN_CHARGE,
+     personInCharge: user.username,
      ETA: RAEnd_date.toISOString(),
      startTime: RAStart_date.toISOString(),
      endTime: RAEnd_date.toISOString(),
      startLocation: '{}',
      endLocation: '{}',
-     unloadPort: `${PORTS_URI}${port.serverID}/`,
-     vessel: `${VESSELS_URI}${vessel.serverID}/`,
+     fishingEvents: [],
+     unloadPort: port.serverID,
+     vessel: vessel.serverID,
   };
 
-  console.log(JSON.stringify(objectToSend));
-
   return postToAPI(TRIP_EVENT_URI, objectToSend);
-
 }
 
 
@@ -107,7 +117,6 @@ export function createTrip(tripObj) {
 function getObjects(URI) {
   return new Promise((resolve, reject) => {
     AsyncStorage.getItem('refreshToken', (err, token) => {
-      console.log(token)
       request
         .get(URI)
         .set('Authorization', `JWT ${token}`)
@@ -161,6 +170,7 @@ function postToAPI(url, objectToSend) {
         .send(objectToSend) // sends a JSON post body
         .set('Authorization', `JWT ${token}`)
         .set('Accept', 'application/json')
+        .set('Content-Type', 'application/json')
         .end((err, res) => {
           if(err) {
             //console.log(err);
