@@ -39,7 +39,7 @@ class FishingEventList extends RealmMasterListView {
       name = 'upload-to-cloud';
       backgroundColor = colors.midGray;
     }
-    const sty = Object.assign({}, { backgroundColor }, iconStyles);
+    const sty = Object.assign({}, { backgroundColor }, iconStyles, { left: -50 });
     return {
       name,
       style: sty
