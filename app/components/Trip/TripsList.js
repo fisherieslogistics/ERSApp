@@ -17,7 +17,7 @@ export default class TripsList extends RealmMasterListView {
         name={ 'truck-filled' }
         size={ 30 }
         color={ "white" }
-        style={ [iconStyles, { backgroundColor: colors.blue }] }
+        style={ [iconStyles, { backgroundColor: colors.blue, left: -50 } ] }
       />
     );
   }
