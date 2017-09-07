@@ -63,13 +63,13 @@ const amount = {
   display: { type: 'child' },
   realm: { type: 'int', optional: true },
 };
-const serverId = {
-  id: 'serverID',
+const id = {
+  id: 'id',
   default: null,
   realm: { type: 'string', optional: true },
 };
-const ProductModel = [species, amount, serverId];
-const DiscardModel = [species, amount, serverId];
+const ProductModel = [species, amount, id];
+const DiscardModel = [species, amount, id];
 
 const productSchema = generateRealmSchema(ProductModel, 'Product');
 const discardSchema = generateRealmSchema(DiscardModel, 'Discard');

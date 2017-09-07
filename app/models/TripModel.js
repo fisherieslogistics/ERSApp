@@ -7,7 +7,7 @@ import FORM_TYPE from '../constants/MPIFormType';
 
 const TCERFields = [
   {
-    id: 'serverID',
+    id: 'id',
     default: null,
     realm: { type: 'string', optional: true },
   },
@@ -91,6 +91,11 @@ const TripModel = [
     id: 'fishingEvents',
     default: [],
     realm: { type: 'list', objectType: 'FishingEvent', default: [] },
+  },
+  {
+    id: 'serverId',
+    default: null,
+    realm: { type: 'string', optional: true },
   },
 ];
 

@@ -5,7 +5,7 @@ import generateRealmSchema from '../database/generateRealmSchema';
 
 const model = [
   {
-    id: 'serverID',
+    id: 'id',
     default: null,
     realm: { type: 'string', optional: true },
   },

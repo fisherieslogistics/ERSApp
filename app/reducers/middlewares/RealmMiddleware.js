@@ -39,21 +39,21 @@ export default function RealmMiddleware({ dispatch, getState }) {
         action.payload.species.forEach((s) => {
           console.log("species", s);
           speciesDB.deleteAll();
-          speciesDB.create({ code: s.code, fullName: s.fullName, serverID: s.id });
+          speciesDB.create({ code: s.code, fullName: s.fullName, id: s.id });
         });
         break;
       case 'updatePorts':
         action.payload.ports.forEach((p) => {
           console.log("ports", p);
           portDB.deleteAll();
-          portDB.create({ name: p.name, serverID: p.id });
+          portDB.create({ name: p.name, id: p.id });
         });
         break;
       case 'updateVessels':
         action.payload.vessels.forEach((v) => {
           console.log("vessels", v);
           vesselDB.deleteAll();
-          vesselDB.create({ name: v.name, serverID: v.id, registration: `${v.registration}` });
+          vesselDB.create({ name: v.name, id: v.id, registration: `${v.registration}` });
         });
         break;
       case 'updateUser':

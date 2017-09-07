@@ -12,6 +12,7 @@ import AsyncStorage from 'AsyncStorage';
 import { createStore, applyMiddleware, combineReducers } from 'redux';
 import thunk from 'redux-thunk';
 import { Provider } from 'react-redux';
+import jwtDecode from 'jwt-decode';
 import request from 'superagent';
 import ReportingApp from './ReportingApp';
 import SplashScreen from '../components/SplashScreen';
@@ -75,6 +76,8 @@ class App extends Component {
           store.dispatch(updatePorts(values[0]));
           store.dispatch(updateSpecies(values[1]));
           store.dispatch(updateVessels(values[2]));
+          const user = jwtDecode(token);
+          store.dispatch(updateUser(user));
           this.setState({
             loggedIn: true,
           });
@@ -92,11 +95,10 @@ class App extends Component {
 
   }
 
-  login() {
+  login(msg=null) {
     AsyncStorage.getItem('refreshToken', (err, refreshToken) => {
       if(!refreshToken) {
-        this.promptUsername();
-        console.log("all the things", this.state);
+        this.promptUsername(msg);
       } else {
         this.onLoggedIn(refreshToken);
       }
@@ -109,8 +111,8 @@ class App extends Component {
       .send({ username: this.state.username, password: this.state.password })
       .end((err, res) => {
         if(err) {
-          console.log('errr', err);
-          this.login();
+          console.warn('errr', err);
+          this.login(err.message);
         }
         if(res && res.body && res.body.token) {
           this.onLoggedIn(res.body.token);
@@ -118,28 +120,26 @@ class App extends Component {
       });
   }
 
-  promptUsername() {
-    AlertIOS.prompt(
-      'Enter Username',
-      () => {
-        console.log('was it cancelled ?')
-      },
-      (username) => {
+  promptUsername(msg=null) {
+    AlertIOS.prompt('Enter Username', msg, [
+      { text: 'No', style: 'destructive',
+        onPress: () => this.promptUsername('you gotta do it')},
+      { text: 'Next', style: 'default', onPress: (username) => {
         this.setState({ username });
         this.promptPassword();
-      },
-    );
+      }},
+    ]);
   }
 
   promptPassword() {
-    AlertIOS.prompt(
-      'Enter Password',
-      null,
-      (password) => {
+    AlertIOS.prompt('Enter Password', null, [
+      { text: 'Back', style: 'destructive',
+        onPress: () => this.promptUsername('did you forget it?')},
+      { text: 'Login', style: 'default', onPress:(password) => {
         this.setState({ password });
         this.getRefreshToken();
-      },
-    );
+      }},
+    ]);
   }
 
   getRefreshToken

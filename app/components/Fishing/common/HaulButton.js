@@ -46,7 +46,7 @@ class HaulButton extends Component {
         {text: 'Haul', onPress: () => {
           this.props.dispatch(endFishingEvent(
               //TODO this needs to change for longline - cos you need the viewing event not the 'last event';
-              this.props.fishingEvent, changes));
+              this.props.fishingEvent, changes, this.props.location));
 
           this.props.dispatch(setViewingEventId(this.props.fishingEvent.RAId));
           this.props.dispatch(setSelectedFishingDetail('detail'));

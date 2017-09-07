@@ -2,14 +2,14 @@
 import uuid from 'uuid/v1';
 
 
-export function startTrip(trip, serverID) {
+export function startTrip(trip, id) {
   return {
     type: 'startTrip',
     realm: trip,
     payload: {
       RAId: trip.RAId,
       changes: {
-        serverID,
+        serverId: id,
         started: true,
         RAStart_date: new Date(),
       },

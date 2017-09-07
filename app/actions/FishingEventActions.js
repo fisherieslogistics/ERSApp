@@ -81,6 +81,7 @@ export function startFishingEvent(tripId, RAId, location) {
     }
   });
 
+
   return {
       type: 'startFishingEvent',
       realm: { trip, newEvent },
@@ -92,8 +93,9 @@ export function startFishingEvent(tripId, RAId, location) {
 
 }
 
-export function endFishingEvent(fishingEvent, changes) {
+export function endFishingEvent(fishingEvent, changes, location) {
   return (dispatch) => {
+    changes.locationEnd = Helper.locationToGeoJSONPoint(location);
 
     dispatch({
       type: 'endFishingEvent',

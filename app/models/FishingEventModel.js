@@ -16,7 +16,7 @@ const valid = Validator.valid;
 
 const FishingEventModel = [
   {
-    id: 'serverID',
+    id: 'id',
     default: null,
     realm: { type: 'string', optional: true },
   },

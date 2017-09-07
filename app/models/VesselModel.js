@@ -7,7 +7,7 @@ const valid = Validator.valid;
 
 const VesselModel = [
   {
-    id: 'serverID',
+    id: 'id',
     default: null,
     realm: { type: 'string', optional: true },
   },

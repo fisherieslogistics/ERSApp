@@ -40,6 +40,7 @@ import { MasterToolbar } from '../layout/Toolbar';
 import { BigButton } from '../common/Buttons';
 
 const portDB = new RealmHelper('port');
+const tripDB = new RealmHelper('trip')
 
 const masterChoices = [
  'Trip',
@@ -318,7 +319,7 @@ class Trip extends RealmMasterDetail {
   }
 
   getDetail() {
-    if(!this.props.vessel && this.props.vessel.serverID) {
+    if(!this.props.vessel && this.props.vessel.id) {
       return (
         <VesselSelect
           auth={this.props.auth}

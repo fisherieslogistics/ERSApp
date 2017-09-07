@@ -1,19 +1,21 @@
 import request from 'superagent';
 import AsyncStorage from 'AsyncStorage';
 import RealmHelper from '../database/RealmHelper';
-
+import Helper from '../utils/Helper';
 import SERVER_URL from '../constants/ServerURL';
+
 const vesselDB = new RealmHelper('vessel');
 const portDB = new RealmHelper('port');
 const userDB = new RealmHelper('user');
 const speciesDB = new RealmHelper('species');
+const tripDB = new RealmHelper('trip');
 
 const USER_NAME = 'testskipper';
 const PASSWORD = 'pwnallthefesh';
 
 const PERSON_IN_CHARGE = 'Skipper King';
 const VESSEL_ID = SERVER_URL + 'rest-api/vessels/';
-const FISHING_EVENT_URI = SERVER_URL + 'fishingEventWithCatches/';
+const FISHING_EVENT_URI = SERVER_URL + 'rest-api/fishingEvents/';
 const TRIP_EVENT_URI = SERVER_URL + 'rest-api/trips/';
 const PORT_DUNEDIN_ID = SERVER_URL + 'rest-api/ports/';
 //const VESSELS_URI = SERVER_URL + 'rest-api/vessels/0a607198-e12d-4f6f-b054-b2524e32b29a/';
@@ -47,9 +49,10 @@ export function createFishingEvent(fishingEventObj) {
     f => (f.code && f.code.length === 3)).map(
       f => {
         const species = speciesDB.findOneWhere(` code = '${f.code}' `, 'createdTimestamp')
-        return { weightKgs: f.amount, species: species.serverID };
+        return { weightKgs: f.amount, species: species.id };
     });
 
+  const trip = tripDB.getLast();
   const port = portDB;
 
   const objectToSend = {
@@ -59,19 +62,18 @@ export function createFishingEvent(fishingEventObj) {
     datetimeAtStart: RAStart_date.toISOString(),
     datetimeAtEnd: RAEnd_date.toISOString(),
     committed: true,
-    locationAtStart: locationStart,
-    locationAtEnd: locationEnd,
-    lineString: {},
+    locationAtStart: Helper.geoJSONPointToWKTPoint(locationStart),
+    locationAtEnd: Helper.geoJSONPointToWKTPoint(locationEnd),
+    lineString: null,
     eventSpecificDetails: JSON.stringify({
       fishingMethod: 'H',
       numberOfPeople,
     }),
     mitigationDeviceCodes: JSON.stringify([]),
     vesselNumber: vessel.registration,
-    vesselId: vessel.serverID,
     isVesselUsed: true,
     completedDateTime: new Date().toISOString(),
-    tripRAId: tripRAId,
+    trip: trip.serverId,
     RAId,
   };
 
@@ -81,7 +83,7 @@ export function createFishingEvent(fishingEventObj) {
 }
 //`${TRIP_EVENT_URI}${RAId}/`,
 
-export function createTrip(tripObj) {
+export function createTrip(tripObj, loc) {
 
   const {
     RAId,
@@ -94,7 +96,7 @@ export function createTrip(tripObj) {
   const vessel = vesselDB.getFirst();
   const user = userDB.getFirst();
   const port = portDB.findOneWhere(` name = '${endPort}' `, 'createdTimestamp');
-  
+
   const objectToSend = {
      organisation: user.organisation,
      RAId,
@@ -102,11 +104,11 @@ export function createTrip(tripObj) {
      ETA: RAEnd_date.toISOString(),
      startTime: RAStart_date.toISOString(),
      endTime: RAEnd_date.toISOString(),
-     startLocation: '{}',
-     endLocation: '{}',
+     startLocation: port.location,
+     endLocation: port.location,
      fishingEvents: [],
-     unloadPort: port.serverID,
-     vessel: vessel.serverID,
+     unloadPort: port.id,
+     vessel: vessel.id,
   };
 
   return postToAPI(TRIP_EVENT_URI, objectToSend);

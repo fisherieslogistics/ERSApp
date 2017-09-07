@@ -2,6 +2,11 @@ import Sexagesimal from 'sexagesimal';
 import moment from 'moment';
 
 
+const locationToWKTPoint = (location) => {
+  const { lon, lat } = location;
+  return 'POINT ({o} {a})'.replace('{o}', lon).replace('{a}', lat);
+}
+
 export default {
 
   getDegreesMinutesFromLocation: (location) => {
@@ -57,6 +62,15 @@ export default {
       properties,
     };
     return JSON.stringify(geometry);
+  },
+
+  locationToWKTPoint,
+
+  geoJSONPointToWKTPoint: (geoJSONPoint) => {
+    const point = JSON.parse(geoJSONPoint);
+    const lat = point.coordinates[1];
+    const lon = point.coordinates[0];
+    return locationToWKTPoint({ lat, lon });
   },
 
   getTotals: (estimatedCatch) => {

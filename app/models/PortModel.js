@@ -5,7 +5,7 @@ import generateRealmSchema from '../database/generateRealmSchema';
 
 const model = [
   {
-    id: 'serverID',
+    id: 'id',
     default: null,
     realm: { type: 'string', optional: true },
   },
@@ -17,6 +17,14 @@ const model = [
     display: { type: 'single' },
     realm: { type: 'string', optional: true },
   },
+  {
+    label: 'Location',
+    id: 'location',
+    valid: Validator.valid.anyValue,
+    type: 'string',
+    display: { type: 'single' },
+    realm: { type: 'string', optional: true },
+  }
 ];
 
 const portSchema = generateRealmSchema(model, 'Port');
