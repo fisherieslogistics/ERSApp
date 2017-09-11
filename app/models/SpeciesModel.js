@@ -5,11 +5,6 @@ import generateRealmSchema from '../database/generateRealmSchema';
 
 const model = [
   {
-    id: 'id',
-    default: null,
-    realm: { type: 'string', optional: true },
-  },
-  {
     label: 'Code',
     id: 'code',
     valid: Validator.valid.anyValue,
