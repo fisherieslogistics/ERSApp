@@ -49,7 +49,7 @@ export function createFishingEvent(fishingEventObj) {
     f => (f.code && f.code.length === 3)).map(
       f => {
         const species = speciesDB.findOneWhere(` code = '${f.code}' `, 'createdTimestamp')
-        return { weightKgs: f.amount, species: species.id };
+        return { weightKgs: f.amount, species: species.code };
     });
 
   const trip = tripDB.getLast();
