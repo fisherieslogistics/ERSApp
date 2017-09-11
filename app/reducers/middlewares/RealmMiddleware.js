@@ -37,15 +37,12 @@ export default function RealmMiddleware({ dispatch, getState }) {
       case 'updateSpecies':
         speciesDB.deleteAll()
         action.payload.species.forEach((s) => {
-          console.log("species", s);
-          speciesDB.deleteAll();
-          speciesDB.create({ code: s.code, fullName: s.fullName, id: s.id });
+          speciesDB.create({ code: s.code, fullName: s.description });
         });
         break;
       case 'updatePorts':
+        portDB.deleteAll();
         action.payload.ports.forEach((p) => {
-          console.log("ports", p);
-          portDB.deleteAll();
           portDB.create({ name: p.name, id: p.id });
         });
         break;
