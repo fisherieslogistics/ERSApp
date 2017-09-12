@@ -66,7 +66,8 @@ export default function RealmMiddleware({ dispatch, getState }) {
         break;
       case 'startTrip':
       case 'updateTrip':
-        tripDB.update(realm, payload.changes);
+        //console.log(type, payload);
+        //tripDB.update(realm, payload.changes);
         break;
       case 'startFishingEvent':
         const startedEvent = fishingEventDB.create(realm.newEvent);
