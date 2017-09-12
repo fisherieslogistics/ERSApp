@@ -23,20 +23,21 @@ class StartTripEditor extends Component {
   onChange(name, value){
     const { trip } = this.props;
     const changes = {};
-    if(name === 'RAEnd_date') {
-      const RAStart_date = new Date();
-      const RAEnd_date = moment(RAStart_date).clone().add(parseInt(value) || 0, "days");
-      changes[name] = RAEnd_date.toDate();
-      changes.RAStart_date = RAStart_date;
+    if(name === 'endTime' || name === 'ETA') {
+      const startTime = new Date();
+      const endTime = moment(startTime).clone().add(parseInt(value) || 0, "days");
+      changes.endTime = endTime.toDate();
+      changes.ETA = endTime.toDate();
+      changes.startTime = startTime;
     } else {
       changes[name] = value;
     }
-    this.props.dispatch(updateTrip(changes, trip));
+    this.props.dispatch(updateTrip(changes, this.props.trip._id, this.props.trip._rev));
   }
 
-  getDayChoices(RAStart_date) {
+  getDayChoices(startTime) {
     const choices = [...Array(50).keys()].map((num, i) => {
-      const date = moment(RAStart_date).clone().add(i, "days");
+      const date = moment(startTime).clone().add(i, "days");
       return {
         value: i,
         description: date.format("MMM Do YY"),
@@ -65,18 +66,18 @@ class StartTripEditor extends Component {
     };
     switch (attribute.id) {
       case "leavingPort":
-      case "endPort":
+      case "unloadPort":
         extraProps.view = 'ports';
         extraProps.choices = this.props.ports;
       break;
-      case "RAStart_date":
+      case "startTime":
         extraProps.mode = "date";
         extraProps.format = "Do MM YYYY";
       break;
-      case "RAEnd_date":
-        const { RAEnd_date, RAStart_date } = this.props.trip;
-        const startDate = moment(RAStart_date || new Date());
-        const endDate = moment(RAEnd_date || new Date());
+      case "ETA":
+        const { endTime, startTime, ETA } = this.props.trip;
+        const startDate = moment(startTime || new Date());
+        const endDate = moment(endTime || new Date());
         extraProps.sortResultsBy = (a, b) => parseInt(a.value) - parseInt(b.value);
         extraProps.choices = this.getDayChoices(startDate.clone());
         const days = moment.duration(endDate.diff(startDate)).asDays();
