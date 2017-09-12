@@ -9,6 +9,7 @@ const initialState = {
   lastUpdated: new Date(),
   selectedHistoryTrips: [],
   trips: [],
+  currentTrip: {},
   totals: {
     products: [],
     discards: [],
