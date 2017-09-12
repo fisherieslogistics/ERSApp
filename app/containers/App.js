@@ -18,16 +18,12 @@ import ReportingApp from './ReportingApp';
 import SplashScreen from '../components/SplashScreen';
 import ConnectionMiddleware from '../reducers/middlewares/ConnectionMiddleware';
 
-import RealmMiddleware from '../reducers/middlewares/RealmMiddleware';
 import PouchMiddleware from '../reducers/middlewares/PouchMiddleware';
 
 import AddUsefulToActions from '../reducers/middlewares/AddUsefulToActions';
 import { startConnection } from '../actions/ConnectionActions';
 import { updateAuth } from '../actions/AuthActions';
 import { updateUser } from '../actions/UserActions';
-import { startRealm } from '../database/realmDB';
-import initialSetup from '../database/initialSetup';
-import { getLastRecord } from '../database/RealmHelper';
 import iOSLocation from '../api/location/iOSLocation';
 import { getPorts, getSpecies, getVessels } from '../api/RestApi';
 import { updatePorts } from '../actions/PortActions';
@@ -38,7 +34,7 @@ import { updateVessels } from '../actions/VesselActions';
 import { reducers } from '../reducers/main';
 import serverURL from '../constants/ServerURL';
 
-const createStoreWithMiddleware = applyMiddleware(thunk, AddUsefulToActions, ConnectionMiddleware, PouchMiddleware, RealmMiddleware)(createStore);
+const createStoreWithMiddleware = applyMiddleware(thunk, AddUsefulToActions, ConnectionMiddleware, PouchMiddleware)(createStore);
 const reducer = combineReducers(reducers);
 const store = createStoreWithMiddleware(reducer);
 const blackBack = { backgroundColor: 'black' };
@@ -72,31 +68,29 @@ class App extends Component {
   }
 
   onLoggedIn(token, username) {
-    startRealm();
-    initialSetup().then(() => {
-      AsyncStorage.setItem('refreshToken', token, () => {
-        Promise.all([getPorts(), getSpecies(), getVessels()]).then((values) => {
-          store.dispatch(updatePorts(values[0]));
-          store.dispatch(updateSpecies(values[1]));
-          store.dispatch(updateVessels(values[2]));
-          const user = jwtDecode(token);
-          store.dispatch(updateUser(user));
-          store.dispatch({ type: 'initialSetup', payload: null });
+    AsyncStorage.setItem('refreshToken', token, () => {
+      Promise.all([getPorts(), getSpecies(), getVessels()]).then((values) => {
+        //store.dispatch(updatePorts(values[0]));
+        //store.dispatch(updateSpecies(values[1]));
+        //store.dispatch(updateVessels(values[2]));
+        const user = jwtDecode(token);
+        console.log(user);
+        //store.dispatch(updateUser(user));
+        //store.dispatch({ type: 'initialSetup', payload: null });
+        /*this.setState({
+          loggedIn: true,
+        });*/
+        //store.dispatch(startConnection());
+      }).catch(err => {
+        debugger
+        AsyncStorage.removeItem('refreshToken', () => {
           this.setState({
-            loggedIn: true,
+            loggedIn: false,
           });
-          store.dispatch(startConnection());
-        }).catch(err => {
-          AsyncStorage.removeItem('refreshToken', () => {
-            this.setState({
-              loggedIn: false,
-            });
-            this.login();
-          });
+          this.login();
         });
       });
     });
-
   }
 
   login(msg=null) {

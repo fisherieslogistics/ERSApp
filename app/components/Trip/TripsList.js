@@ -1,11 +1,11 @@
 'use strict';
 'use strict';
 import React from 'react';
-import RealmMasterListView from '../common/RealmMasterListView';
+import MasterListView from '../common/MasterListView';
 import { textStyles, colors, listViewStyles, iconStyles } from '../../styles/styles';
 import Icon8 from  '../common/Icon8';
 
-export default class TripsList extends RealmMasterListView {
+export default class TripsList extends MasterListView {
 
   isSelected(trip) {
     return !!this.props.selectedTrips.find(t => t === trip.RAId);

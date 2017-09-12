@@ -3,13 +3,13 @@ import{
   View,
   TouchableHighlight,
   Text,
+  ListView,
 } from 'react-native';
-import { ListView } from 'realm/react-native';
 import React, { Component } from 'react';
 import { listViewStyles, colors, textStyles } from '../../styles/styles';
 
 
-export default class RealmMasterListView extends Component {
+export default class MasterListView extends Component {
 
   constructor(props){
     super(props);

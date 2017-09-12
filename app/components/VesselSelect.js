@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import RealmHelper, { getFirstRecord } from '../database/RealmHelper';
 import {
   View,
   TouchableOpacity,
@@ -7,7 +6,6 @@ import {
 } from 'react-native';
 import { setSelectedTripDetail } from '../actions/TripActions';
 
-const vesselDB = new RealmHelper('vessel');
 
 const style = {
   box: {

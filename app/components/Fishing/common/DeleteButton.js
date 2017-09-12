@@ -11,13 +11,8 @@ import { colors } from '../../../styles/styles';
 //import { setViewingEventId } from '../../../actions/ViewActions';
 
 import {
-//  deleteFishingEvent,
 } from '../../../actions/FishingEventActions';
 
-import {
-  getRecord,
-  getLastRecord,
-} from '../../../database/RealmHelper';
 
 class HaulButton extends Component {
 
@@ -28,7 +23,7 @@ class HaulButton extends Component {
 
   /*endFishingEvent() {
     const changes = {
-      RAEnd_date: new Date(),
+      endTime: new Date(),
       locationEnd: Helper.locationToGeoJSONPoint(this.props.location),
       NetLeaveDepthLocation: Helper.locationToGeoJSONPoint(this.props.location),
       averageSpeed: this.props.averageSpeed,
@@ -75,13 +70,13 @@ class HaulButton extends Component {
 }
 
 const select = (state) => {
-  const trip = getLastRecord('trip');
+  //const trip = getLastRecord('trip');
   let viewingEvent = null;
   if(state.view.viewingEventId){
-    viewingEvent = getRecord('fishingEvent', state.view.viewingEventId);
+    //viewingEvent = getRecord('fishingEvent', state.view.viewingEventId);
   }
   const props = {
-    trip,
+    state.trip.currentTrip,
     fishingEvent: viewingEvent,
   };
   return props;

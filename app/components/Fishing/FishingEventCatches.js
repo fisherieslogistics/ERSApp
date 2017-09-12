@@ -6,7 +6,7 @@ import EventProductsEditor from './EventProductsEditor';
 import EventProtectedsEditor from './EventProtectedsEditor';
 import ProductModel, { DiscardModel } from '../../models/ProductModel';
 import ProtectedModel from '../../models/ProtectedModel';
-import { getRecord, getRecords } from '../../database/RealmHelper';
+
 
 class FishingEventCatchesEditor extends Component {
 
@@ -64,13 +64,13 @@ class FishingEventCatchesEditor extends Component {
 const select = (state) => {
   let fishingEvent = null;
   if(state.view.viewingEventId){
-    fishingEvent = getRecord('fishingEvent', state.view.viewingEventId);
+  //  fishingEvent = getRecord('fishingEvent', state.view.viewingEventId);
   }
   return {
     lastUpdated: state.fishingEvents.lastUpdated,
-    fishingEvent,
+    fishingEvent: state.fishingEvents.viewingEvent,
     viewLastUpdated: state.view.lastUpdated,
-    species: getRecords('species'),
+    species: state.species.all,//getRecords('species'),
   };
 }
 

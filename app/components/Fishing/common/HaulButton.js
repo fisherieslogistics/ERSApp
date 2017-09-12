@@ -16,11 +16,6 @@ import {
   endFishingEvent
 } from '../../../actions/FishingEventActions';
 
-import {
-  getRecord,
-  getLastRecord,
-} from '../../../database/RealmHelper';
-
 
 class HaulButton extends Component {
 
@@ -32,7 +27,7 @@ class HaulButton extends Component {
   onPress() {
     const loc = Helper.locationToGeoJSONPoint(this.props.location)
     const changes = {
-      RAEnd_date: new Date(),
+      endTime: new Date(),
       locationEnd: loc,
       NetLeaveDepthLocation: loc,
       averageSpeed: this.props.averageSpeed,
@@ -89,14 +84,15 @@ class HaulButton extends Component {
 }
 
 const select = (state) => {
-  const trip = getLastRecord('trip');
+
   let fishingEvent = null;
   if(state.view.viewingEventId){
-    fishingEvent = getRecord('fishingEvent', state.view.viewingEventId);
+  //  fishingEvent = getRecord('fishingEvent', state.view.viewingEventId);
   }
+
   const props = {
-    trip,
-    fishingEvent,
+    state.trip.currentTrip,
+    state.fishingEvent.viewingEvent,
     location: state.location,
     averageSpeed: state.location.averagedSpeed.currentAvg,
   };

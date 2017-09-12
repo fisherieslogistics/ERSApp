@@ -12,9 +12,7 @@ import FishingEventCatchesEditor from './FishingEventCatches';
 import styles from './FishingStyle';
 import { LongButton } from '../common/Buttons';
 import { colors } from '../../styles/styles';
-import {
-  getRecord,
-} from '../../database/RealmHelper';
+
 import {
   changeItemInEvent,
   deleteItemInEvent,
@@ -135,7 +133,7 @@ class EventEditor extends Component {
 
   renderDetailViewButtons() {
     const fEvent = this.props.fishingEvent;
-    const catchesEnabled = !!fEvent.RAEnd_date;
+    const catchesEnabled = !!fEvent.endTime;
     return [
       this.renderDetailViewButton((catchesEnabled && !fEvent.detailsValid), 'detail', true, 0),
       this.renderDetailViewButton(!fEvent.estimatedCatchValid, 'catches', catchesEnabled, fEvent.estimatedCatch.length - 1),
@@ -203,12 +201,12 @@ class EventEditor extends Component {
     if(this.props.fishingEvent.completed || this.props.fishingEvent.committed) {
       return this.renderMessage("Shot has been signed off and cannot be edited");
     }
-    const { RAEnd_date } = this.props.fishingEvent;
+    const { endTime } = this.props.fishingEvent;
     let detailAttribute = `${this.props.selectedDetail}`;
     if(detailAttribute === 'catches') {
       detailAttribute = 'estimatedCatch';
     }
-    const catchesEnabled = !!RAEnd_date;
+    const catchesEnabled = !!endTime;
     const canAdd = this.props.selectedDetail !== 'detail';
     const addButton = this.renderAddButton(detailAttribute, !!(catchesEnabled && canAdd));
     const detailView = this.renderDetailEditor();
@@ -240,11 +238,11 @@ class EventEditor extends Component {
 const select = (state) => {
   let fishingEvent = null;
   if(state.view.viewingEventId){
-    fishingEvent = getRecord('fishingEvent', state.view.viewingEventId);
+    //fishingEvent = getRecord('fishingEvent', state.view.viewingEventId);
   }
   const props = {
     fishingEventsUpdated: state.fishingEvents.lastUpdated,
-    fishingEvent,
+    fishingEvent: state.fishingEvents.viewingEvent,
     selectedDetail: state.view.selectedFishingDetail,
     lastUpdated: state.view.lastUpdated,
   };

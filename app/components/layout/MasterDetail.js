@@ -3,8 +3,8 @@ import {
   View,
 } from 'react-native';
 import React, { Component } from 'react';
-import { ListView } from 'realm/react-native';
-import RealmMasterListView from '../../components/common/RealmMasterListView';
+import { ListView } from 'react-native';
+import MasterListView from '../../components/common/MasterListView';
 import { MasterToolbar, DetailToolbar } from './Toolbar';
 import {shadowStyles, colors, iconStyles, masterDetailStyles } from '../../styles/styles';
 import { BigButton } from '../../components/common/Buttons';
@@ -42,7 +42,7 @@ const icons = {
 };
 
 
-class RealmMasterDetail extends Component {
+class MasterDetail extends Component {
 
   constructor(props){
     super(props);
@@ -100,7 +100,7 @@ class RealmMasterDetail extends Component {
 
   renderMasterListView() {
     return (
-      <RealmMasterListView
+      <MasterListView
         getDescription={ this.getDescription }
         isSelected={ this.isSelected }
         onPress={ this.masterListOnPress }
@@ -189,4 +189,4 @@ class RealmMasterDetail extends Component {
   }
 }
 
-export default RealmMasterDetail
+export default MasterDetail

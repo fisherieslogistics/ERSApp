@@ -1,21 +1,17 @@
 'use strict';
-import { ListView } from 'realm/react-native';
+import { ListView } from 'react-native';
 import React from 'react';
 import {connect} from 'react-redux';
-import RealmMasterListView from '../common/RealmMasterListView';
+import MasterListView from '../common/MasterListView';
 import Icon8 from '../common/Icon8';
 import { setViewingEventId, setSelectedFishingDetail } from '../../actions/ViewActions';
-import RealmHelper, {
-  getLastRecord,
-} from '../../database/RealmHelper';
 
-const fishingEventDB = new RealmHelper('fishingEvent');
 
 import { darkColors as colors, iconStyles } from '../../styles/styles';
 
 const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
-class FishingEventList extends RealmMasterListView {
+class FishingEventList extends MasterListView {
   constructor(props){
     super(props);
     this.getDescription = this.getDescription.bind(this);
@@ -27,11 +23,11 @@ class FishingEventList extends RealmMasterListView {
   eventStatus(fe){
     let backgroundColor = colors.green;
     let name = 'ok';
-    if(!fe.RAEnd_date){
+    if(!fe.endTime){
       name = 'fishing';
       backgroundColor = colors.blue;
     }
-    if(fe.RAEnd_date && !(fe.detailsValid && fe.estimatedCatchValid && fe.discardsValid && fe.protectedsValid)) {
+    if(fe.endTime && !(fe.detailsValid && fe.estimatedCatchValid && fe.discardsValid && fe.protectedsValid)) {
       name = 'error';
       backgroundColor= colors.orange;
     }
@@ -75,14 +71,13 @@ class FishingEventList extends RealmMasterListView {
 }
 
 const select = (state) => {
-  const trip = getLastRecord('trip');
   let viewingEvent = null;
   if(state.view.viewingEventId){
-    viewingEvent = fishingEventDB.findOne(state.view.viewingEventId);
+    viewingEvent = state.fishingEvents.viewingEvent;
   }
   return {
     lastUpdated: state.trip.lastUpdated,
-    dataSource: ds.cloneWithRows([...trip.fishingEvents].reverse()),
+    dataSource: ds.cloneWithRows([...state.fishingEvents].reverse()),
     selectedFishingEvent: viewingEvent,
   }
 }

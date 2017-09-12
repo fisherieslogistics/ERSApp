@@ -4,10 +4,10 @@ import{
   Text,
 } from 'react-native';
 import React from 'react';
-import RealmMasterListView from '../common/RealmMasterListView';
+import MasterListView from '../common/MasterListView';
 import { listViewStyles, colors } from '../../styles/styles';
 
-class TotalsList extends RealmMasterListView {
+class TotalsList extends MasterListView {
 
   constructor(props){
     super(props);

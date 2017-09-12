@@ -13,9 +13,7 @@ import { RadioButtons } from 'react-native-radio-buttons';
 import Helper from '../../utils/Helper';
 import InputView from './InputView';
 import { updateFishingEvent } from '../../actions/FishingEventActions';
-import {
-  getRecord,
-} from '../../database/RealmHelper';
+
 
 const styles = StyleSheet.create({
   coordLabel: {
@@ -183,7 +181,7 @@ class CoordinateEditor extends Component {
 const select = (state) => (
   {
     lastUpdated: state.fishingEvents.lastUpdated,
-    fishingEvent: getRecord('fishingEvent', state.view.viewingEventId),
+    fishingEvent: state.fishingEvents.viewingEvent,//getRecord('fishingEvent', state.view.viewingEventId),
   }
 );
 

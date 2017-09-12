@@ -14,17 +14,10 @@ import PlaceholderMessage from '../common/PlaceholderMessage';
 import Validator from '../../utils/Validator';
 import { colors } from '../../styles/styles';
 import { getRenderableTCERDetailModel } from '../../utils/ModelUtils';
-import {
-  getLastRecord,
-  getRecord,
-} from '../../database/RealmHelper';
-import RealmHelper from '../../database/RealmHelper';
 
 /* eslint-disable */
 import speciesCodesDesc from '../../constants/species/speciesDesc';
 /* eslint-enable */
-const speciesDB = new RealmHelper('species');
-
 
 class EventDetailEditor extends Component{
 
@@ -145,12 +138,12 @@ class EventDetailEditor extends Component{
 
 const select = (state) => {
   const props = {
-    fishingEvent: getRecord('fishingEvent', state.view.viewingEventId),
-    trip: getLastRecord('trip'),
+    fishingEvent: state.fishingEvents.viewingEvent),
+    trip: state.trip.currentTrip,
     viewLastUpdated: state.view.lastUpdated,
     fishingEventUpdated: state.fishingEvents.lastUpdated,
     showOptionalFields: state.fishingEvents.showOptionalFields,
-    species: speciesDB.findAll('species').map(s => ({ value: s.code, description: s.fullName })),
+    species: state.species.all,//speciesDB.findAll('species').map(s => ({ value: s.code, description: s.fullName })),
   };
   return props;
 }

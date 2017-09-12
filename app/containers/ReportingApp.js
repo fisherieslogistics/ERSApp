@@ -15,9 +15,7 @@ import Orientation from 'react-native-orientation';
 import { startTracking } from '../actions/LocationActions';
 import { setSelectedTab } from '../actions/ViewActions';
 import Icon8 from '../components/common/Icon8';
-import {
-  getLastRecord,
-} from '../database/RealmHelper';
+
 
 const styles = {
   wrapper: {
@@ -192,10 +190,9 @@ class ReportingApp extends Component {
 
 const select = (state) => {
   const { view, connection } = state;
-  const trip = getLastRecord('trip');
   return {
     lastUpdated: view.lastUpdated,
-    trip,
+    trip: state.trip.currentTrip,
     orientation: view.orientation,
     height: view.height,
     width: view.width,

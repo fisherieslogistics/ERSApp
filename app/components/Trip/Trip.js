@@ -3,13 +3,13 @@ import {
   View,
   Text,
   AlertIOS,
+  ListView,
 } from 'react-native';
-import { ListView } from 'realm/react-native';
 
 import React from 'react';
 import { connect } from 'react-redux';
 
-import RealmMasterDetail from '../layout/RealmMasterDetail';
+import MasterDetail from '../layout/MasterDetail';
 import {
   updateTrip,
   startTrip,
@@ -27,20 +27,10 @@ import ConnectionSettingsEditor from '../VMS/ConnectionSettingsEditor';
 import TripsList from './TripsList';
 import ports from '../../constants/ports';
 import VesselSelect from '../VesselSelect';
-import {
-  getRecords,
-  queryRecord,
-  getLastRecord,
-} from '../../database/RealmHelper';
 import AsyncStorage from 'AsyncStorage';
-import RealmHelper from '../../database/RealmHelper';
-
 import { colors, textStyles } from '../../styles/styles';
 import { MasterToolbar } from '../layout/Toolbar';
 import { BigButton } from '../common/Buttons';
-
-const portDB = new RealmHelper('port');
-const tripDB = new RealmHelper('trip')
 
 const masterChoices = [
  'Trip',
@@ -84,7 +74,7 @@ const dsTotals = new ListView.DataSource({rowHasChanged: (r1, r2) => r1.id !== r
 const dsTrips = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2 });
 
 
-class Trip extends RealmMasterDetail {
+class Trip extends MasterDetail {
 
   constructor (props){
     super(props);
@@ -381,19 +371,18 @@ const select = (state) => {
     tripUpdated: state.trip.lastUpdated,
     view: state.view,
     trip:state.trip.currentTrip,
-    c_id: state.trip.currentTrip && state.trip.currentTrip._id ? state.trip.currentTrip._id  : 1,
     vessel: getLastRecord('vessel'),
     user: getLastRecord('user'),
-    fishingEvents: trip.fishingEvents,
-    historyTrips: trips,
+    fishingEvents: state.fishingEvents,
+    historyTrips: [],
     selectedHistoryTrips: state.trip.selectedHistoryTrips,
-    totalsDataSource: dsTotals.cloneWithRows(totals),
-    tripsDataSource: dsTrips.cloneWithRows(trips),
+    totalsDataSource: [],//dsTotals.cloneWithRows(totals),
+    tripsDataSource: dsTrips.cloneWithRows([]),
     selectedDetail: state.trip.selectedDetail,
     selectedTab: state.view.selectedTab,
     connectionSettings: queryRecord(
       'connectionSettings', 'active = true').slice(0),
-    ports: portDB.findAll().map(p => ({ value: p.name, description: "" })),
+    ports: state.port.all,//portDB.findAll().map(p => ({ value: p.name, description: "" })),
     auth: state.auth.auth,
   };
 }

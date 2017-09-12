@@ -10,10 +10,6 @@ import {
   startFishingEvent,
 } from '../../../actions/FishingEventActions';
 
-import {
-  getRecord,
-  getLastRecord,
-} from '../../../database/RealmHelper';
 
 class ShootButton extends Component {
 
@@ -55,14 +51,10 @@ class ShootButton extends Component {
 }
 
 const select = (state) => {
-  const trip = getLastRecord('trip');
-  let viewingEvent = null;
-  if(state.view.viewingEventId){
-    viewingEvent = getRecord('fishingEvent', state.view.viewingEventId);
-  }
+
   const props = {
-    trip,
-    fishingEvent: viewingEvent,
+    state.trip.currentTrip,
+    fishingEvent: state.fishingEvents.viewingEvent,
     location: state.location,
   };
   return props;
