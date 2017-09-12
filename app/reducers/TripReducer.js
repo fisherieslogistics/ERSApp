@@ -8,6 +8,7 @@ const tripDB = new RealmHelper('trip');
 const initialState = {
   lastUpdated: new Date(),
   selectedHistoryTrips: [],
+  trips: [],
   totals: {
     products: [],
     discards: [],
@@ -58,8 +59,11 @@ const TripReducer = (state = initialState, action) => {
   const { type, payload } = action;
 
   switch(type) {
+    case 'setInitialTrips':
+      return update(state, { trips: payload.changes });
+      console.log('setCurrentTrip', Object.keys(payload.changes)[0], '###@@###');
     case 'endTrip':
-    case 'updateTrip':
+    case 'updateTripState':
     case 'startTrip':
       return update(state, { lastUpdated: new Date() });
     case 'addSelectedHistoryTrip':
