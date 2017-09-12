@@ -1,6 +1,16 @@
 "use strict";
 import uuid from 'uuid/v1';
 
+export function setCurrentTrip(trip) {
+  return {
+    type: 'setCurrentTrip',
+    payload: {
+      changes: {
+        trip,
+      },
+    },
+  }
+}
 
 export function startTrip(trip, id) {
   return {
@@ -11,7 +21,7 @@ export function startTrip(trip, id) {
       changes: {
         serverId: id,
         started: true,
-        RAStart_date: new Date(),
+        startTime: new Date(),
       },
     },
   }
@@ -30,18 +40,20 @@ export function endTrip(trip){
         wingSpread: parseInt(trip.wingSpread),
         headlineHeight: parseFloat(trip.headlineHeight),
         leavingPort: trip.leavingPort,
-        endPort: trip.endPort,
+        unloadPort: trip.unloadPort,
       },
     },
   };
 }
 
-export function updateTrip(changes, trip) {
+export function updateTrip(changes, _id, _rev) {
+  changes.type = 'trip';
   return {
     type: 'updateTrip',
-    realm: trip,
+    //realm: trip,
     payload: {
-      RAId: trip.RAId,
+      _id,
+      _rev,
       changes,
     },
   }
