@@ -1,6 +1,17 @@
 "use strict";
 import uuid from 'uuid/v1';
 
+export function setInitialTrips(trips) {
+  return {
+    type: 'setInitialTrips',
+    payload: {
+      changes: {
+        trips,
+      },
+    },
+  }
+}
+
 export function setCurrentTrip(trip) {
   return {
     type: 'setCurrentTrip',
@@ -15,7 +26,7 @@ export function setCurrentTrip(trip) {
 export function startTrip(trip, id) {
   return {
     type: 'startTrip',
-    realm: trip,
+
     payload: {
       RAId: trip.RAId,
       changes: {
@@ -31,7 +42,7 @@ export function endTrip(trip){
   const changes = { completed: true, };
   return {
     type: 'endTrip',
-    realm: trip,
+
     payload: {
       RAId: trip.RAId,
       changes,
@@ -50,7 +61,7 @@ export function updateTrip(changes, _id, _rev) {
   changes.type = 'trip';
   return {
     type: 'updateTrip',
-    //realm: trip,
+
     payload: {
       _id,
       _rev,

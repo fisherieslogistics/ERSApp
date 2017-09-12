@@ -12,7 +12,7 @@ export function updateUser(user) {
 export function updateVessel(key, value, vessel) {
   return {
     type: 'updateVessel',
-    realm: vessel,
+
     payload: {
       changes: {[key]: value },
     }

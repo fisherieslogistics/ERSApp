@@ -26,7 +26,6 @@ export function updateConnectionStatus(status) {
 export function updateConnectionSettings(settings) {
   return {
     type: 'connectionSettings',
-    realm: settings,
     payload: Object.assign({}, settings, { active: true }),
   };
 }

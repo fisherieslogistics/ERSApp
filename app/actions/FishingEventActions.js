@@ -2,14 +2,10 @@
 import {
   calculateStatArea,
 } from '../reducers/GeneralMethods';
-import RealmHelper, {
-  getLastRecord,
-} from '../database/RealmHelper';
 import { blankModel } from '../utils/ModelUtils';
 import Helper from '../utils/Helper';
 import FishingEventModel from '../models/FishingEventModel';
 
-const fishingEventDB = new RealmHelper('fishingEvent');
 
 export function toggleOptionalFields() {
   return {
@@ -32,7 +28,7 @@ export function updateFishingEvent(fishingEvent, changes) {
   return (dispatch) => {
     dispatch({
       type: 'updateFishingEvent',
-      realm: fishingEvent,
+
       payload: {
         RAId: fishingEvent.RAId,
         changes,
@@ -49,7 +45,7 @@ export function updateFishingEvent(fishingEvent, changes) {
 export function commitFishingEvent(fishingEvent) {
   return {
     type: 'updateFishingEvent',
-    realm: fishingEvent,
+
     payload: {
       RAId: fishingEvent.RAId,
       changes: { committed: true, completed: true, signed: true },
@@ -57,17 +53,12 @@ export function commitFishingEvent(fishingEvent) {
   }
 }
 
-export function startFishingEvent(tripId, RAId, location) {
-  const trip = getLastRecord('trip');
+export function startFishingEvent(tripId, RAId, location, trip, previousEvent) {
   let newEvent = blankModel(FishingEventModel);
-  const previousEvent = fishingEventDB.findOneWhere(` tripRAId = '${trip.RAId}' `, 'numberOfInTrip');
-  //const previousEvent = trip.fishingEvents.find(fe => fe.numberOfInTrip === trip.fishingEvents.length);
   newEvent.tripRAId = `${trip.RAId}`;
   newEvent.RAId = RAId;
-  newEvent.RAStart_date = new Date();
+  newEvent.startTime = new Date();
   newEvent.numberOfInTrip = trip.fishingEvents.length + 1;
-  //newEvent.wingSpread = trip.wingSpread;
-  //newEvent.headlineHeight = trip.headlineHeight;
   newEvent.locationStart = Helper.locationToGeoJSONPoint(location);
 
   FishingEventModel.forEach(field => {
@@ -84,7 +75,7 @@ export function startFishingEvent(tripId, RAId, location) {
 
   return {
       type: 'startFishingEvent',
-      realm: { trip, newEvent },
+
       payload: {
         newEvent,
         tripId: trip.RAId,
@@ -99,7 +90,7 @@ export function endFishingEvent(fishingEvent, changes, location) {
 
     dispatch({
       type: 'endFishingEvent',
-      realm: fishingEvent,
+
       payload: {
         changes,
         RAId: fishingEvent.RAId,
@@ -111,18 +102,18 @@ export function endFishingEvent(fishingEvent, changes, location) {
       return;
     }
 
-    const fishingEvents = getLastRecord('trip').fishingEvents;
+    /*const fishingEvents = getLastRecord('trip').fishingEvents;
 
     const previousEvent = fishingEvents.find(
       fe => fe.numberOfInTrip === (fishingEvent.numberOfInTrip - 1));
-    dispatch(repeatEventCatches(fishingEvent, previousEvent.replicatedEstimatedCatch));
+    dispatch(repeatEventCatches(fishingEvent, previousEvent.replicatedEstimatedCatch));*/
   };
 }
 
 export function deleteFishingEvent(fishingEvent) {
   return {
     type: 'deleteFishingEvent',
-    realm: fishingEvent,
+
     payload: {
       RAId: fishingEvent.RAId,
     }
@@ -132,7 +123,7 @@ export function deleteFishingEvent(fishingEvent) {
 export function repeatEventCatches(fishingEvent, catches) {
   return {
     type: 'repeatEventCatches',
-    realm: fishingEvent,
+
     payload: {
       RAId: fishingEvent.RAId,
       changes: {
@@ -153,7 +144,7 @@ export function addItemToEvent(fishingEvent, eventAttribute) {
   }
   return {
     type: actionNames[eventAttribute],
-    realm: fishingEvent,
+
     payload: {
       RAId: fishingEvent.RAId,
     },
@@ -168,7 +159,7 @@ export function deleteItemInEvent(fishingEvent, item, eventAttribute) {
   }
   return {
     type: actionNames[eventAttribute],
-    realm: item,
+
     payload: {
       fishingEventId: fishingEvent.RAId,
       RAId: item.RAId,
@@ -190,7 +181,7 @@ export function changeItemInEvent(fishingEvent, item, changes, eventAttribute) {
   }
   return {
     type: actionNames[eventAttribute],
-    realm: item,
+
     payload: {
       fishingEventId: fishingEvent.RAId,
       RAId: item.RAId,
