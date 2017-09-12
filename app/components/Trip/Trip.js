@@ -99,7 +99,7 @@ class Trip extends RealmMasterDetail {
   }
 
   updateTrip(attribute, value){
-    this.props.dispatch(updateTrip(attribute, value, this.props.trip.RAId));
+    this.props.dispatch(updateTrip(attribute, value, this.props.trip.RAId, { ...this.props.trip }));
   }
 
   componentWillReceiveProps(nextProps) {
@@ -183,15 +183,15 @@ class Trip extends RealmMasterDetail {
     if (this.props.trip.canEnd) {
       return ["Press End Trip when your heading in"];
     }
-    const numUncompletedShots = [...this.props.trip.fishingEvents].filter(
-      fe => !fe.completed).length;
-    if(!numUncompletedShots) {
+    /*const numUncompletedShots = [...this.props.trip.fishingEvents].filter(
+      fe => !fe.completed).length;*/
+    //if(!numUncompletedShots) {
       return ["Select ports and ETA before starting trip"];
-    }
-    return [
-      "Trip Incomplete",
-      `${numUncompletedShots} Shots to commit`,
-    ];
+    ///  }
+    //return [
+    //  "Trip Incomplete",
+    //  `${numUncompletedShots} Shots to commit`,
+    //];
   }
 
   renderMessage(){
@@ -334,6 +334,7 @@ class Trip extends RealmMasterDetail {
           <StartTripEditor
             ports={this.props.ports}
             trip={this.props.trip}
+            _id={this.props.c_id}
             dispatch={this.props.dispatch}
           />
         );
@@ -373,10 +374,14 @@ const select = (state) => {
   const products = state.trip.totals.products;
   const discards = state.trip.totals.discards;
   const totals = [...productsHeader, ...products, ...discardsHeader, ...discards];
+  if(state.trip.currentTrip && state.trip.currentTrip._id){
+    // console.log(state.trip.currentTrip, "currentTrip");
+  }
   return {
     tripUpdated: state.trip.lastUpdated,
     view: state.view,
-    trip,
+    trip:state.trip.currentTrip,
+    c_id: state.trip.currentTrip && state.trip.currentTrip._id ? state.trip.currentTrip._id  : 1,
     vessel: getLastRecord('vessel'),
     user: getLastRecord('user'),
     fishingEvents: trip.fishingEvents,
