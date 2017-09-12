@@ -61,7 +61,9 @@ const TripReducer = (state = initialState, action) => {
   switch(type) {
     case 'setInitialTrips':
       return update(state, { trips: payload.changes });
+    case 'setCurrentTrip':
       console.log('setCurrentTrip', Object.keys(payload.changes)[0], '###@@###');
+      return update(state, { currentTrip: payload.changes, lastUpdated: new Date() });
     case 'endTrip':
     case 'updateTripState':
     case 'startTrip':
