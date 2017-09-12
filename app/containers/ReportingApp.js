@@ -89,7 +89,6 @@ class ReportingApp extends Component {
   }
 
   setTab(tab) {
-    console.log(tab, "SET TABGE")
     this.props.dispatch(setSelectedTab(tab));
   }
 
@@ -98,8 +97,7 @@ class ReportingApp extends Component {
       orientation}});
   }
 
-  componentDidMount(){
-    console.log("Component Did Mount")
+  componentDidMount() {
     Orientation.addOrientationListener(this.orientationDidChange);
     this.props.dispatch({ type: 'orientation', payload: {
       orientation: Orientation.getInitialOrientation(),
