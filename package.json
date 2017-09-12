@@ -10,6 +10,7 @@
 		"jwt-decode": "^2.2.0",
 		"moment": "^2.18.1",
 		"nmea-0183": "0.0.7",
+		"pouchdb-react-native": "^6.3.4",
 		"react": "16.0.0-alpha.12",
 		"react-native": "0.47.2",
 		"react-native-datepicker": "^1.6.0",
