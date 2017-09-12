@@ -6,11 +6,7 @@ import FORM_TYPE from '../constants/MPIFormType';
 
 
 const TCERFields = [
-  {
-    id: 'id',
-    default: null,
-    realm: { type: 'string', optional: true },
-  },
+
   {
     label: 'Wing Spread',
     id: 'wingSpread',
@@ -42,6 +38,26 @@ const LCERFields = [
 
 const TripModel = [
   {
+    id: 'id',
+    default: null,
+    realm: { type: 'string', optional: true },
+  },
+  {
+    id: 'startLocation',
+    default: null,
+    realm: { type: 'string', optional: true },
+  },
+  {
+    id: 'endLocation',
+    default: null,
+    realm: { type: 'string', optional: true },
+  },
+  {
+    id: 'vessel',
+    default: null,
+    realm: { type: 'string', optional: true },
+  },
+  {
    label: 'Sailing From',
    id: 'leavingPort',
    valid: Validator.valid.anyValue,
@@ -51,7 +67,7 @@ const TripModel = [
   },
   {
    label: 'Expected Unload Port',
-   id: 'endPort',
+   id: 'unloadPort',
    valid: Validator.valid.anyValue,
    type: 'picker',
    display: { type: 'single'},
@@ -59,20 +75,25 @@ const TripModel = [
   },
   {
    label: 'Sailing Date',
-   id: 'RAStart_date',
+   id: 'startTime',
    valid: Validator.valid.startTimeValid,
    type: 'datetime',
    realm: { type: 'date', optional: true },
   },
   {
+   id: 'endTime',
+   valid: Validator.valid.alwaysValid,
+   type: 'datetime',
+   realm: { type: 'date', optional: true },
+  },
+  {
    label: 'Estimated Days Left In Trip',
-   id: 'RAEnd_date',
+   id: 'ETA',
    valid: Validator.valid.tripDate,
    type: 'picker', unit: '',
    display: { type: 'single'},
    realm: { type: 'date', optional: true },
   },
-
   {
     id: 'started',
     default: false,
@@ -81,21 +102,16 @@ const TripModel = [
     realm: { type: 'bool', default: false, optional: true  },
   },
   {
-    id: 'complete',
-    default: false,
-    valid: Validator.valid.alwaysValid,
-    type: 'bool',
-    realm: { type: 'bool', default: false, optional: true },
-  },
-  {
     id: 'fishingEvents',
     default: [],
     realm: { type: 'list', objectType: 'FishingEvent', default: [] },
   },
   {
-    id: 'serverId',
-    default: null,
-    realm: { type: 'string', optional: true },
+    id: 'complete',
+    default: false,
+    valid: Validator.valid.alwaysValid,
+    type: 'bool',
+    realm: { type: 'bool', default: false, optional: true },
   },
 ];
 
@@ -117,11 +133,11 @@ const realmSchema = generateRealmSchema(model, 'Trip');
 class TripRealm extends Realm.Object {
 
   get startDateMoment() {
-    return moment(this.RAStart_date);
+    return moment(this.startTime);
   }
 
   get endDateMoment() {
-    return moment(this.RAEnd_date);
+    return moment(this.endTime);
   }
 
   get lastEvent() {
@@ -138,7 +154,7 @@ class TripRealm extends Realm.Object {
     if(FORM_TYPE === 'LCER') {
       return true;
     }
-    return !!this.lastEvent.RAEnd_date;
+    return !!this.lastEvent.endTime;
   }
 
   get canEndEvent() {
@@ -152,8 +168,8 @@ class TripRealm extends Realm.Object {
   }
 
   get canStart() {
-    return !this.started && this.leavingPort && this.endPort &&
-           this.RAStart_date && this.RAEnd_date;
+    return !this.started && this.leavingPort && this.unloadPort &&
+           this.startTime && this.endTime;
   }
 
   get canEnd() {

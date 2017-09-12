@@ -10,15 +10,15 @@ import JSONPointToLocation from '../../utils/JSONPointToLocation';
 export default class TCERRealm extends Realm.Object {
 
   get startDateMoment() {
-    return moment(this.RAStart_date);
+    return moment(this.startTime);
   }
 
   get endDateMoment() {
-    return moment(this.RAEnd_date);
+    return moment(this.endTime);
   }
 
   get canEnd() {
-    return !this.RAEnd_date;
+    return !this.endTime;
   }
 
   get shouldAddEmptyCatch() {
@@ -31,19 +31,19 @@ export default class TCERRealm extends Realm.Object {
       wingSpread,
       headlineHeight,
       locationStart,
-      RAStart_date,
-      RAEnd_date,
+      startTime,
+      endTime,
       bottomDepth,
       groundropeDepth,
       averageSpeed,
       locationEnd,
     } = this;
 
-    const stage1 = (targetSpecies && wingSpread && headlineHeight && locationStart && RAStart_date);
-    if((!RAEnd_date && stage1)) {
+    const stage1 = (targetSpecies && wingSpread && headlineHeight && locationStart && startTime);
+    if((!endTime && stage1)) {
       return stage1;
     }
-    const datesSweet =  !!(RAStart_date < RAEnd_date);
+    const datesSweet =  !!(startTime < endTime);
     const depths = !!(bottomDepth && groundropeDepth);
     return !!(stage1 && !!locationEnd && !!averageSpeed && depths && datesSweet);
   }
@@ -51,10 +51,10 @@ export default class TCERRealm extends Realm.Object {
   get canSubmit() {
     const {
       detailsValid,
-      RAEnd_date,
+      endTime,
       estimatedCatchValid,
     } = this;
-    return !!(detailsValid && RAEnd_date && estimatedCatchValid)
+    return !!(detailsValid && endTime && estimatedCatchValid)
   }
 
   get estimatedCatchKg() {
@@ -117,7 +117,7 @@ export default class TCERRealm extends Realm.Object {
       method: 'BT',
       targetSpeciesCode: this.targetSpecies,
       mitigationDevicesUsed: [],
-      startDateTime: this.RAStart_date,
+      startDateTime: this.startTime,
       locationStart: {
         "systemDateTime": this.locationStartDecimal.timestamp,
         "systemLocation": {
@@ -135,7 +135,7 @@ export default class TCERRealm extends Realm.Object {
       bottomDepthMetres: this.bottomDepth,
       speedKnots: this.averageSpeed,
       isNetLost: this.isNetLost,
-      finishDateTime: this.RAEnd_date,
+      finishDateTime: this.endTime,
       finishLocation: {
         "systemDateTime": this.locationEndDecimal.timestamp,
         "systemLocation": {

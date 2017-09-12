@@ -88,9 +88,9 @@ export default {
     }
     return [
       'leavingPort',
-      'RAStart_date',
-      'RAEnd_date',
-      'endPort',
+      'startTime',
+      'endTime',
+      'unloadPort',
       'headlineHeight',
       'wingSpread'
     ].every(key => !!trip[key]);
@@ -98,10 +98,10 @@ export default {
 
   createHistoryTrip(trip, fishingEvents){
     const {
-      RAStart_date,
-      RAEnd_date,
+      startTime,
+      endTime,
       leavingPort,
-      endPort,
+      unloadPort,
       id,
     } = trip;
 
@@ -114,10 +114,10 @@ export default {
     });
 
     return {
-      RAStart_date,
+      startTime,
       leavingPort,
-      endPort,
-      RAEnd_date,
+      unloadPort,
+      endTime,
       fishingEvents: newEvents,
       id,
     };

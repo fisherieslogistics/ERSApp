@@ -8,15 +8,15 @@ import JSONPointToLocation from '../../utils/JSONPointToLocation';
 export default class LCERRealm extends Realm.Object {
 
   get startDateMoment() {
-    return moment(this.RAStart_date);
+    return moment(this.startTime);
   }
 
   get endDateMoment() {
-    return moment(this.RAEnd_date);
+    return moment(this.endTime);
   }
 
   get canEnd() {
-    return !this.RAEnd_date;
+    return !this.endTime;
   }
 
   get shouldAddEmptyCatch() {
@@ -24,11 +24,11 @@ export default class LCERRealm extends Realm.Object {
   }
 
   get detailsValid() {
-    const stage1 = (this.targetSpecies && this.numberOfHooks && this.locationStart && this.RAStart_date);
-    if((!this.RAEnd_date && stage1)) {
+    const stage1 = (this.targetSpecies && this.numberOfHooks && this.locationStart && this.startTime);
+    if((!this.endTime && stage1)) {
       return stage1;
     }
-    return !!(stage1 && (this.RAStart_date < this.RAEnd_date) && this.locationEnd && this.averageSpeed);
+    return !!(stage1 && (this.startTime < this.endTime) && this.locationEnd && this.averageSpeed);
   }
 
   get estimatedCatchValid() {

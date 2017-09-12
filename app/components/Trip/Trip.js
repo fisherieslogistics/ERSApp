@@ -163,7 +163,7 @@ class Trip extends RealmMasterDetail {
 
   endTrip(){
     AlertIOS.alert(
-      `Heading to ${this.props.trip.endPort}`,
+      `Heading to ${this.props.trip.unloadPort}`,
       `Arriving in about ${this.props.trip.endDateMoment.fromNow(true)}`,
       [
         { text: 'Cancel', style: 'cancel' },
