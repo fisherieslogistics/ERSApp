@@ -87,23 +87,23 @@ export function createTrip(tripObj, loc) {
 
   const {
     RAId,
-    RAStart_date,
-    RAEnd_date,
+    startTime,
+    endTime,
     leavingPort,
-    endPort,
+    unloadPort,
   } = tripObj
 
   const vessel = vesselDB.getFirst();
   const user = userDB.getFirst();
-  const port = portDB.findOneWhere(` name = '${endPort}' `, 'createdTimestamp');
+  const port = portDB.findOneWhere(` name = '${unloadPort}' `, 'createdTimestamp');
 
   const objectToSend = {
      organisation: user.organisation,
      RAId,
      personInCharge: user.username,
-     ETA: RAEnd_date.toISOString(),
-     startTime: RAStart_date.toISOString(),
-     endTime: RAEnd_date.toISOString(),
+     ETA: endTime.toISOString(),
+     startTime: startTime.toISOString(),
+     endTime: endTime.toISOString(),
      startLocation: port.location,
      endLocation: port.location,
      fishingEvents: [],
