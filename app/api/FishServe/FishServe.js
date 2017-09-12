@@ -1,15 +1,11 @@
-import request from 'superagent';
-import RealmHelper from '../../database/RealmHelper';
-
-const actionToSendDB = new RealmHelper('actionToSend');
-const fishingEventDB = new RealmHelper('fishingEvent');
+/*import request from 'superagent';
 const CLIENT_NUMBER = 9900113;
 const TIME_TO_WAIT = 3000;
 const toBind = [
   'onSuccess',
   'onFail',
   'start',
-]
+]*/
 
 export default class Fishserve {
 
