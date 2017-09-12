@@ -1,9 +1,9 @@
 "use strict";
 import { update } from './GeneralMethods';
 import Helper from '../utils/Helper';
-import RealmHelper from '../database/RealmHelper';
+//import RealmHelper from '../database/RealmHelper';
 
-const tripDB = new RealmHelper('trip');
+//const tripDB = new RealmHelper('trip');
 
 const initialState = {
   lastUpdated: new Date(),
@@ -19,7 +19,7 @@ const initialState = {
 
 const getTotalsList = (tripIds) => {
 
-  const trips = tripIds.map(id => tripDB.findOne(id));
+  const trips = [];//tripIds.map(id => tripDB.findOne(id));
   const catchObj = {};
   const discardObj = {};
 
