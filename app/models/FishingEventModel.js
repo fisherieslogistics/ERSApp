@@ -1,14 +1,13 @@
 
 import Validator from '../utils/Validator';
-import generateRealmSchema from '../database/generateRealmSchema';
 
 import TCERModel from './TCERModel';
 import LCERModel from './LCERModel';
 import HandGatheringEventModel from './HandGatheringEventModel';
 
-import LCERRealm from './realm/LCER';
-import TCERRealm from './realm/TCER';
-import HandGatheringEventRealm from './realm/HandGatheringEvent';
+import
+import
+import
 
 import FORM_TYPE from '../constants/MPIFormType';
 
@@ -18,12 +17,12 @@ const FishingEventModel = [
   {
     id: 'id',
     default: null,
-    realm: { type: 'string', optional: true },
+
   },
   {
-    label: 'Number of in Trip', id: 'numberOfInTrip', valid: valid.anyValue,
+    label: 'Number in Trip', id: 'numberInTrip', valid: valid.anyValue,
     type: 'number',
-    realm: { type: 'int', optional: true },
+
   },
   {
     id: 'targetSpecies', valid: valid.targetSpecies,
@@ -32,11 +31,11 @@ const FishingEventModel = [
     default: "",
     display: { type: 'single' },
     repeating: true,
-    realm: { type: 'string', optional: true },
+
   },
   {
     label: 'Start Time - Date',
-    id: 'RAStart_date',
+    id: 'datetimeAtStart',
     valid: valid.anyValue,
     type: 'datetime',
     combinedValid: {
@@ -46,116 +45,122 @@ const FishingEventModel = [
     },
     display: { type: 'combined', siblings: ['locationStart'] },
     optionalRender: true,
-    realm: { type: 'date', optional: true },
+
   },
   {
     id: 'manualStartTime', valid: valid.alwaysValid, default: false,
-    realm: { type: 'bool', default: false },
+
   },
   {
     id: 'manualStartLocation', valid: valid.alwaysValid, default: false,
-    realm: { type: 'bool', default: false },
+
   },
   {
     id: 'manualEndTime', valid: valid.alwaysValid, default: false,
-    realm: { type: 'bool', default: false },
+
   },
   {
     id: 'manualEndLocation', valid: valid.alwaysValid, default: false,
-    realm: { type: 'bool', default: false },
+
   },
   {
     label: 'End Time - Date',
-    id: 'RAEnd_date',
+    id: 'datetimeAtEnd',
     valid: valid.anyValue,
     type: 'datetime',
-    /*combinedValid: {
-      attributes: ["endDateMoment", "startDateMoment"],
+    combinedValid: {
+      attributes: ["datetimeAtEnd", "datetimeAtStart"],
       func: Validator.combined.orderedGreaterThan,
       errorMessage: "end time must be after start time"
-    },*/
-    display: { type: 'combined', siblings: ['locationEnd'] },
+    },
+    display: { type: 'combined', siblings: ['locationAtEnd'] },
     optionalRender: true, displayStage: 'Haul',
-    realm: { type: 'date', optional: true },
+
   },
   {
     label: 'Location at Start',
-    id: 'locationStart',
+    id: 'locationAtStart',
     valid: valid.locationValid,
     type: 'location',
     default: null,
     display: { type: 'child' },
     optionalRender: true,
-    realm: { type: 'string', optional: true },
+
   },
   {
     label: 'Location at End of Haul',
-    id: 'locationEnd',
+    id: 'locationAtEnd',
     valid: valid.locationValid,
     type: 'location',
     default: null,
     display: { type: 'child' },
     optionalRender: true,
     displayStage: 'Haul',
-    realm: { type: 'string', optional: true },
+
   },
   {
-    id: 'estimatedCatch',
-    valid: valid.alwaysValid,
-    default: [],
-    realm: { type: 'list', objectType: 'Product' },
+    id: 'committed', valid: valid.alwaysValid, default: false,
+
   },
   {
-    id: 'discards',
-    default: [],
-    realm: { type: 'list', objectType: 'Discard' },
+    id: 'trip_id',
+
   },
   {
-    id: 'protecteds',
-    default: [],
-    realm: { type: 'list', objectType: 'ProtectedSpecies' },
+    id: 'eventSpecificDetails',
+
   },
   {
-    label: 'Non Fish Protected Species',
-    type: 'bool',
-    id: 'nonFishProtected',
-    valid: valid.alwaysValid,
-    default: false,
-    optionalRender: true,
-    realm: { type: 'bool', default: false },
+    id: 'mitigationDeviceCodes',
+
   },
   {
-    id: 'completed', valid: valid.alwaysValid, default: false,
-    realm: { type: 'bool', default: false },
+    id: 'vesselNumber',
+
   },
   {
-    id: 'tripRAId',
-    realm: { type: 'string', optional: false },
+    id: 'amendmentReason',
+
+  },
+  {
+    id: 'creator',
+
+  },
+  {
+    id: 'archived',
+
+  },
+  {
+    id: 'notes',
+
+  },
+  {
+    id: 'isVesselUsed',
+
+  },
+  {
+    id: 'lineString',
+
   },
 ];
 
 /* eslint-disable */
 let model = FishingEventModel;
-let FishingEventRealm = {};
 /* eslint-enable  */
 
 switch (FORM_TYPE){
   case 'LCER':
     model = FishingEventModel.concat(LCERModel);
-    FishingEventRealm = LCERRealm;
+
     break;
   case 'TCER':
     model = FishingEventModel.concat(TCERModel);
-    FishingEventRealm = TCERRealm;
+
     break;
   case 'HandGatheringEvent':
     model = FishingEventModel.concat(HandGatheringEventModel);
-    FishingEventRealm = HandGatheringEventRealm;
-    console.log(HandGatheringEventRealm);
+
+
 }
-
-FishingEventRealm.schema = generateRealmSchema(model, 'FishingEvent');
-
-export { FishingEventRealm }
 
 export default model

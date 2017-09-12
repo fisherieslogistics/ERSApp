@@ -1,7 +1,9 @@
 import PouchDB from 'pouchdb-react-native';
 import { setInitialTrips } from '../actions/TripActions';
 import uuid from 'uuid/v1';
-import { update } from '../reducers/GeneralMethods'
+import { update } from '../reducers/GeneralMethods';
+import { relayErrorMessage } from '../api/RestApi';
+
 const REMOTE_URI = 'http://localhost:5984/reporting';
 const APP_STATE_ID = 'AppState';
 
@@ -87,6 +89,17 @@ export default class Pouch {
       this.dispatch({ type: 'setCurrentTrip', payload: {
         changes: currentTrip,
       }});
+    });
+  }
+
+  create(itemToCreate, type) {
+    if(!itemToCreate._id) {
+      itemToCreate._id = uuid()
+    }
+    return this.localDB.put(newdoc).then((res) => {
+      console.log(res);
+    }).catch(err => {
+      relayErrorMessage(err);
     });
   }
 

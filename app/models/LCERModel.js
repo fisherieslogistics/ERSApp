@@ -6,7 +6,6 @@ const LCERModel = [
   {
     id: 'fishingMethod',
     default: 'BLL',
-    realm: { type: 'string' },
   },
   {
     label: 'Shot Finish Time',
@@ -14,7 +13,6 @@ const LCERModel = [
     display: { type: 'single'},
     valid: valid.anyValue,
     type: 'datetime',
-    realm: { type: 'date', optional: true },
   },
   {
     label: 'Bottom Depth',
@@ -24,7 +22,6 @@ const LCERModel = [
     unit: 'm',
     default: 0,
     display: { type: 'single' },
-    realm: { type: 'int', optional: true },
   },
   {
     label: 'Hook Spacing',
@@ -32,7 +29,6 @@ const LCERModel = [
     valid: valid.greaterThanZero,
     type: 'float',
     display: { type: 'single' },
-    realm: { type: 'float', optional: true, unit: 'm' },
   },
   {
     label: 'Number of Hooks',
@@ -40,7 +36,6 @@ const LCERModel = [
     valid: valid.greaterThanZero,
     type: 'number',
     display: { type: 'single' },
-    realm: { type: 'int', optional: true },
   },
   {
     label: 'Average Speed',
@@ -52,17 +47,13 @@ const LCERModel = [
     unit: 'kt',
     optionalRender: true,
     displayStage: 'Haul',
-    realm: { type: 'float', optional: true },
   },
   {
     id: 'formType', default: 'LCER',
-    realm: { type: 'string', default: 'LCER' },
   },
   {
     id: 'otherSpeciesWeight', default: 0,
-    realm: { type: 'int', default: 0 },
   },
-
 ];
 
 export default LCERModel;

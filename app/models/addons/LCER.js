@@ -1,11 +1,11 @@
-import Realm from 'realm';
+import
 import moment from 'moment';
 import ProductModel from '../../models/ProductModel';
 import { blankModel } from '../../utils/ModelUtils';
 import uuid from 'uuid/v1';
 import JSONPointToLocation from '../../utils/JSONPointToLocation';
 
-export default class LCERRealm extends Realm.Object {
+export
 
   get startDateMoment() {
     return moment(this.startTime);

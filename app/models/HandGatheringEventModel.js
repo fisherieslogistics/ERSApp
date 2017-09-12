@@ -3,7 +3,7 @@ const HandGatheringEventModel = [
     id: 'fishingMethod',
     default: 'H',
     repeating: true,
-    realm: { type: 'string' },
+
   },
   {
     id: 'numberOfPeople',
@@ -12,7 +12,7 @@ const HandGatheringEventModel = [
     display: { type: 'single' },
     default: 1,
     repeating: true,
-    realm: { type: 'int', optional: true }
+
   },
 ];
 

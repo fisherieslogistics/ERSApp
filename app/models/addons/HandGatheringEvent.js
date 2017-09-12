@@ -1,24 +1,23 @@
-import Realm from 'realm';
+import
 import moment from 'moment';
 import uuid from 'uuid/v1';
 import ProductModel from '../../models/ProductModel';
 import { blankModel } from '../../utils/ModelUtils';
-import { getLastRecord } from '../../database/RealmHelper';
 import JSONPointToLocation from '../../utils/JSONPointToLocation';
 
 
-export default class HandGatheringEventRealm extends Realm.Object {
+export
 
   get startDateMoment() {
-    return moment(this.RAStart_date);
+    return moment(this.startTime);
   }
 
   get endDateMoment() {
-    return moment(this.RAEnd_date);
+    return moment(this.endTime);
   }
 
   get canEnd() {
-    return !this.RAEnd_date;
+    return !this.endTime;
   }
 
   get shouldAddEmptyCatch() {
@@ -28,26 +27,26 @@ export default class HandGatheringEventRealm extends Realm.Object {
   get detailsValid() {
     const {
       locationStart,
-      RAStart_date,
-      RAEnd_date,
+      startTime,
+      endTime,
       locationEnd,
     } = this;
 
-    const stage1 = (locationStart && RAStart_date);
-    if((!RAEnd_date && stage1)) {
+    const stage1 = (locationStart && startTime);
+    if((!endTime && stage1)) {
       return stage1;
     }
-    const datesSweet =  !!(RAStart_date < RAEnd_date);
+    const datesSweet =  !!(startTime < endTime);
     return !!(stage1 && locationEnd && datesSweet);
   }
 
   get canSubmit() {
     const {
       detailsValid,
-      RAEnd_date,
+      endTime,
       estimatedCatchValid,
     } = this;
-    return !!(detailsValid && RAEnd_date && estimatedCatchValid)
+    return !!(detailsValid && endTime && estimatedCatchValid)
   }
 
   get estimatedCatchKg() {
@@ -102,7 +101,7 @@ export default class HandGatheringEventRealm extends Realm.Object {
       method: 'H',
       targetSpeciesCode: this.targetSpecies,
       mitigationDevicesUsed: [],
-      startDateTime: this.RAStart_date,
+      startDateTime: this.startTime,
       locationStart: {
         "systemDateTime": this.locationStartDecimal.timestamp,
         "systemLocation": {
@@ -112,7 +111,7 @@ export default class HandGatheringEventRealm extends Realm.Object {
         isManual: false,
       },
       numberOfPeople: this.numberOfPeople,
-      finishDateTime: this.RAEnd_date,
+      finishDateTime: this.endTime,
       finishLocation: {
         "systemDateTime": this.locationEndDecimal.timestamp,
         "systemLocation": {
@@ -138,10 +137,10 @@ export default class HandGatheringEventRealm extends Realm.Object {
   }
 
   get eventHeader() {
-    const vessel = getLastRecord('vessel');
+    //const vessel = getLastRecord('vessel');
     return {
       eventID: this.RAId,
-      vesselNumber: vessel.registration,
+      vesselNumber: 2,//vessel.registration,
       isVesselUsed: true,
       notes: 'Create By FLL Reporting',
     }

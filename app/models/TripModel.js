@@ -1,7 +1,6 @@
-import Realm from 'realm';
+import
 import moment from 'moment';
 import Validator from '../utils/Validator';
-import generateRealmSchema from '../database/generateRealmSchema';
 import FORM_TYPE from '../constants/MPIFormType';
 
 
@@ -13,7 +12,7 @@ const TCERFields = [
     valid: Validator.valid.greaterThanZero,
     type: 'number',
     display: { type: 'single' }, unit: 'm',
-    realm: { type: 'int', default: 0, optional: true },
+
   },
   {
     label: 'Headline Height',
@@ -21,7 +20,7 @@ const TCERFields = [
     valid: Validator.valid.greaterThanZero,
     type: 'float', unit: 'm',
     display: { type: 'single'},
-    realm: { type: 'float', default: 0, optional: true },
+
   },
 ]
 
@@ -32,7 +31,7 @@ const LCERFields = [
     valid: Validator.valid.greaterThanZero,
     type: 'float',
     display: { type: 'single' },
-    realm: { type: 'float', optional: true, unit: 'm' },
+
   },
 ]
 
@@ -40,22 +39,22 @@ const TripModel = [
   {
     id: 'id',
     default: null,
-    realm: { type: 'string', optional: true },
+  },
+  {
+    id: 'creator',
+    default: null,
   },
   {
     id: 'startLocation',
     default: null,
-    realm: { type: 'string', optional: true },
   },
   {
     id: 'endLocation',
     default: null,
-    realm: { type: 'string', optional: true },
   },
   {
-    id: 'vessel',
+    id: 'vessel_id',
     default: null,
-    realm: { type: 'string', optional: true },
   },
   {
    label: 'Sailing From',
@@ -63,7 +62,6 @@ const TripModel = [
    valid: Validator.valid.anyValue,
    type: 'picker',
    display: { type: 'single'},
-   realm: { type: 'string', optional: true },
   },
   {
    label: 'Expected Unload Port',
@@ -71,20 +69,17 @@ const TripModel = [
    valid: Validator.valid.anyValue,
    type: 'picker',
    display: { type: 'single'},
-   realm: { type: 'string', optional: true },
   },
   {
    label: 'Sailing Date',
    id: 'startTime',
    valid: Validator.valid.startTimeValid,
    type: 'datetime',
-   realm: { type: 'date', optional: true },
   },
   {
    id: 'endTime',
    valid: Validator.valid.alwaysValid,
    type: 'datetime',
-   realm: { type: 'date', optional: true },
   },
   {
    label: 'Estimated Days Left In Trip',
@@ -92,26 +87,6 @@ const TripModel = [
    valid: Validator.valid.tripDate,
    type: 'picker', unit: '',
    display: { type: 'single'},
-   realm: { type: 'date', optional: true },
-  },
-  {
-    id: 'started',
-    default: false,
-    valid: Validator.valid.alwaysValid,
-    type: 'bool',
-    realm: { type: 'bool', default: false, optional: true  },
-  },
-  {
-    id: 'fishingEvents',
-    default: [],
-    realm: { type: 'list', objectType: 'FishingEvent', default: [] },
-  },
-  {
-    id: 'complete',
-    default: false,
-    valid: Validator.valid.alwaysValid,
-    type: 'bool',
-    realm: { type: 'bool', default: false, optional: true },
   },
 ];
 
@@ -128,9 +103,7 @@ switch(FORM_TYPE) {
 
 const model = TripModel.concat(specificFields);
 
-const realmSchema = generateRealmSchema(model, 'Trip');
-
-class TripRealm extends Realm.Object {
+class addon {
 
   get startDateMoment() {
     return moment(this.startTime);
@@ -179,8 +152,5 @@ class TripRealm extends Realm.Object {
 
 
 }
-TripRealm.schema = realmSchema;
-
-export { TripRealm }
 
 export default model

@@ -1,7 +1,6 @@
-import Realm from 'realm';
+import
 import moment from 'moment';
 import Validator from '../utils/Validator';
-import generateRealmSchema from '../database/generateRealmSchema';
 
 const model = [
   {
@@ -10,22 +9,14 @@ const model = [
     valid: Validator.valid.anyValue,
     type: 'string',
     display: { type: 'single' },
-    realm: { type: 'string', optional: true },
   },
   {
-    label: 'Full Name',
-    id: 'fullName',
+    id: 'description',
     valid: Validator.valid.anyValue,
     type: 'string',
     display: { type: 'single' },
-    realm: { type: 'string', optional: true },
   },
 ];
 
-const speciesSchema = generateRealmSchema(model, 'Species');
 
-class SpeciesRealm extends Realm.Object {}
-SpeciesRealm.schema = speciesSchema;
-
-export { SpeciesRealm }
 export default model

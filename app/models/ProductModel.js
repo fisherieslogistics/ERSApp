@@ -1,7 +1,6 @@
-import Realm from 'realm';
+import
 
 import Validator from '../utils/Validator';
-import generateRealmSchema from '../database/generateRealmSchema';
 
 const valid = Validator.valid;
 
@@ -12,7 +11,7 @@ const species = {
   default: "",
   type: "productCodePicker",
   display: { type: 'combined', siblings: ['amount'] },
-  realm: { type: 'string', optional: true },
+
 };
 
 const speciesWithState = {
@@ -27,7 +26,7 @@ const speciesWithState = {
     func: Validator.combined.validSpeciesAndState,
     errorMessage: 'Duplicate species codes must have unique state codes',
   },*/
-  realm: { type: 'string', optional: true },
+
 };
 
 const qma = {
@@ -35,7 +34,7 @@ const qma = {
   id: 'qma',
   valid: valid.alwaysValid,
   default: "",
-  realm: { type: 'string', optional: true },
+
 };
 
 const state = {
@@ -50,7 +49,7 @@ const state = {
     func: Validator.combined.validSpeciesAndState,
     errorMessage: 'Duplicate species codes must have unique state codes',
   },
-  realm: { type: 'string', default: "GRE" },
+
 };
 
 const amount = {
@@ -61,25 +60,15 @@ const amount = {
   default: 0,
   unit: 'kg',
   display: { type: 'child' },
-  realm: { type: 'int', optional: true },
+
 };
 const id = {
   id: 'id',
   default: null,
-  realm: { type: 'string', optional: true },
+
 };
 const ProductModel = [species, amount, id];
 const DiscardModel = [species, amount, id];
 
-const productSchema = generateRealmSchema(ProductModel, 'Product');
-const discardSchema = generateRealmSchema(DiscardModel, 'Discard');
 
-class DiscardRealm extends Realm.Object {}
-DiscardRealm.schema = discardSchema;
-
-class ProductRealm extends Realm.Object {}
-ProductRealm.schema = productSchema;
-
-
-export { DiscardModel, DiscardRealm, ProductRealm, }
 export default ProductModel;

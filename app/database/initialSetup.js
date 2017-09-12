@@ -1,6 +1,5 @@
 
 import { AsyncStorage } from 'react-native';
-import { getRecords, createRecord } from './RealmHelper';
 import { updateUser } from '../actions/UserActions';
 import UserModel from '../models/UserModel';
 import TripModel from '../models/TripModel';

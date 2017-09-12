@@ -8,7 +8,6 @@ const TCERModel = [
     id: 'fishingMethod',
     default: 'BT',
     repeating: true,
-    realm: { type: 'string' },
   },
   /*{
     label: 'Bottom Depth',
@@ -18,7 +17,7 @@ const TCERModel = [
     unit: 'm',
     default: 0,
     display: { type: 'combined', siblings: ['groundropeDepth'] },
-    realm: { type: 'int', optional: true },
+
   },*/
   {
     label: 'Number of People',
@@ -28,7 +27,6 @@ const TCERModel = [
     default: 1,
     repeating: true,
     display: { type: 'single' },
-    realm: { type: 'int' },
   },
   /*{
     label: 'Estimated Total Bag Size',
@@ -40,7 +38,7 @@ const TCERModel = [
     displayStage: 'Haul',
     unit: 'kg',
     display: { type: 'single' },
-    realm: { type: 'int', optional: true },
+
   },
   {
     label: 'Vessel Pair Number',
@@ -50,7 +48,7 @@ const TCERModel = [
     default: null,
     repeating: true,
     display: { type: 'single' },
-    realm: { type: 'int', optional: true },
+
   },
   {
     label: 'Minimum Mesh Size',
@@ -61,7 +59,7 @@ const TCERModel = [
     unit: 'mm',
     repeating: true,
     display: { type: 'single' },
-    realm: { type: 'float' },
+
   },
   {
     label: 'Start of Haul Location',
@@ -73,7 +71,7 @@ const TCERModel = [
     displayStage: 'Haul',
     display: { type: 'single' },
     optionalRender: true,
-    realm: { type: 'string', optional: true },
+
   },
   {
     label: 'Start Of Haul Time',
@@ -84,7 +82,7 @@ const TCERModel = [
     copyFrom: 'endTime',
     display: { type: 'single' },
     optionalRender: true,
-    realm: { type: 'date', optional: true },
+
   },
   {
     label: 'End Of Shot Location',
@@ -95,7 +93,7 @@ const TCERModel = [
     copyFrom: 'locationStart',
     display: { type: 'single' },
     optionalRender: true,
-    realm: { type: 'string', optional: true },
+
   },
   {
     label: 'End Of Shot Time',
@@ -106,7 +104,7 @@ const TCERModel = [
     copyFrom: 'startTime',
     display: { type: 'single' },
     optionalRender: true,
-    realm: { type: 'date', optional: true },
+
   },
   {
     label: 'Code End Time',
@@ -118,17 +116,17 @@ const TCERModel = [
     displayStage: 'Haul',
     display: { type: 'single' },
     optionalRender: true,
-    realm: { type: 'date', optional: true },
+
   },*/
   {
-    label: 'Is Vessel Used',
+    label: 'Is Net Lost',
     id: 'isNetLost',
     valid: valid.anyValue,
     type: 'bool',
     default: false,
     displayStage: 'Haul',
     display: { type: 'single' },
-    realm: { type: 'bool' },
+
   },
   /*{
     label: 'Groundrope Depth',
@@ -143,7 +141,7 @@ const TCERModel = [
         errorMessage: "Groundrope cannot be below the bottom"
       },
     display: { type: 'child'}, unit: 'm', optionalRender: false,
-    realm: { type: 'int', optional: true },
+
   },
   {
     label: 'Wing Spread',
@@ -152,7 +150,7 @@ const TCERModel = [
     type: 'number',
     repeating: true,
     display: { type: 'combined', siblings: ['headlineHeight']}, unit: 'm', order: 1, optionalRender: true,
-    realm: { type: 'int', optional: true },
+
   },
   {
     label: 'Headline Height',
@@ -164,7 +162,7 @@ const TCERModel = [
     optionalRender: true,
     repeating: true,
     display: { type: 'child'},
-    realm: { type: 'float', optional: true },
+
   },
   {
     label: 'Average Speed',
@@ -176,19 +174,19 @@ const TCERModel = [
     unit: 'kt',
     optionalRender: true,
     displayStage: 'Haul',
-    realm: { type: 'float', optional: true },
+
   },*/
   {
     id: 'formType', default: 'TCER',
-    realm: { type: 'string', default: 'TCER' },
+
   },
   /*{
     id: 'otherSpeciesWeight', default: 0,
-    realm: { type: 'int', default: 0 },
+
   },*/
   {
     id: 'committed', default: false,
-    realm: { type: 'bool', default: false, optional: true },
+
   }
 ];
 

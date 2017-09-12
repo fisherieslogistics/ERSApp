@@ -1,13 +1,12 @@
-import Realm from 'realm';
+import
 import moment from 'moment';
 import ProductModel from '../../models/ProductModel';
 import { blankModel } from '../../utils/ModelUtils';
 import uuid from 'uuid/v1';
-import { getLastRecord } from '../../database/RealmHelper';
 import JSONPointToLocation from '../../utils/JSONPointToLocation';
 
 
-export default class TCERRealm extends Realm.Object {
+export
 
   get startDateMoment() {
     return moment(this.startTime);
@@ -180,10 +179,10 @@ export default class TCERRealm extends Realm.Object {
   }
 
   get eventHeader() {
-    const vessel = getLastRecord('vessel');
+    //const vessel = getLastRecord('vessel');
     return {
-      eventID: this.RAId,
-      vesselNumber: vessel.registration,
+      //eventID: this.RAId,
+      //vesselNumber: vessel.registration,
       isVesselUsed: true,
       notes: 'Create By FLL Reporting',
     }
