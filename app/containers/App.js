@@ -17,7 +17,10 @@ import request from 'superagent';
 import ReportingApp from './ReportingApp';
 import SplashScreen from '../components/SplashScreen';
 import ConnectionMiddleware from '../reducers/middlewares/ConnectionMiddleware';
+
 import RealmMiddleware from '../reducers/middlewares/RealmMiddleware';
+import PouchMiddleware from '../reducers/middlewares/PouchMiddleware';
+
 import AddUsefulToActions from '../reducers/middlewares/AddUsefulToActions';
 import { startConnection } from '../actions/ConnectionActions';
 import { updateAuth } from '../actions/AuthActions';
@@ -35,7 +38,7 @@ import { updateVessels } from '../actions/VesselActions';
 import { reducers } from '../reducers/main';
 import serverURL from '../constants/ServerURL';
 
-const createStoreWithMiddleware = applyMiddleware(thunk, AddUsefulToActions, ConnectionMiddleware, RealmMiddleware)(createStore);
+const createStoreWithMiddleware = applyMiddleware(thunk, AddUsefulToActions, ConnectionMiddleware, PouchMiddleware, RealmMiddleware)(createStore);
 const reducer = combineReducers(reducers);
 const store = createStoreWithMiddleware(reducer);
 const blackBack = { backgroundColor: 'black' };
@@ -59,12 +62,12 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.iosLocation.addCallbacks((nmeStr) => {
+  /*this.iosLocation.addCallbacks((nmeStr) => {
       //console.log("messageCallback", nmeStr);
     },
     (err) => {
       //console.log("locErr", err);
-    });
+    });*/
     this.login();
   }
 
@@ -78,6 +81,7 @@ class App extends Component {
           store.dispatch(updateVessels(values[2]));
           const user = jwtDecode(token);
           store.dispatch(updateUser(user));
+          store.dispatch({ type: 'initialSetup', payload: null });
           this.setState({
             loggedIn: true,
           });
