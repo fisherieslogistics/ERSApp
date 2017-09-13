@@ -1,4 +1,3 @@
-import
 import moment from 'moment';
 import Validator from '../utils/Validator';
 import FORM_TYPE from '../constants/MPIFormType';
@@ -12,7 +11,6 @@ const TCERFields = [
     valid: Validator.valid.greaterThanZero,
     type: 'number',
     display: { type: 'single' }, unit: 'm',
-
   },
   {
     label: 'Headline Height',
@@ -20,7 +18,6 @@ const TCERFields = [
     valid: Validator.valid.greaterThanZero,
     type: 'float', unit: 'm',
     display: { type: 'single'},
-
   },
 ]
 
