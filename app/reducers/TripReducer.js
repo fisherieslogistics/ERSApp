@@ -1,15 +1,14 @@
 "use strict";
-import { update } from './GeneralMethods';
+import { updateWithTimeStamp } from './GeneralMethods';
 import Helper from '../utils/Helper';
-//import RealmHelper from '../database/RealmHelper';
+import { Trip } from '../models/TripModel';
 
-//const tripDB = new RealmHelper('trip');
 
 const initialState = {
   lastUpdated: new Date(),
   selectedHistoryTrips: [],
   trips: [],
-  currentTrip: {},
+  currentTrip: new Trip({}),
   totals: {
     products: [],
     discards: [],
@@ -61,15 +60,18 @@ const TripReducer = (state = initialState, action) => {
 
   switch(type) {
     case 'setInitialTrips':
-      return update(state, { trips: payload.changes });
+      return updateWithTimeStamp(state, { trips: payload.changes });
     case 'setCurrentTrip':
-      console.log('setCurrentTrip', Object.keys(payload.changes)[0], '###@@###');
-      return update(state, { currentTrip: payload.changes, lastUpdated: new Date() });
-    case 'endTrip':
-    case 'updateTripState':
-    case 'startTrip':
-      return update(state, { lastUpdated: new Date() });
-    case 'addSelectedHistoryTrip':
+      return updateWithTimeStamp(state, { currentTrip: new Trip(payload.changes) });
+    case 'updateTrip':
+      debugger;
+      state.currentTrip.setValue(payload.changes);
+      return updateWithTimeStamp({}, state);
+    //case 'endTrip':
+    //case 'updateTripState':
+    //case 'startTrip':
+    //  return update(state, { lastUpdated: new Date() });
+    /*case 'addSelectedHistoryTrip':
       let tripIds = [payload.tripId];
       if(state.selectedHistoryTrips.includes(payload.tripId)) {
         tripIds = state.selectedHistoryTrips.filter(
@@ -90,7 +92,7 @@ const TripReducer = (state = initialState, action) => {
         lastUpdated: new Date(),
       });
     case 'setSelectedTripDetail':
-      return update(state, { selectedDetail: payload.name });
+      return update(state, { selectedDetail: payload.name });*/
   }
 
   return state;

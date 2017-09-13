@@ -1,13 +1,15 @@
 import moment from 'moment';
+import { updateWithTimeStamp } from './GeneralMethods';
 
 const initialState = {
-  species: [],
+  all: [],
 };
 
-export default (state = initialState, action) => {
-  switch (action.type) {
-    case 'updateSpecies':
-      return action.species;
+export default (state = initialState, { type, payload }) => {
+  switch (type) {
+    case 'setSpecies':
+      
+      return updateWithTimeStamp(state, { all: payload.changes });
     default:
       return state;
   }

@@ -7,11 +7,11 @@ const initialState = {
   user:  blankModel(UserModel),
 };
 
-export default (state = initialState, action) => {
+export default (state = initialState, { type, payload }) => {
 
-  switch (action.type) {
-    case 'updateUser':
-      return update(state, { lastUpdated: moment().milliseconds() });
+  switch (type) {
+    case 'setUser':
+      return update(state, { user: payload.changes });
     default:
       return state;
   }
