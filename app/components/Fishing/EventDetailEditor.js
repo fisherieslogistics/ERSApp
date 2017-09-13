@@ -138,7 +138,7 @@ class EventDetailEditor extends Component{
 
 const select = (state) => {
   const props = {
-    fishingEvent: state.fishingEvents.viewingEvent),
+    fishingEvent: state.fishingEvents.viewingEvent,
     trip: state.trip.currentTrip,
     viewLastUpdated: state.view.lastUpdated,
     fishingEventUpdated: state.fishingEvents.lastUpdated,

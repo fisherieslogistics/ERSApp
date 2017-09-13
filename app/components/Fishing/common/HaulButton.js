@@ -91,8 +91,8 @@ const select = (state) => {
   }
 
   const props = {
-    state.trip.currentTrip,
-    state.fishingEvent.viewingEvent,
+    trip: state.trip.currentTrip,
+    fishingEvent: state.fishingEvent.viewingEvent,
     location: state.location,
     averageSpeed: state.location.averagedSpeed.currentAvg,
   };

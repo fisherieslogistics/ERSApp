@@ -53,7 +53,7 @@ class ShootButton extends Component {
 const select = (state) => {
 
   const props = {
-    state.trip.currentTrip,
+    trip: state.trip.currentTrip,
     fishingEvent: state.fishingEvents.viewingEvent,
     location: state.location,
   };

@@ -18,7 +18,7 @@ import ReportingApp from './ReportingApp';
 import SplashScreen from '../components/SplashScreen';
 import ConnectionMiddleware from '../reducers/middlewares/ConnectionMiddleware';
 
-import PouchMiddleware from '../reducers/middlewares/PouchMiddleware';
+import PouchMiddleware, { initialize } from '../reducers/middlewares/PouchMiddleware';
 
 import AddUsefulToActions from '../reducers/middlewares/AddUsefulToActions';
 import { startConnection } from '../actions/ConnectionActions';
@@ -69,20 +69,29 @@ class App extends Component {
 
   onLoggedIn(token, username) {
     AsyncStorage.setItem('refreshToken', token, () => {
-      Promise.all([getPorts(), getSpecies(), getVessels()]).then((values) => {
-        //store.dispatch(updatePorts(values[0]));
-        //store.dispatch(updateSpecies(values[1]));
-        //store.dispatch(updateVessels(values[2]));
+      Promise.all([getPorts(token), getSpecies(token), getVessels(token)]).then((values) => {
+
+        const ports = values[0];
+        const species = values[1];
+        const vessels = values[2];
         const user = jwtDecode(token);
-        console.log(user);
-        //store.dispatch(updateUser(user));
-        //store.dispatch({ type: 'initialSetup', payload: null });
-        /*this.setState({
+
+        store.dispatch({ type: 'setPorts', payload: { changes: ports.map(
+          p => ({ value: p.name, description: ''})) }});
+        store.dispatch({ type: 'setSpecies', payload: { changes: species.map(
+          p => ({ value: p.code, description: p.description})) }});
+        store.dispatch({ type: 'setVessels', payload: { changes: vessels }});
+        store.dispatch({ type: 'setUser', payload: { changes: user }});
+
+        store.dispatch(initialize());
+        store.dispatch(startConnection());
+
+        this.setState({
           loggedIn: true,
-        });*/
-        //store.dispatch(startConnection());
+        });
+
       }).catch(err => {
-        debugger
+        console.log(err);
         AsyncStorage.removeItem('refreshToken', () => {
           this.setState({
             loggedIn: false,
