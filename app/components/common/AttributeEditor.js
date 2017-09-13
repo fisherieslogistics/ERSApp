@@ -14,6 +14,7 @@ import DayPicker from './DayPicker';
 import ProductCodePicker from '../Fishing/ProductCodePicker';
 import EditOnBlurInput from './EditOnBlurInput';
 import JSONPointToLocation from '../../utils/JSONPointToLocation';
+import Label from './Label';
 
 const styles = {
   custom: {
@@ -210,13 +211,7 @@ class AttributeEditor extends Component {
         );
       case "label":
         const wrap = { width: 70 };
-        return (
-          <View style={ wrap }>
-            <Text style={ styles.custom.dateText }>
-              {`${value}`}
-            </Text>
-          </View>
-        );
+        return (<Label value={value} style={wrap} />);
       case "number":
       case "float":
       default:

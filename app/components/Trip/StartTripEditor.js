@@ -96,23 +96,16 @@ class StartTripEditor extends Component {
     }
 
     return (
-      <KeyboardAwareScrollView
-        viewIsInsideTabBar
-        extraHeight={ 150 }
-        bouncesZoom={false}
-        alwaysBounceVertical={false}
-      >
-        <View style={styleGap}>
-          <ModelEditor
-            getEditorProps={ this.getEditorProps }
-            model={ TripModel }
-            modelValues={ this.props.trip }
-            index={ 1 }
-            onChange={ this.onChange }
-            dispatch={ this.props.dispatch }
-          />
-        </View>
-      </KeyboardAwareScrollView>
+      <View style={styleGap}>
+        <ModelEditor
+          getEditorProps={ this.getEditorProps }
+          model={ TripModel }
+          modelValues={ this.props.trip }
+          index={ 1 }
+          onChange={ this.onChange }
+          dispatch={ this.props.dispatch }
+        />
+      </View>
     );
   }
 }

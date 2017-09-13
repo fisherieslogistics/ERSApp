@@ -5,7 +5,7 @@ import {
   AlertIOS,
   ListView,
 } from 'react-native';
-
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import React from 'react';
 import { connect } from 'react-redux';
 
@@ -31,6 +31,7 @@ import AsyncStorage from 'AsyncStorage';
 import { colors, textStyles } from '../../styles/styles';
 import { MasterToolbar } from '../layout/Toolbar';
 import { BigButton } from '../common/Buttons';
+import Label from '../common/Label';
 
 const masterChoices = [
  'Trip',
@@ -308,25 +309,38 @@ class Trip extends MasterDetail {
   }
 
   getDetail() {
-    if(!this.props.vessel && this.props.vessel.id) {
-      return (
+    const { vessel, user, trip, ports } = this.props;
+    //if(!(vessel && vessel.id)) {
+      /*return (
         <VesselSelect
           auth={this.props.auth}
           dispatch={this.props.dispatch}
         />
-      );
-    }
+      );*/
+    //}
     const detail = this.props.selectedDetail;
     switch (detail) {
       case 'Trip':
+        const ves = `${vessel.name} ${vessel.registration}`;
+        const use = `${user.username} ${user.email}`
         return (
-          <StartTripEditor
-            ports={this.props.ports}
-            trip={this.props.trip.values}
-            _id={this.props.c_id}
-            dispatch={this.props.dispatch}
-          />
+          <KeyboardAwareScrollView
+            viewIsInsideTabBar
+            extraHeight={ 150 }
+            bouncesZoom={false}
+            alwaysBounceVertical={false}
+          >
+            <StartTripEditor
+              ports={this.props.ports}
+              trip={this.props.trip.values}
+              _id={this.props.c_id}
+              dispatch={this.props.dispatch}
+            />
+            <Label value={} />
+            <Label value={} />
+          </KeyboardAwareScrollView>
         );
+
       case 'Totals':
         return this.renderTotalsListView();
       /*case 'Profile':
