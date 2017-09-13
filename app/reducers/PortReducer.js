@@ -1,13 +1,15 @@
 import moment from 'moment';
+import { updateWithTimeStamp } from './GeneralMethods';
 
 const initialState = {
-  ports: [],
+  all: [],
 };
 
-export default (state = initialState, action) => {
-  switch (action.type) {
-    case 'updatePorts':
-      return action.ports;
+export default (state = initialState, { type, payload }) => {
+  switch (type) {
+    case 'setPorts':
+      debugger;
+      return updateWithTimeStamp(state, { all: payload.changes });
     default:
       return state;
   }
