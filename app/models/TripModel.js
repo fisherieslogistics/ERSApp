@@ -100,7 +100,6 @@ switch(FORM_TYPE) {
 
 const model = TripModel.concat(specificFields);
 
-class addon {
 export class Trip {
 
   constructor(trip) {
@@ -158,8 +157,6 @@ export class Trip {
   get canEnd() {
     return this.trip.started && this.trip.fishingEvents.every(fe => !!fe.completed);
   }
-
-
 
 }
 
