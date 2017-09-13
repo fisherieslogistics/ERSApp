@@ -1,4 +1,3 @@
-import
 
 import Validator from '../utils/Validator';
 

@@ -1,5 +1,3 @@
-import
-
 import Validator from '../utils/Validator';
 
 const valid = Validator.valid;

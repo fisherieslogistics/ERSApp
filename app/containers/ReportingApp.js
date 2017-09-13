@@ -196,7 +196,7 @@ const select = (state) => {
     orientation: view.orientation,
     height: view.height,
     width: view.width,
-    fishingEvents: trip.fishingEvents,
+    fishingEvents: state.fishingEvents.fishingEvents,
     viewingForm: view.viewingForm,
     showFormsHistory: view.isShowingHistory,
     suggestBarVisible: view.suggestBarVisible,

@@ -257,9 +257,8 @@ class Trip extends MasterDetail {
 
   userReady() {
     const { user } = this.props;
-    /*const { id, username, organisation, email } = user;
-    return  id && username && organisation && email;*/
-    return true;
+    const { user_id, username, email } = user;
+    return user_id && username && email;
   }
 
   onMasterButtonPress() {
@@ -323,7 +322,7 @@ class Trip extends MasterDetail {
         return (
           <StartTripEditor
             ports={this.props.ports}
-            trip={this.props.trip}
+            trip={this.props.trip.values}
             _id={this.props.c_id}
             dispatch={this.props.dispatch}
           />
@@ -338,17 +337,28 @@ class Trip extends MasterDetail {
             dispatch={this.props.dispatch}
           />
         );*/
-      case 'Connection Settings':
+      /*case 'Connection Settings':
         return (
           <ConnectionSettingsEditor
             connectionSettings={this.props.connectionSettings}
             dispatch={this.props.dispatch}
           />
-        );
+        );*/
     }
   }
 
   renderDetailView() {
+    if(!this.userReady()) {
+      return (
+        <View style={ messageWrapperStyle }>
+          <View>
+            <Text style={ messageTextStyle }>
+              { "First Enter Your Details "}
+            </Text>
+          </View>
+        </View>
+      );
+    }
     return (
       <View style={ padStyle }>
         { this.getDetail() }
@@ -359,30 +369,20 @@ class Trip extends MasterDetail {
 }
 
 const select = (state) => {
-  const trip = getLastRecord('trip');
-  const trips = getRecords('trip');
-  const products = state.trip.totals.products;
-  const discards = state.trip.totals.discards;
-  const totals = [...productsHeader, ...products, ...discardsHeader, ...discards];
-  if(state.trip.currentTrip && state.trip.currentTrip._id){
-    // console.log(state.trip.currentTrip, "currentTrip");
-  }
   return {
     tripUpdated: state.trip.lastUpdated,
     view: state.view,
-    trip:state.trip.currentTrip,
-    vessel: getLastRecord('vessel'),
-    user: getLastRecord('user'),
+    trip: state.trip.currentTrip,
+    vessel: state.vessel.selected,
+    user: state.user.user,
     fishingEvents: state.fishingEvents,
     historyTrips: [],
-    selectedHistoryTrips: state.trip.selectedHistoryTrips,
-    totalsDataSource: [],//dsTotals.cloneWithRows(totals),
+    selectedHistoryTrips: [],
+    totalsDataSource: dsTotals.cloneWithRows([]),
     tripsDataSource: dsTrips.cloneWithRows([]),
     selectedDetail: state.trip.selectedDetail,
     selectedTab: state.view.selectedTab,
-    connectionSettings: queryRecord(
-      'connectionSettings', 'active = true').slice(0),
-    ports: state.port.all,//portDB.findAll().map(p => ({ value: p.name, description: "" })),
+    ports: state.ports.all,
     auth: state.auth.auth,
   };
 }
