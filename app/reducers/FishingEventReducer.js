@@ -6,6 +6,8 @@ const initialState = {
   lastUpdated: new Date(),
   showOptionalFields: false,
   setSelectedCatchesDetail: 'catches',
+  fishingEvents: [],
+  viewingEvent: null,
 };
 
 export default (state = initialState, action) => {
@@ -31,7 +33,7 @@ export default (state = initialState, action) => {
     case 'deleteProtected':
     case 'commitFishingEvent':
     case 'signForm':
-      console.log(type, 'is in the reducer');
+      //console.log(type, 'is in the reducer');
       return update(state, {
         lastUpdated: new Date(),
       });
