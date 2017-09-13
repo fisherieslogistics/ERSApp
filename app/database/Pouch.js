@@ -10,7 +10,8 @@ const APP_STATE_ID = 'AppState';
 const toBind = [
   'setCurrentTrip',
   'setupReduxState',
-]
+  'setupInitialTrip',
+];
 
 export default class Pouch {
 
@@ -34,11 +35,22 @@ export default class Pouch {
   }
 
   handleChange(changes) {
-    console.log(changes)
+    console.log('there is changes');
+    if(changes.doc.type === 'trip') {
+      console.log('TRIP');
+      this.dispatch({
+        type: 'updateTrip',
+          payload: {
+            changes: { unloadPort: 'USA'},
+            _id: changes.id,
+          },
+        });
+    }
+    //console.log('changes CHANGE', changes, 'changes CHANGE');
   }
 
   handleComplete(changes) {
-
+    //console.log('changes COMPLETED', changes, 'changes COMPLETED');
   }
 
   setupListeners() {
@@ -81,7 +93,42 @@ export default class Pouch {
     ]).then(results => {
       this.setupReduxState();
     });
+  }
 
+  setItems({ ports, vessels, user, species }) {
+    user._id = uuid();
+    return this.replaceItems(ports, 'ports').then(() =>
+      this.replaceItems(vessels, 'vessels')).then(() =>
+        this.replaceItems(species, 'species')).then(() =>
+          this.replaceItems([user], 'users'));
+
+  }
+
+  bulkInsert(insertable) {
+    return this.localDB.bulkDocs(insertable).catch(err =>  { throw(err) })
+  }
+
+  replaceItems(items, type){
+    const insertable = items.map(
+      i => Object.assign({}, i, { _id: i.id || uuid(), type, }));
+
+    return this.deleteAllOfType(type).then(this.bulkInsert(insertable));
+  }
+
+  deleteAllOfType(type) {
+    return this.localDB.allDocs({include_docs: true}).then((allDocs) => {
+      const toDel = allDocs.rows.filter(row => row.type === type).map(
+        (r) => {
+          return {_id: row.id, _rev: row.doc._rev, _deleted: true};
+        });
+      return toDel;
+    }).then(
+      deleteDocs => this.localDB.bulkDocs(deleteDocs)
+        .catch(err => { throw(err) }));
+  }
+
+  get(_id) {
+    return this.localDB.get(_id);
   }
 
   setCurrentTrip(appState) {
@@ -132,8 +179,6 @@ export default class Pouch {
   setupReduxState() {
     this.localDB.get(APP_STATE_ID).then(appState => {
       this.setCurrentTrip(appState);
-    }).catch(err => {
-      console.log(err);
     });
   }
 
