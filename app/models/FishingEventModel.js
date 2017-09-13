@@ -5,10 +5,6 @@ import TCERModel from './TCERModel';
 import LCERModel from './LCERModel';
 import HandGatheringEventModel from './HandGatheringEventModel';
 
-import
-import
-import
-
 import FORM_TYPE from '../constants/MPIFormType';
 
 const valid = Validator.valid;
