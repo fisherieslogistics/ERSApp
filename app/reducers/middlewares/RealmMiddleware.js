@@ -1,5 +1,5 @@
 
-import RealmHelper, { queryRecord } from '../../database/RealmHelper';
+//import RealmHelper, { queryRecord } from '../../database/RealmHelper';
 import ProductModel, { DiscardModel } from '../../models/ProductModel';
 import ProtectedModel from '../../models/ProtectedModel';
 import { blankModel } from '../../utils/ModelUtils';
@@ -22,11 +22,11 @@ const addItemToEvent = (fishingEvent, model, attributeName, realmDB) =>
 
 function setActiveConnection(activeProviderName) {
 
-  const allSettings = queryRecord('connectionSettings', 'active = true');
-  allSettings.forEach(cs => connectionSettingsDB.update(cs, { active: false }));
+  //const allSettings = queryRecord('connectionSettings', 'active = true');
+  //allSettings.forEach(cs => connectionSettingsDB.update(cs, { active: false }));
 
-  const activeSettings = queryRecord('connectionSettings', `name = '${activeProviderName}'`).slice(0);
-  connectionSettingsDB.update(activeSettings, { active: true });
+  //const activeSettings = queryRecord('connectionSettings', `name = '${activeProviderName}'`).slice(0);
+//  connectionSettingsDB.update(activeSettings, { active: true });
 }
 
 export default function RealmMiddleware({ dispatch, getState }) {

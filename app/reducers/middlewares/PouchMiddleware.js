@@ -8,31 +8,27 @@ const update = (obj, chn) => Object.assign({}, obj, chn);
 
 let db = null;
 
+export const initialize = () => {
+  return (dispatch) => {
+    db = new Pouch(dispatch);
+    db.setupListeners();
+    db.setupSync();
+    //db.setItems({ ports, species, vessels, user }).then(
+    db.get('AppState')
+        .then(db.setupReduxState)
+        .catch(db.setupInitialTrip);
+  }
+
+}
+
 export default function PouchMiddleware({ dispatch, getState }) {
 
   return (next) => (action, state) => {
-    if(action.type === 'initialSetup'){
-      console.log('try to init')
-      try {
-        db = new Pouch(dispatch);
-        db.setupListeners();
-        db.setupSync();
-        db.getAllDocIds().then(res => {
-          if(!res.total_rows) {
-            db.setupInitialTrip();
-          } else {
-            db.setupReduxState();
-          }
-        });
-      } catch (err) {
-        console.log(err);
-      }
-      return state;
-    }
+
     if(!db) {
-      return state;
+      return next(action);
     }
-    const { type, realm, payload } = action;
+    const { type, payload } = action;
     switch (type) {
       /*case 'updateSpecies':
         speciesDB.deleteAll()
@@ -66,8 +62,8 @@ export default function PouchMiddleware({ dispatch, getState }) {
         break;
       case 'startTrip':
       case 'updateTrip':
-        const { changes, _id } = payload;
-        db.update(changes, _id);
+        //const { changes, _id } = payload;
+        //db.update(changes, _id);
         break;
       /*case 'startFishingEvent':
         const startedEvent = fishingEventDB.create(realm.newEvent);
