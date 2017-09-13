@@ -1,4 +1,4 @@
-
+import moment from 'moment';
 //import statAreas from '../constants/geography/statAreas';
 //import gju from 'geojson-utils';
 /* eslint-disable */
@@ -11,8 +11,12 @@
     properties: qma.features[0].properties,
 }));*/
 
-function update(obj, change) {
-  return Object.assign({}, obj, change);
+function update(obj, change, stamps={}) {
+  return Object.assign({}, obj, change, stamps);
+}
+
+function updateWithTimeStamp(obj, change){
+  return update(obj, change, { lastUpdated: moment().milliseconds() });
 }
 
 function getQMA(code, location) {
@@ -40,4 +44,5 @@ export {
   update,
   calculateStatArea,
   getQMA,
+  updateWithTimeStamp,
 };
