@@ -8,9 +8,13 @@ import TripReducer from './TripReducer';
 import LocationReducer from './LocationReducer';
 import ConnectionReducer from './ConnectionReducer';
 import AuthReducer from './AuthReducer';
+import PortReducer from './PortReducer';
+import SpeciesReducer from './SpeciesReducer';
 
 export const reducers = {
   fishingEvents: FishingEventReducer,
+  ports: PortReducer,
+  species: SpeciesReducer,
   user: UserReducer,
   vessel: VesselReducer,
   view: ViewReducer,
@@ -24,24 +28,6 @@ const MainReducer = combineReducers(reducers);
 
 const mutateState = (state, action) => {
   const newState = MainReducer(state, action);
-  const { type, payload } = action;
-
-  if(type === 'loadSavedState'){
-    const loadedState = MainReducer(undefined, {type: 'init'});
-    const savedState = payload.savedState;
-    if(!savedState){
-      return newState;
-    }
-    Object.keys(savedState).forEach((k)=>{
-      if(k in reducers){
-        loadedState[k] = savedState[k];
-      }
-    });
-    return MainReducer(loadedState, action);
-  }
-
-  //helper.saveToLocalStorage(newState, type);
-
   return newState;
 }
 
