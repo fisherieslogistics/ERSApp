@@ -101,21 +101,34 @@ switch(FORM_TYPE) {
 const model = TripModel.concat(specificFields);
 
 class addon {
+export class Trip {
+
+  constructor(trip) {
+    this.trip = trip;
+  }
+
+  get values() {
+    return this.trip;
+  }
+
+  setValue(change) {
+    this.trip = Object.assign({}, this.trip, change);
+  }
 
   get startDateMoment() {
-    return moment(this.startTime);
+    return moment(this.trip.startTime);
   }
 
   get endDateMoment() {
-    return moment(this.endTime);
+    return moment(this.trip.endTime);
   }
 
   get lastEvent() {
-    return [...this.fishingEvents].pop();
+    return [...this.trip.fishingEvents].pop();
   }
 
   get canStartEvent() {
-    if(!this.started) {
+    if(!this.trip.started) {
       return false;
     }
     if(!this.lastEvent){
@@ -128,7 +141,7 @@ class addon {
   }
 
   get canEndEvent() {
-    if(!this.started) {
+    if(!this.trip.started) {
       return false;
     }
     if(!this.lastEvent){
@@ -138,12 +151,12 @@ class addon {
   }
 
   get canStart() {
-    return !this.started && this.leavingPort && this.unloadPort &&
-           this.startTime && this.endTime;
+    return !this.trip.started && this.trip.leavingPort && this.trip.unloadPort &&
+           this.trip.startTime && this.trip.endTime;
   }
 
   get canEnd() {
-    return this.started && this.fishingEvents.every(fe => !!fe.completed);
+    return this.trip.started && this.trip.fishingEvents.every(fe => !!fe.completed);
   }
 
 
