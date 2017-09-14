@@ -8,7 +8,6 @@ const initialState = {
 export default (state = initialState, { type, payload }) => {
   switch (type) {
     case 'setPorts':
-      debugger;
       return updateWithTimeStamp(state, { all: payload.changes });
     default:
       return state;

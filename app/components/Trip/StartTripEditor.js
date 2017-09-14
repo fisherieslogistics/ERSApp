@@ -21,7 +21,7 @@ class StartTripEditor extends Component {
   }
 
   onChange(name, value){
-    const { trip } = this.props;
+    const trip = this.props.trip.values
     const changes = {};
     if(name === 'endTime' || name === 'ETA') {
       const startTime = new Date();
@@ -32,7 +32,9 @@ class StartTripEditor extends Component {
     } else {
       changes[name] = value;
     }
-    this.props.dispatch(updateTrip(changes, this.props.trip._id, this.props.trip._rev));
+    changes._id = trip._id;
+    changes._rev = trip._rev;
+    this.props.db.update(changes, trip._id);
   }
 
   getDayChoices(startTime) {
@@ -100,7 +102,7 @@ class StartTripEditor extends Component {
         <ModelEditor
           getEditorProps={ this.getEditorProps }
           model={ TripModel }
-          modelValues={ this.props.trip }
+          modelValues={ this.props.trip.values }
           index={ 1 }
           onChange={ this.onChange }
           dispatch={ this.props.dispatch }

@@ -22,7 +22,6 @@ import PouchMiddleware, { initialize } from '../reducers/middlewares/PouchMiddle
 
 import AddUsefulToActions from '../reducers/middlewares/AddUsefulToActions';
 import { startConnection } from '../actions/ConnectionActions';
-import { updateAuth } from '../actions/AuthActions';
 import { updateUser } from '../actions/UserActions';
 import iOSLocation from '../api/location/iOSLocation';
 import { getPorts, getSpecies, getVessels } from '../api/RestApi';

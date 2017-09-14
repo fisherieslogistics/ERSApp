@@ -18,7 +18,6 @@ import {
   emptySelectedHistoryTrips,
   setSelectedTripDetail,
 } from '../../actions/TripActions';
-import { createTrip } from '../../api/RestApi';
 import { setSelectedTab, setViewingEventId } from '../../actions/ViewActions';
 import StartTripEditor from './StartTripEditor';
 import TotalsList from './TotalsList';
@@ -90,7 +89,7 @@ class Trip extends MasterDetail {
   }
 
   updateTrip(attribute, value){
-    this.props.dispatch(updateTrip(attribute, value, this.props.trip.RAId, { ...this.props.trip }));
+    //this.props.dispatch(updateTrip(attribute, value, this.props.trip.RAId, { ...this.props.trip }));
   }
 
   componentWillReceiveProps(nextProps) {
@@ -136,17 +135,11 @@ class Trip extends MasterDetail {
       [
         { text: 'Cancel', style: 'cancel' },
         { text: 'OK', onPress: () => {
-          createTrip(this.props.trip).then(res => {
-            if(!res.body && res.body.id) {
-              AlertIOS.alert('please try that again when you are online');
-              return;
-            }
-            console.log("RESPONSE TRIPID", res.body.id);
-            this.props.dispatch(startTrip(this.props.trip, res.body.id));
-            this.props.dispatch(setSelectedTab('fishing'));
-          }).catch(err => {
-            AlertIOS.alert('please try that again');
-          });
+
+
+          //this.props.dispatch(startTrip());
+          this.props.dispatch(setSelectedTab('fishing'));
+
         }},
       ]
     );
@@ -247,11 +240,11 @@ class Trip extends MasterDetail {
     return (
       <View style={ outerStyle }>
         <View style={ innerStyle }>
-         { this.renderMasterListView() }
+         { /*this.renderMasterListView()*/ }
         </View>
-        <View style={ lowerStyle }>
+        {/*<View style={ lowerStyle }>
           { this.renderLowerList() }
-        </View>
+        </View>*/}
       </View>
     );
   }
@@ -313,7 +306,6 @@ class Trip extends MasterDetail {
     //if(!(vessel && vessel.id)) {
       /*return (
         <VesselSelect
-          auth={this.props.auth}
           dispatch={this.props.dispatch}
         />
       );*/
@@ -332,12 +324,11 @@ class Trip extends MasterDetail {
           >
             <StartTripEditor
               ports={this.props.ports}
-              trip={this.props.trip.values}
-              _id={this.props.c_id}
-              dispatch={this.props.dispatch}
+              trip={this.props.trip}
+              db={this.props.db}
             />
-            <Label value={} />
-            <Label value={} />
+            <Label value={`${this.props.user.username} ${this.props.user.email}`} />
+            <Label value={`${this.props.vessel.name} ${this.props.vessel.registration}`} />
           </KeyboardAwareScrollView>
         );
 
@@ -397,7 +388,7 @@ const select = (state) => {
     selectedDetail: state.trip.selectedDetail,
     selectedTab: state.view.selectedTab,
     ports: state.ports.all,
-    auth: state.auth.auth,
+    db: state.database.db,
   };
 }
 

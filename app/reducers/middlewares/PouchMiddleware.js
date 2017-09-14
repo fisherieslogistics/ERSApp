@@ -17,6 +17,7 @@ export const initialize = () => {
     db.get('AppState')
         .then(db.setupReduxState)
         .catch(db.setupInitialTrip);
+    dispatch({ type: 'setDatabase', payload: { db }});
   }
 
 }
@@ -61,7 +62,7 @@ export default function PouchMiddleware({ dispatch, getState }) {
         //tripDB.create(payload.newTrip);
         break;
       case 'startTrip':
-      case 'updateTrip':
+      case 'update-trip':
         //const { changes, _id } = payload;
         //db.update(changes, _id);
         break;

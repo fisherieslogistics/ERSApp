@@ -23,16 +23,12 @@ export function setCurrentTrip(trip) {
   }
 }
 
-export function startTrip(trip, id) {
+export function startTrip() {
   return {
-    type: 'startTrip',
-
+    type: 'updateTrip',
     payload: {
-      RAId: trip.RAId,
       changes: {
-        serverId: id,
         started: true,
-        startTime: new Date(),
       },
     },
   }
@@ -42,14 +38,11 @@ export function endTrip(trip){
   const changes = { completed: true, };
   return {
     type: 'endTrip',
-
     payload: {
-      RAId: trip.RAId,
       changes,
+      trip_id: trip._id,
       newTrip: {
-        RAId: uuid(),
-        wingSpread: parseInt(trip.wingSpread),
-        headlineHeight: parseFloat(trip.headlineHeight),
+        _id: uuid(),
         leavingPort: trip.leavingPort,
         unloadPort: trip.unloadPort,
       },
@@ -60,8 +53,7 @@ export function endTrip(trip){
 export function updateTrip(changes, _id, _rev) {
   changes.type = 'trip';
   return {
-    type: 'updateTrip',
-
+    type: 'update-trip',
     payload: {
       _id,
       _rev,

@@ -65,7 +65,7 @@ export default function RealmMiddleware({ dispatch, getState }) {
         tripDB.create(payload.newTrip);
         break;
       case 'startTrip':
-      case 'updateTrip':
+      case 'update-trip':
         //console.log(type, payload);
         //tripDB.update(realm, payload.changes);
         break;

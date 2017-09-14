@@ -145,7 +145,6 @@ const select = (state) => {
     fishingEvents: state.trip.fishingEvents,
     signalStrength: state.connection.signalStrength,
     viewingEvent: state.fishingEvents.viewingEvent,
-    auth: state.auth.auth,
   };
   return props;
 }

@@ -37,7 +37,7 @@ export function updateFishingEvent(fishingEvent, changes) {
     const keys = Object.keys(changes);
     if( keys.includes('wingSpread') || keys.includes('headlineHeight') ) {
       //TODO update the trip
-      //dispatch(updateTrip(changes))
+      //dispatch(update-trip(changes))
     }
   }
 }

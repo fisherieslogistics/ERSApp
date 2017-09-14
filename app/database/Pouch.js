@@ -35,17 +35,7 @@ export default class Pouch {
   }
 
   handleChange(changes) {
-    console.log('there is changes');
-    if(changes.doc.type === 'trip') {
-      console.log('TRIP');
-      this.dispatch({
-        type: 'updateTrip',
-          payload: {
-            changes: { unloadPort: 'USA'},
-            _id: changes.id,
-          },
-        });
-    }
+    console.log('there is changes', changes);
     //console.log('changes CHANGE', changes, 'changes CHANGE');
   }
 
@@ -150,6 +140,14 @@ export default class Pouch {
     });
   }
 
+  dispatchUpdate(doc) {
+    console.log('dispatchUpdate', doc);
+    this.dispatch({
+      type: `update-${doc.type}`,
+      payload: { changes: doc }
+    });
+  }
+
   update(change, _id) {
     change._id = _id;
     this.localDB.get(_id).then(doc => {
@@ -158,16 +156,7 @@ export default class Pouch {
       return this.localDB.put(newdoc).then((res) => {
 
         this.localDB.get(res.id).then(newestdoc => {
-          switch (newestdoc.type) {
-            case 'trip':
-              this.dispatch({
-                type: 'setCurrentTrip',
-                payload: { changes: newestdoc }
-              });
-              break;
-            default:
-          }
-
+          this.dispatchUpdate(newestdoc);
         });
 
       }).catch((err) => {
