@@ -38,7 +38,7 @@ import RealmHelper from '../../database/RealmHelper';
 import { colors, textStyles } from '../../styles/styles';
 import { MasterToolbar } from '../layout/Toolbar';
 import { BigButton } from '../common/Buttons';
-
+import { createStartTripEvent } from '../../api/FishServe/FishServe';
 const portDB = new RealmHelper('port');
 const tripDB = new RealmHelper('trip')
 
@@ -125,19 +125,20 @@ class Trip extends RealmMasterDetail {
   }
 
   startTrip(){
+    const { user, vessel, trip } = this.props;
     const title = `Please Confirm Correct`;
     const body = `
       Person in Charge:
-      ${this.props.user.username}
+      ${user.username}
 
       Vessel Name:
-      ${this.props.vessel.name}
+      ${vessel.name}
 
       Vessel Registration:
-      ${this.props.vessel.registration}
+      ${vessel.registration}
 
       Leaving Port:
-      ${this.props.trip.leavingPort}
+      ${trip.leavingPort}
     `;
     AlertIOS.alert(
       title,
@@ -145,14 +146,15 @@ class Trip extends RealmMasterDetail {
       [
         { text: 'Cancel', style: 'cancel' },
         { text: 'OK', onPress: () => {
-          createTrip(this.props.trip).then(res => {
+          createTrip(trip).then(res => {
             if(!res.body && res.body.id) {
               AlertIOS.alert('please try that again when you are online');
               return;
             }
             console.log("RESPONSE TRIPID", res.body.id);
-            this.props.dispatch(startTrip(this.props.trip, res.body.id));
+            this.props.dispatch(startTrip(trip, res.body.id));
             this.props.dispatch(setSelectedTab('fishing'));
+            createStartTripEvent(trip);
           }).catch(err => {
             AlertIOS.alert('please try that again');
           });

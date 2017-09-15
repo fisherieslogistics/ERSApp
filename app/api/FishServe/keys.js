@@ -1,0 +1,5 @@
+export const privateKeyHex = '2e5dd19d222154bb17b591c9df06a29bef9d45452cee4396cc7c6eabba9585b4';
+export const publicKeyHex = '04b00e6d26b659af949e875c89d5c7b21e9275b4dff7d96fa26ecd1b116136ebca7a00960f16d581e0f69ba47ab81e50379cb20585a2be9b2e69241d0435485e4e';
+
+export const privateKeyPem = 'Ll3RnSIhVLsXtZHJ3waim++dRUUs7kOWzHxuq7qVhbQ=';
+export const publicKeyPem = 'BLAObSa2Wa+UnodcidXHsh6SdbTf99lvom7NGxFhNuvKegCWDxbVgeD2m6R6uB5QN5yyBYWivpsuaSQdBDVIXk4=';
