@@ -64,7 +64,6 @@ const TripReducer = (state = initialState, action) => {
     case 'setCurrentTrip':
       return updateWithTimeStamp(state, { currentTrip: new Trip(payload.changes) });
     case 'updateTrip':
-      debugger;
       state.currentTrip.setValue(payload.changes);
       return updateWithTimeStamp({}, state);
     //case 'endTrip':
