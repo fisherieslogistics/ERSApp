@@ -7,9 +7,10 @@ import ViewReducer from './ViewReducer';
 import TripReducer from './TripReducer';
 import LocationReducer from './LocationReducer';
 import ConnectionReducer from './ConnectionReducer';
-import AuthReducer from './AuthReducer';
 import PortReducer from './PortReducer';
 import SpeciesReducer from './SpeciesReducer';
+import DatabaseReducer from './DatabaseReducer';
+
 
 export const reducers = {
   fishingEvents: FishingEventReducer,
@@ -21,7 +22,7 @@ export const reducers = {
   trip: TripReducer,
   location: LocationReducer,
   connection: ConnectionReducer,
-  auth: AuthReducer,
+  database: DatabaseReducer,
 }
 
 const MainReducer = combineReducers(reducers);

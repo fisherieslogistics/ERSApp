@@ -62,7 +62,6 @@ export default class VesselSelect extends Component {
       payload: {
         vessel_id: _vessel.vessel_id,
         DeviceId: _vessel.vessel_id,
-        jwt: this.props.auth.idToken,
       },
     });
     this.props.dispatch(setSelectedTripDetail('Trip'));

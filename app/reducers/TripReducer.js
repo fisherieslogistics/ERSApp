@@ -63,11 +63,12 @@ const TripReducer = (state = initialState, action) => {
       return updateWithTimeStamp(state, { trips: payload.changes });
     case 'setCurrentTrip':
       return updateWithTimeStamp(state, { currentTrip: new Trip(payload.changes) });
-    case 'updateTrip':
+    case 'update-trip':
+      console.log('updating Trip', payload.changes);
       state.currentTrip.setValue(payload.changes);
       return updateWithTimeStamp({}, state);
     //case 'endTrip':
-    //case 'updateTripState':
+    //case 'update-tripState':
     //case 'startTrip':
     //  return update(state, { lastUpdated: new Date() });
     /*case 'addSelectedHistoryTrip':
