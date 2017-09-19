@@ -3,6 +3,17 @@ import AsyncStorage from 'AsyncStorage';
 import RealmHelper from '../database/RealmHelper';
 import Helper from '../utils/Helper';
 import SERVER_URL from '../constants/ServerURL';
+import {
+  CLIENT_NUMBER,
+  SOFTWARE_INSTALLATION_ID,
+  TRIP_START_PATH,
+  TRIP_END_PATH,
+  VESSEL_NUMBER,
+  KUPE_USER_ID,
+  SOFTWARE_VERSION,
+  SOFTWARE_VENDOR,
+} from './FishServe/FishServe';
+
 
 const vesselDB = new RealmHelper('vessel');
 const portDB = new RealmHelper('port');
@@ -96,10 +107,21 @@ export function createTrip(tripObj, loc) {
   const vessel = vesselDB.getFirst();
   const user = userDB.getFirst();
   const port = portDB.findOneWhere(` name = '${endPort}' `, 'createdTimestamp');
+  
+  const header = {
+    clientNumber: CLIENT_NUMBER,
+    isVesselUsed: true,
+    softwareInstallationId: SOFTWARE_INSTALLATION_ID,
+    softwareVendor: SOFTWARE_VENDOR,
+    softwareVersion: SOFTWARE_VERSION,
+    notes: "Some notes.",
+    vesselNumber: VESSEL_NUMBER,
+  }
+  
+  const json = tripObj.startToJSON(VESSEL_NUMBER, 'Rick Burch', header, -45.3443, 171.3434);
 
   const objectToSend = {
      organisation: user.organisation,
-     RAId,
      personInCharge: user.username,
      ETA: RAEnd_date.toISOString(),
      startTime: RAStart_date.toISOString(),
@@ -109,12 +131,14 @@ export function createTrip(tripObj, loc) {
      fishingEvents: [],
      unloadPort: port.id,
      vessel: vessel.id,
+     event_type: TRIP_START_PATH,
+     event_id: tripObj.eventId,
+     json,
+     headers: tripObj.fishServeHeadersJSON,
   };
 
   return postToAPI(TRIP_EVENT_URI, objectToSend);
 }
-
-
 
 function getObjects(URI) {
   return new Promise((resolve, reject) => {

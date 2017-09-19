@@ -30,7 +30,7 @@ import { getPorts, getSpecies, getVessels } from '../api/RestApi';
 import { updatePorts } from '../actions/PortActions';
 import { updateSpecies } from '../actions/SpeciesActions';
 import { updateVessels } from '../actions/VesselActions';
-import { registerApp } from '../api/FishServe/FishServe';
+import { registerApp, createStartTripEvent } from '../api/FishServe/FishServe';
 
 //import ErrorUtils from 'ErrorUtils';
 import { reducers } from '../reducers/main';
@@ -67,6 +67,7 @@ class App extends Component {
       //console.log("locErr", err);
     });
     //registerApp();
+    //createStartTripEvent();
     this.login();
 
   }

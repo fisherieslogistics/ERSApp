@@ -3,7 +3,7 @@ import moment from 'moment';
 import Validator from '../utils/Validator';
 import generateRealmSchema from '../database/generateRealmSchema';
 import FORM_TYPE from '../constants/MPIFormType';
-
+import { update } from '../utils/Helper';
 
 const TCERFields = [
   {
@@ -159,10 +159,48 @@ class TripRealm extends Realm.Object {
   get canEnd() {
     return this.started && this.fishingEvents.every(fe => !!fe.completed);
   }
+  
+  get eventId() {
+    return `${this.RAId}`;
+  }
 
-
+  startToJSON(vesselNumber, personInCharge, header, lat, lon) {
+    
+    const tripHeader = {
+      eventId: this.eventId,
+      tripId: this.RAId,
+      completedDateTime: moment().format(),//2017-09-18T15:12:30+12:00,
+      vesselNumber: vesselNumber,//44695,
+    };
+    const eventHeader = update(header, tripHeader);
+    const fishServeData = {
+      eventHeader,
+      personInCharge,
+      startLocation: {
+        systemDateTime: moment(this.RAStart_date),
+        systemLocation: {
+          longitude: `${lon}`,
+          latitude: `${lat}`,
+        },
+        manualDateTime: null,
+        manualLocation: null
+      }
+    }
+    const json = JSON.stringify(fishServeData);
+    return { eventHeader, json }  
+  }
+  
+  get fishServeHeadersJSON() {
+    return JSON.stringify({
+      'Accept': 'application/json',
+      'Signature': null,
+      'Content-Type': 'application/json',
+    });
+  }
 
 }
+
+
 TripRealm.schema = realmSchema;
 
 export { TripRealm }
