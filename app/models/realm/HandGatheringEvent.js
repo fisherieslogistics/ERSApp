@@ -96,7 +96,7 @@ export default class HandGatheringEventRealm extends Realm.Object {
     return !!this.protecteds.length;
   }
 
-  toJSON(eventHeader, lat, lon) {
+  toJSON(eventHeader) {
 
     const startT = moment(this.locationStartDecimal.timestamp);
     const endT = moment(this.locationEndDecimal.timestamp);
