@@ -73,7 +73,7 @@ export function createFishingEvent(fishingEventObj) {
     eventId: event_id,
     completedDateTime: moment().format(),
   }
-  const json = fishingEventObj.toJSON(header, -45.3443, 171.3434);
+  const json = fishingEventObj.toJSON(header);
 
   const objectToSend = {
     fishCatches,
@@ -110,6 +110,7 @@ export function createFishingEvent(fishingEventObj) {
 //`${TRIP_EVENT_URI}${RAId}/`,
 
 export function createTrip(tripObj, loc) {
+  console.log(loc);
 
   const {
     RAId,
@@ -132,7 +133,7 @@ export function createTrip(tripObj, loc) {
     eventId: event_id,
   }
 
-  const json = tripObj.startToJSON(vessel.registration, user.username, header, -45.3443, 171.3434);
+  const json = tripObj.startToJSON(vessel.registration, user.username, header, loc.lat.toFixed(4), loc.lon.toFixed(4));
   const objectToSend = {
      id: RAId,
      personInCharge: user.username,
@@ -169,7 +170,7 @@ export function patchTrip(tripObj, loc) {
     eventId: event_id,
   }
 
-  const json = tripObj.endToJSON(vessel.registration, user.username, header, -45.3443, 171.3434);
+  const json = tripObj.endToJSON(vessel.registration, user.username, header, loc.lat.toFixed(4), loc.lon.toFixed(4));
   const objectToSend = {
     id: tripObj.RAId,
     json,
