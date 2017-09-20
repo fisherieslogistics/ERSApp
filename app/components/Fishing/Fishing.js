@@ -36,6 +36,10 @@ class Fishing extends RealmMasterDetail {
   }
 
   removeFishingEvent(){
+    if(this.props.viewingEvent.completed){
+      AlertIOS.alert('Shot has been submitted to FishServe - you can no longer delete it.');
+      return;
+    }
     AlertIOS.prompt(
       'Delete Latest Shot',
       'Type "Delete" to confirm',
@@ -43,8 +47,9 @@ class Fishing extends RealmMasterDetail {
         {text: 'Cancel', onPress: () => null, style: 'Cancel'},
         {text: 'Delete', onPress: (text) => {
           if(text && text.toLowerCase() === 'delete') {
+            debugger;
             const numberOfInTrip = this.props.viewingEvent.numberOfInTrip;
-            const otherEvents = fishingEventDB.findWhere(` numberOfInTrip > ${numberOfInTrip}`);
+            const otherEvents = this.props.trip.fishingEvents.filter(f => f.numberOfInTrip > numberOfInTrip);//fishingEventDB.findWhere(` numberOfInTrip > ${numberOfInTrip} `);
             this.props.dispatch(deleteFishingEvent(this.props.viewingEvent));
             this.props.dispatch(setViewingEventId(null));
             otherEvents.forEach(
