@@ -124,7 +124,7 @@ class Trip extends RealmMasterDetail {
   }
 
   startTrip(){
-    const { user, vessel, trip } = this.props;
+    const { user, vessel, trip, location } = this.props;
     const title = `Please Confirm Correct`;
     const body = `
       Person in Charge:
@@ -145,7 +145,7 @@ class Trip extends RealmMasterDetail {
       [
         { text: 'Cancel', style: 'cancel' },
         { text: 'OK', onPress: () => {
-          createTrip(trip).then(res => {
+          createTrip(trip, location).then(res => {
             console.log("RESPONSE TRIPID", res);
             this.props.dispatch(startTrip(trip, res.body.id));
             this.props.dispatch(setSelectedTab('fishing'));
@@ -159,14 +159,14 @@ class Trip extends RealmMasterDetail {
   }
 
   endTrip(){
-    const { trip, dispatch } = this.props;
+    const { trip, dispatch, location } = this.props;
     AlertIOS.alert(
       `Heading to ${trip.endPort}`,
       `Arriving in about ${trip.endDateMoment.fromNow(true)}`,
       [
         { text: 'Cancel', style: 'cancel' },
         { text: 'OK', onPress: () => {
-          patchTrip(trip).then(res => {
+          patchTrip(trip, location).then(res => {
             console.log(res);
             dispatch(endTrip(trip));
             dispatch(setViewingEventId(null));
@@ -382,6 +382,7 @@ const select = (state) => {
     trip,
     vessel: getLastRecord('vessel'),
     user: getLastRecord('user'),
+    location: state.location,
     fishingEvents: trip.fishingEvents,
     historyTrips: trips,
     selectedHistoryTrips: state.trip.selectedHistoryTrips,
