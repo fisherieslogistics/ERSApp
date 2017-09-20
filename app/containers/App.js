@@ -30,7 +30,6 @@ import { getPorts, getSpecies, getVessels } from '../api/RestApi';
 import { updatePorts } from '../actions/PortActions';
 import { updateSpecies } from '../actions/SpeciesActions';
 import { updateVessels } from '../actions/VesselActions';
-import { registerApp, createStartTripEvent } from '../api/FishServe/FishServe';
 
 //import ErrorUtils from 'ErrorUtils';
 import { reducers } from '../reducers/main';
@@ -66,8 +65,6 @@ class App extends Component {
     (err) => {
       //console.log("locErr", err);
     });
-    //registerApp();
-    //createStartTripEvent();
     this.login();
 
   }
@@ -87,6 +84,7 @@ class App extends Component {
           });
           store.dispatch(startConnection());
         }).catch(err => {
+          console.log(err);
           AsyncStorage.removeItem('refreshToken', () => {
             this.setState({
               loggedIn: false,

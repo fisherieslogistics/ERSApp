@@ -159,15 +159,35 @@ class TripRealm extends Realm.Object {
   get canEnd() {
     return this.started && this.fishingEvents.every(fe => !!fe.completed);
   }
-  
-  get eventId() {
-    return `${this.RAId}`;
+
+  endToJSON(vesselNumber, personInCharge, header, lat, lon) {
+
+    const tripHeader = {
+      tripId: this.RAId,
+      completedDateTime: moment().format(),//2017-09-18T15:12:30+12:00,
+      vesselNumber,//44695,
+    };
+    const eventHeader = update(header, tripHeader);
+    const fishServeData = {
+      eventHeader,
+      personInCharge,
+      endLocation: {
+        systemDateTime: moment(this.RAEnd_date).format(),
+        systemLocation: {
+          longitude: `${lon}`,
+          latitude: `${lat}`,
+        },
+        manualDateTime: null,
+        manualLocation: null
+      }
+    }
+    return JSON.stringify(fishServeData);
   }
 
+
   startToJSON(vesselNumber, personInCharge, header, lat, lon) {
-    
+
     const tripHeader = {
-      eventId: this.eventId,
       tripId: this.RAId,
       completedDateTime: moment().format(),//2017-09-18T15:12:30+12:00,
       vesselNumber: vesselNumber,//44695,
@@ -177,7 +197,7 @@ class TripRealm extends Realm.Object {
       eventHeader,
       personInCharge,
       startLocation: {
-        systemDateTime: moment(this.RAStart_date),
+        systemDateTime: moment(this.RAStart_date).format(),
         systemLocation: {
           longitude: `${lon}`,
           latitude: `${lat}`,
@@ -186,10 +206,9 @@ class TripRealm extends Realm.Object {
         manualLocation: null
       }
     }
-    const json = JSON.stringify(fishServeData);
-    return { eventHeader, json }  
+    return JSON.stringify(fishServeData);
   }
-  
+
   get fishServeHeadersJSON() {
     return JSON.stringify({
       'Accept': 'application/json',

@@ -96,55 +96,44 @@ export default class HandGatheringEventRealm extends Realm.Object {
     return !!this.protecteds.length;
   }
 
-  get fishServeObject() {
-    return {
-      eventHeader: this.eventHeader,
-      method: 'H',
+  toJSON(eventHeader, lat, lon) {
+
+    const startT = moment(this.locationStartDecimal.timestamp);
+    const endT = moment(this.locationEndDecimal.timestamp);
+    const json = {
+      eventHeader,
       targetSpeciesCode: this.targetSpecies,
       mitigationDevicesUsed: [],
-      startDateTime: this.RAStart_date,
-      locationStart: {
-        "systemDateTime": this.locationStartDecimal.timestamp,
-        "systemLocation": {
-          longitude: this.locationStartDecimal.lon,
-          latitude: this.locationStartDecimal.lat,
-        },
-        isManual: false,
-      },
+      fishingMethodCode: "H",
+      timeSpentHours: parseInt(moment.duration(endT.diff(startT)).asHours()) || 1,
+      completedDateTime: moment().format(),
       numberOfPeople: this.numberOfPeople,
-      finishDateTime: this.RAEnd_date,
       finishLocation: {
-        "systemDateTime": this.locationEndDecimal.timestamp,
-        "systemLocation": {
+        systemDateTime: endT.format(),
+        systemLocation: {
           longitude: this.locationEndDecimal.lon,
           latitude: this.locationEndDecimal.lat,
+          manualDateTime: null,
+          manualLocation: null
         },
-        isManual: false
       },
-      catches: this.estimatedCatch.map(es => ({
+      startLocation: {
+        systemDateTime: startT.format(),
+        systemLocation: {
+          longitude: this.locationStartDecimal.lon,
+          latitude: this.locationStartDecimal.lat,
+          manualDateTime: null,
+          manualLocation: null
+        },
+      },
+      catches: this.estimatedCatch.filter(t => !!(t.code && t.code.length === 3 && t.amount)).map(es => ({
         speciesCode: es.code,
         greenWeightEstimateKg: es.amount,
       })),
-      isNonFishOrProtectedSpeciesCatchPresent: this.nonFishProtected,
-      nonFishOrProtectedSpeciesCatches: this.protecteds.map(pr => ({
-        seabirdCaptureDetails: null,
-        estimatedWeightKg: pr.amount,
-        numberUninjured: pr.uninjured,
-        numberInjured: pr.injured,
-        numberDead: pr.dead,
-        tags: []
-      })),
+      isNonFishOrProtectedSpeciesCatchPresent: false,
     }
-  }
 
-  get eventHeader() {
-    const vessel = getLastRecord('vessel');
-    return {
-      eventID: this.RAId,
-      vesselNumber: vessel.registration,
-      isVesselUsed: true,
-      notes: 'Create By FLL Reporting',
-    }
+    return JSON.stringify(json);
   }
 
 }

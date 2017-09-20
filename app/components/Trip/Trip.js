@@ -18,7 +18,7 @@ import {
   emptySelectedHistoryTrips,
   setSelectedTripDetail,
 } from '../../actions/TripActions';
-import { createTrip } from '../../api/RestApi';
+import { createTrip, patchTrip } from '../../api/RestApi';
 import { setSelectedTab, setViewingEventId } from '../../actions/ViewActions';
 import StartTripEditor from './StartTripEditor';
 import TotalsList from './TotalsList';
@@ -38,7 +38,6 @@ import RealmHelper from '../../database/RealmHelper';
 import { colors, textStyles } from '../../styles/styles';
 import { MasterToolbar } from '../layout/Toolbar';
 import { BigButton } from '../common/Buttons';
-import { createStartTripEvent } from '../../api/FishServe/FishServe';
 const portDB = new RealmHelper('port');
 const tripDB = new RealmHelper('trip')
 
@@ -147,15 +146,11 @@ class Trip extends RealmMasterDetail {
         { text: 'Cancel', style: 'cancel' },
         { text: 'OK', onPress: () => {
           createTrip(trip).then(res => {
-            if(!res.body && res.body.id) {
-              AlertIOS.alert('please try that again when you are online');
-              return;
-            }
-            console.log("RESPONSE TRIPID", res.body.id);
+            console.log("RESPONSE TRIPID", res);
             this.props.dispatch(startTrip(trip, res.body.id));
             this.props.dispatch(setSelectedTab('fishing'));
-            createStartTripEvent(trip);
           }).catch(err => {
+            console.log(err)
             AlertIOS.alert('please try that again');
           });
         }},
@@ -164,15 +159,21 @@ class Trip extends RealmMasterDetail {
   }
 
   endTrip(){
+    const { trip, dispatch } = this.props;
     AlertIOS.alert(
-      `Heading to ${this.props.trip.endPort}`,
-      `Arriving in about ${this.props.trip.endDateMoment.fromNow(true)}`,
+      `Heading to ${trip.endPort}`,
+      `Arriving in about ${trip.endDateMoment.fromNow(true)}`,
       [
         { text: 'Cancel', style: 'cancel' },
         { text: 'OK', onPress: () => {
-
-          this.props.dispatch(endTrip(this.props.trip));
-          this.props.dispatch(setViewingEventId(null));
+          patchTrip(trip).then(res => {
+            console.log(res);
+            dispatch(endTrip(trip));
+            dispatch(setViewingEventId(null));
+          }).catch(err => {
+            console.log(err)
+            AlertIOS.alert('please try that again');
+          });
         }},
       ]
     );

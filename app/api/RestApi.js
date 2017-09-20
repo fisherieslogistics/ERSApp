@@ -2,18 +2,11 @@ import request from 'superagent';
 import AsyncStorage from 'AsyncStorage';
 import RealmHelper from '../database/RealmHelper';
 import Helper from '../utils/Helper';
+import uuid from 'uuid/v1';
 import SERVER_URL from '../constants/ServerURL';
-import {
-  CLIENT_NUMBER,
-  SOFTWARE_INSTALLATION_ID,
-  TRIP_START_PATH,
-  TRIP_END_PATH,
-  VESSEL_NUMBER,
-  KUPE_USER_ID,
-  SOFTWARE_VERSION,
-  SOFTWARE_VENDOR,
-} from './FishServe/FishServe';
-
+const SOFTWARE_VERSION = '1.10.01.0';
+const SOFTWARE_VENDOR = 'Fishery Logistics';
+import moment from 'moment';
 
 const vesselDB = new RealmHelper('vessel');
 const portDB = new RealmHelper('port');
@@ -29,11 +22,15 @@ const VESSEL_ID = SERVER_URL + 'rest-api/vessels/';
 const FISHING_EVENT_URI = SERVER_URL + 'rest-api/fishingEvents/';
 const TRIP_EVENT_URI = SERVER_URL + 'rest-api/trips/';
 const PORT_DUNEDIN_ID = SERVER_URL + 'rest-api/ports/';
-//const VESSELS_URI = SERVER_URL + 'rest-api/vessels/0a607198-e12d-4f6f-b054-b2524e32b29a/';
 const VESSELS_URI = SERVER_URL + 'rest-api/vessels/';
 const PORTS_URI = SERVER_URL + 'rest-api/ports/';
 const SPECIES_URI = SERVER_URL + 'rest-api/species/';
 const USERS_URI = SERVER_URL + 'rest-api/users/';
+const TRIP_END_URI = SERVER_URL + 'rest-api/trip-end/';
+
+const TRIP_START_PATH = 'v1/trip-start';
+const TRIP_END_PATH = 'v1/trip-end';
+const HAND_GATHERING_EVENT_PATH = 'v1/hand-gathering'
 
 //const TOKEN = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoyLCJ1c2VybmFtZSI6InRlc3Rza2lwcGVyIiwiZXhwIjoxNTAzMzc3NzMwLCJlbWFpbCI6InNraXBzQHJlZ3VsYXJzaG93LmNvbSIsIm9yaWdfaWF0IjoxNTAzMzc0NzMwfQ.dIt0gBGXWSERN4mmLCE5P_pIwGK-tfh8kH3dJ1OtIJg'
 //const REFRESH_TOKEN = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoyLCJ1c2VybmFtZSI6InRlc3Rza2lwcGVyIiwiZXhwIjoxNTAzMzcyOTk4LCJlbWFpbCI6InNraXBzQHJlZ3VsYXJzaG93LmNvbSIsIm9yaWdfaWF0IjoxNTAzMzY5OTEzfQ.Pf2nupALO2jBlpN3w_EUhKEZwP1xhEECJ6SGb9GDnLo';
@@ -65,6 +62,18 @@ export function createFishingEvent(fishingEventObj) {
 
   const trip = tripDB.getLast();
   const port = portDB;
+  const event_id = uuid();
+  const header = {
+    isVesselUsed: true,
+    notes: "Some notes.",
+    vesselNumber: vessel.registration,
+    tripId: trip.RAId,
+    softwareVendor: SOFTWARE_VENDOR,
+    softwareVersion: SOFTWARE_VERSION,
+    eventId: event_id,
+    completedDateTime: moment().format(),
+  }
+  const json = fishingEventObj.toJSON(header, -45.3443, 171.3434);
 
   const objectToSend = {
     fishCatches,
@@ -86,9 +95,15 @@ export function createFishingEvent(fishingEventObj) {
     completedDateTime: new Date().toISOString(),
     trip: trip.serverId,
     RAId,
+    id: fishingEventObj.RAId,
+    json,
+    event_type: HAND_GATHERING_EVENT_PATH,
+    headers: JSON.stringify({
+      'Accept': 'application/json',
+      'Signature': null,
+      'Content-Type': 'application/json',
+    }),
   };
-
-  console.log(objectToSend);
 
   return postToAPI(FISHING_EVENT_URI, objectToSend);
 }
@@ -107,21 +122,19 @@ export function createTrip(tripObj, loc) {
   const vessel = vesselDB.getFirst();
   const user = userDB.getFirst();
   const port = portDB.findOneWhere(` name = '${endPort}' `, 'createdTimestamp');
-  
+  const event_id = uuid();
   const header = {
-    clientNumber: CLIENT_NUMBER,
     isVesselUsed: true,
-    softwareInstallationId: SOFTWARE_INSTALLATION_ID,
+    notes: "Some notes.",
+    vesselNumber: vessel.registration,
     softwareVendor: SOFTWARE_VENDOR,
     softwareVersion: SOFTWARE_VERSION,
-    notes: "Some notes.",
-    vesselNumber: VESSEL_NUMBER,
+    eventId: event_id,
   }
-  
-  const json = tripObj.startToJSON(VESSEL_NUMBER, 'Rick Burch', header, -45.3443, 171.3434);
 
+  const json = tripObj.startToJSON(vessel.registration, user.username, header, -45.3443, 171.3434);
   const objectToSend = {
-     organisation: user.organisation,
+     id: RAId,
      personInCharge: user.username,
      ETA: RAEnd_date.toISOString(),
      startTime: RAStart_date.toISOString(),
@@ -132,12 +145,39 @@ export function createTrip(tripObj, loc) {
      unloadPort: port.id,
      vessel: vessel.id,
      event_type: TRIP_START_PATH,
-     event_id: tripObj.eventId,
      json,
-     headers: tripObj.fishServeHeadersJSON,
+     headers: JSON.stringify({
+       'Accept': 'application/json',
+       'Signature': null,
+       'Content-Type': 'application/json',
+     }),
   };
 
   return postToAPI(TRIP_EVENT_URI, objectToSend);
+}
+
+export function patchTrip(tripObj, loc) {
+  const vessel = vesselDB.getFirst();
+  const user = userDB.getFirst();
+  const event_id = uuid();
+  const header = {
+    isVesselUsed: true,
+    notes: "Some notes.",
+    vesselNumber: vessel.registration,
+    softwareVendor: SOFTWARE_VENDOR,
+    softwareVersion: SOFTWARE_VERSION,
+    eventId: event_id,
+  }
+
+  const json = tripObj.endToJSON(vessel.registration, user.username, header, -45.3443, 171.3434);
+  const objectToSend = {
+    id: tripObj.RAId,
+    json,
+    event_type: TRIP_END_PATH,
+    headers: tripObj.fishServeHeadersJSON,
+  }
+
+  return postToAPI(TRIP_END_URI, objectToSend);
 }
 
 function getObjects(URI) {
@@ -175,6 +215,24 @@ function putToAPI(url, objectToSend) {
     AsyncStorage.getItem('refreshToken', (err, token) => {
       return request
         .put(url)
+        .send(objectToSend) // sends a JSON post body
+        .set('Authorization', `JWT ${token}`)
+        .set('Accept', 'application/json')
+        .end((err, res) => {
+          if(err) {
+            return reject(err);
+          }
+          return resolve(res);
+        });
+    });
+  });
+}
+
+function patchToAPI(url, objectToSend) {
+  return new Promise((resolve, reject) => {
+    AsyncStorage.getItem('refreshToken', (err, token) => {
+      return request
+        .patch(url)
         .send(objectToSend) // sends a JSON post body
         .set('Authorization', `JWT ${token}`)
         .set('Accept', 'application/json')
