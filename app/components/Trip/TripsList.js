@@ -15,18 +15,18 @@ export default class TripsList extends RealmMasterListView {
     return (
       <Icon8
         name={ 'truck-filled' }
-        size={ 30 }
+        size={ 28 }
         color={ "white" }
-        style={ [iconStyles, { backgroundColor: colors.blue, left: -50 } ] }
+        style={ [iconStyles, { backgroundColor: colors.blue, left: -32 } ] }
       />
     );
   }
 
   getTextStyle(isSelected){
     if(isSelected){
-      return [ textStyles.font, listViewStyles.text, textStyles.white, { fontSize: 16 } ];
+      return [ textStyles.font, listViewStyles.text, textStyles.white, { fontSize: 14 } ];
     }
-    return [ textStyles.font, listViewStyles.text, { fontSize: 16 } ];
+    return [ textStyles.font, listViewStyles.text, { fontSize: 14 } ];
   }
 
   getDescription(trip) {
