@@ -200,7 +200,7 @@ class EventEditor extends Component {
     if(!this.props.fishingEvent) {
       return null;
     }
-    if(this.props.fishingEvent.completed || this.props.fishingEvent.committed) {
+    if(this.props.fishingEvent.completed) {
       return this.renderMessage("Shot has been signed off and cannot be edited");
     }
     const { RAEnd_date } = this.props.fishingEvent;
