@@ -69,7 +69,7 @@ class App extends Component {
 
   }
 
-  onLoggedIn(token, username) {
+  onLoggedIn(token, existingToken) {
     startRealm();
     initialSetup().then(() => {
       AsyncStorage.setItem('refreshToken', token, () => {
@@ -84,13 +84,11 @@ class App extends Component {
           });
           store.dispatch(startConnection());
         }).catch(err => {
-          console.log(err);
-          AsyncStorage.removeItem('refreshToken', () => {
-            this.setState({
-              loggedIn: false,
-            });
-            this.login();
+
+          this.setState({
+            loggedIn: true,
           });
+
         });
       });
     });
@@ -102,7 +100,7 @@ class App extends Component {
       if(!refreshToken) {
         this.promptUsername(msg);
       } else {
-        this.onLoggedIn(refreshToken);
+        this.onLoggedIn(refreshToken, true);
       }
     });
   }
