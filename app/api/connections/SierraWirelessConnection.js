@@ -50,7 +50,7 @@ export default class SierraWirelessConnection extends Connection {
   constructor() {
     super();
     this.setup(settings);
-    this.relocationStartListener = this.relocationStartListener.bind(this);
+    this.restartLocationListener = this.restartLocationListener.bind(this);
     this.connectionStatusHandler = new SierraConnectionStatusHandler();
     this.locationHandler = new LocationHandler();
     this.setupLocationListener();
@@ -61,12 +61,12 @@ export default class SierraWirelessConnection extends Connection {
     this.locationListener.setSettings({
       ...settings,
       messageCallback: this.onDataRead,
-      closeCallback: this.relocationStartListener,
-      errorCallback: this.relocationStartListener,
+      closeCallback: this.restartLocationListener,
+      errorCallback: this.restartLocationListener,
     });
   }
 
-  relocationStartListener(err1, err2) {
+  restartLocationListener(err1, err2) {
     if(err1) {
       this.errorHandler(err1);
     }

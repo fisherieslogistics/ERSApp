@@ -95,8 +95,8 @@ export default {
       'RAStart_date',
       'RAEnd_date',
       'endPort',
-      'headlineHeight',
-      'wingSpread'
+      'headlineHeightMetres',
+      'wingSpreadMetres'
     ].every(key => !!trip[key]);
   },
 

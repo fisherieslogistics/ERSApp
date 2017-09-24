@@ -44,9 +44,9 @@ class EventDetailEditor extends Component{
     this.onChangeText(name, value);
   }
 
-  shouldCombineDepths(bottomDepth, groundropeDepth) {
-    const bottomDepthValid = Validator.valid.greaterThanZero.func(bottomDepth);
-    const groundropeDepthValid = Validator.valid.greaterThanZero.func(groundropeDepth);
+  shouldCombineDepths(bottomDepthMetres, groundropeDepthMetres) {
+    const bottomDepthValid = Validator.valid.greaterThanZero.func(bottomDepthMetres);
+    const groundropeDepthValid = Validator.valid.greaterThanZero.func(groundropeDepthMetres);
     return bottomDepthValid && !groundropeDepthValid;
   }
 
@@ -54,9 +54,9 @@ class EventDetailEditor extends Component{
     const changes = { [name]: value };
     const { fishingEvent } = this.props;
 
-    if(!this.props.showOptionalFields && name === 'bottomDepth') {
-      if(this.shouldCombineDepths(value, fishingEvent.groundropeDepth)) {
-        changes.groundropeDepth = value;
+    if(!this.props.showOptionalFields && name === 'bottomDepthMetres') {
+      if(this.shouldCombineDepths(value, fishingEvent.groundropeDepthMetres)) {
+        changes.groundRopeDepthMetres = value;
       }
     }
     this.props.dispatch(

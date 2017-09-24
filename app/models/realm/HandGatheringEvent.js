@@ -27,18 +27,18 @@ export default class HandGatheringEventRealm extends Realm.Object {
 
   get detailsValid() {
     const {
-      locationStart,
+      startLocation,
       RAStart_date,
       RAEnd_date,
-      locationEnd,
+      finishLocation,
     } = this;
 
-    const stage1 = (locationStart && RAStart_date);
+    const stage1 = (startLocation && RAStart_date);
     if((!RAEnd_date && stage1)) {
       return stage1;
     }
     const datesSweet =  !!(RAStart_date < RAEnd_date);
-    return !!(stage1 && locationEnd && datesSweet);
+    return !!(stage1 && finishLocation && datesSweet);
   }
 
   get canSubmit() {
@@ -72,12 +72,12 @@ export default class HandGatheringEventRealm extends Realm.Object {
     return true;
   }
 
-  get locationStartDecimal() {
-    return JSONPointToLocation(this.locationStart);
+  get startLocationDecimal() {
+    return JSONPointToLocation(this.startLocation);
   }
 
-  get locationEndDecimal() {
-    return JSONPointToLocation(this.locationEnd);
+  get finishLocationDecimal() {
+    return JSONPointToLocation(this.finishLocation);
   }
 
   get replicatedEstimatedCatch() {
@@ -98,8 +98,8 @@ export default class HandGatheringEventRealm extends Realm.Object {
 
   toJSON(eventHeader) {
 
-    const startT = moment(this.locationStartDecimal.timestamp);
-    const endT = moment(this.locationEndDecimal.timestamp);
+    const startT = moment(this.startLocationDecimal.timestamp);
+    const endT = moment(this.finishLocationDecimal.timestamp);
     const json = {
       eventHeader,
       targetSpeciesCode: this.targetSpecies,
@@ -111,8 +111,8 @@ export default class HandGatheringEventRealm extends Realm.Object {
       finishLocation: {
         systemDateTime: endT.format(),
         systemLocation: {
-          longitude: this.locationEndDecimal.lon,
-          latitude: this.locationEndDecimal.lat,
+          longitude: this.finishLocationDecimal.lon,
+          latitude: this.finishLocationDecimal.lat,
           manualDateTime: null,
           manualLocation: null
         },
@@ -120,8 +120,8 @@ export default class HandGatheringEventRealm extends Realm.Object {
       startLocation: {
         systemDateTime: startT.format(),
         systemLocation: {
-          longitude: this.locationStartDecimal.lon,
-          latitude: this.locationStartDecimal.lat,
+          longitude: this.startLocationDecimal.lon,
+          latitude: this.startLocationDecimal.lat,
           manualDateTime: null,
           manualLocation: null
         },

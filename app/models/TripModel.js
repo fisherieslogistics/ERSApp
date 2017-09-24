@@ -13,7 +13,7 @@ const TCERFields = [
   },
   {
     label: 'Wing Spread',
-    id: 'wingSpread',
+    id: 'wingSpreadMetres',
     valid: Validator.valid.greaterThanZero,
     type: 'number',
     display: { type: 'single' }, unit: 'm',
@@ -21,7 +21,7 @@ const TCERFields = [
   },
   {
     label: 'Headline Height',
-    id: 'headlineHeight',
+    id: 'headlineHeightMetres',
     valid: Validator.valid.greaterThanZero,
     type: 'float', unit: 'm',
     display: { type: 'single'},

@@ -33,7 +33,7 @@ class HaulButton extends Component {
     const loc = Helper.locationToGeoJSONPoint(this.props.location)
     const changes = {
       RAEnd_date: new Date(),
-      locationEnd: loc,
+      finishLocation: loc,
       NetLeaveDepthLocation: loc,
       averageSpeed: this.props.averageSpeed,
     };

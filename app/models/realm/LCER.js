@@ -24,11 +24,11 @@ export default class LCERRealm extends Realm.Object {
   }
 
   get detailsValid() {
-    const stage1 = (this.targetSpecies && this.numberOfHooks && this.locationStart && this.RAStart_date);
+    const stage1 = (this.targetSpecies && this.numberOfHooks && this.startLocation && this.RAStart_date);
     if((!this.RAEnd_date && stage1)) {
       return stage1;
     }
-    return !!(stage1 && (this.RAStart_date < this.RAEnd_date) && this.locationEnd && this.averageSpeed);
+    return !!(stage1 && (this.RAStart_date < this.RAEnd_date) && this.finishLocation && this.averageSpeed);
   }
 
   get estimatedCatchValid() {
@@ -46,12 +46,12 @@ export default class LCERRealm extends Realm.Object {
     return true;
   }
 
-  get locationStartDecimal() {
-    return JSONPointToLocation(this.locationStart);
+  get startLocationDecimal() {
+    return JSONPointToLocation(this.startLocation);
   }
 
-  get locationEndDecimal() {
-    return JSONPointToLocation(this.locationEnd);
+  get finishLocationDecimal() {
+    return JSONPointToLocation(this.finishLocation);
   }
 
   get replicatedEstimatedCatch() {

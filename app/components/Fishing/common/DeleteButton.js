@@ -29,7 +29,7 @@ class HaulButton extends Component {
   /*endFishingEvent() {
     const changes = {
       RAEnd_date: new Date(),
-      locationEnd: Helper.locationToGeoJSONPoint(this.props.location),
+      finishLocation: Helper.locationToGeoJSONPoint(this.props.location),
       NetLeaveDepthLocation: Helper.locationToGeoJSONPoint(this.props.location),
       averageSpeed: this.props.averageSpeed,
     };

@@ -44,7 +44,7 @@ const FishingEventModel = [
       func: Validator.combined.startTimeValid,
       errorMessage: "start time must be before end time"
     },
-    display: { type: 'combined', siblings: ['locationStart'] },
+    display: { type: 'combined', siblings: ['startLocation'] },
     optionalRender: true,
     realm: { type: 'date', optional: true },
   },
@@ -74,13 +74,13 @@ const FishingEventModel = [
       func: Validator.combined.orderedGreaterThan,
       errorMessage: "end time must be after start time"
     },*/
-    display: { type: 'combined', siblings: ['locationEnd'] },
+    display: { type: 'combined', siblings: ['finishLocation'] },
     optionalRender: true, displayStage: 'Haul',
     realm: { type: 'date', optional: true },
   },
   {
     label: 'Location at Start',
-    id: 'locationStart',
+    id: 'startLocation',
     valid: valid.locationValid,
     type: 'location',
     default: null,
@@ -90,7 +90,7 @@ const FishingEventModel = [
   },
   {
     label: 'Location at End of Haul',
-    id: 'locationEnd',
+    id: 'finishLocation',
     valid: valid.locationValid,
     type: 'location',
     default: null,

@@ -28,24 +28,26 @@ export default class TCERRealm extends Realm.Object {
   get detailsValid() {
     const {
       targetSpecies,
-      wingSpread,
-      headlineHeight,
-      locationStart,
+      wingSpreadMetres,
+      headlineHeightMetres,
+      startLocation,
       RAStart_date,
       RAEnd_date,
-      bottomDepth,
-      groundropeDepth,
+      bottomDepthMetres,
+      groundRopeDepthMetres,
       averageSpeed,
-      locationEnd,
+      finishLocation,
     } = this;
-
-    const stage1 = (targetSpecies && wingSpread && headlineHeight && locationStart && RAStart_date);
+    console.log(targetSpecies, wingSpreadMetres, headlineHeightMetres, startLocation, RAStart_date);
+    const stage1 = (targetSpecies && wingSpreadMetres && headlineHeightMetres && startLocation && RAStart_date);
     if((!RAEnd_date && stage1)) {
       return stage1;
     }
     const datesSweet =  !!(RAStart_date < RAEnd_date);
-    const depths = !!(bottomDepth && groundropeDepth);
-    return !!(stage1 && !!locationEnd && !!averageSpeed && depths && datesSweet);
+    const depths = !!(bottomDepthMetres && groundRopeDepthMetres);
+    console.log(datesSweet, depths);
+    console.log(stage1, finishLocation, averageSpeed, depths, datesSweet);
+    return !!(stage1 && !!finishLocation && !!averageSpeed && depths && datesSweet);
   }
 
   get canSubmit() {
@@ -79,20 +81,20 @@ export default class TCERRealm extends Realm.Object {
     return true;
   }
 
-  get locationStartDecimal() {
-    return JSONPointToLocation(this.locationStart);
+  get startLocationDecimal() {
+    return JSONPointToLocation(this.startLocation);
   }
 
-  get locationEndDecimal() {
-    return JSONPointToLocation(this.locationEnd);
+  get finishLocationDecimal() {
+    return JSONPointToLocation(this.finishLocation);
   }
 
   get NetLeaveDepthLocationDecimal() {
-    return JSONPointToLocation(this.NetLeaveDepthLocation);
+    return JSONPointToLocation(this.startLocation);
   }
 
-  get NetAtDepthLocationDecimal() {
-    return JSONPointToLocation(this.NetAtDepthLocation);
+  get startLocationDecimal() {
+    return JSONPointToLocation(this.startLocation);
   }
 
   get replicatedEstimatedCatch() {
@@ -110,73 +112,44 @@ export default class TCERRealm extends Realm.Object {
   get nonFishProtectedsExist() {
     return !!this.protecteds.length;
   }
+  
+  toJSON(eventHeader) {
 
-  get fishServeObject() {
-    return {
-      eventHeader: this.eventHeader,
-      method: 'BT',
-      targetSpeciesCode: this.targetSpecies,
-      mitigationDevicesUsed: [],
-      startDateTime: this.RAStart_date,
-      locationStart: {
-        "systemDateTime": this.locationStartDecimal.timestamp,
-        "systemLocation": {
-          longitude: this.locationStartDecimal.lon,
-          latitude: this.locationStartDecimal.lat,
+    const obj =  {
+      eventHeader,  
+      fishingMethodCode:'BT',
+      targetSpeciesCode:this.targetSpecies,
+      mitigationDeviceCodes: [],
+      startLocation: {
+        systemDateTime: this.startDateMoment.format(),
+        systemLocation: {
+          longitude: this.startLocationDecimal.lon,
+          latitude: this.startLocationDecimal.lat,
         },
-        isManual: false,
       },
-      numberOfNets: 3,
-      vesselPairNumber: this.vesselPairNumber,
-      wingSpreadMetres: this.wingSpread,
-      headlineHeightMetres: this.headlineHeight,
-      minMeshSizeMm: this.minMeshSizeMm,
-      groundRopeDepthMetres: this.groundropeDepth,
-      bottomDepthMetres: this.bottomDepth,
-      speedKnots: this.averageSpeed,
-      isNetLost: this.isNetLost,
-      finishDateTime: this.RAEnd_date,
       finishLocation: {
-        "systemDateTime": this.locationEndDecimal.timestamp,
-        "systemLocation": {
-          longitude: this.locationEndDecimal.lon,
-          latitude: this.locationEndDecimal.lat,
+        systemDateTime: this.endDateMoment.format(),
+        systemLocation: {
+          latitude: this.finishLocationDecimal.lat,
+          longitude: this.finishLocationDecimal.lon,
         },
-        isManual: false
       },
-      NetAtDepthDateTime: this.NetAtDepthDateTime,
-      NetAtDepthLocation: {
-        "systemDateTime": this.NetAtDepthLocationDecimal.timestamp,
-        "systemLocation": {
-            longitude: this.NetAtDepthLocationDecimal.lon,
-            latitude: this.NetAtDepthLocationDecimal.lat,
-        }
-      },
-      NetLeaveDepthDateTime: this.NetLeaveDepthDateTime,
-      NetLeaveDepthLocation: {
-        "systemDateTime": this.NetLeaveDepthLocationDecimal.timestamp,
-        "systemLocation": {
-          longitude: this.NetLeaveDepthLocationDecimal.lon,
-          latitude: this.NetLeaveDepthLocationDecimal.lat,
-        },
-        isManual: false
-      },
-      codendDateTime: this.codendDateTime,
+      numberOfNets: this.numberOfNets,
+      vesselPairNumber: null,
+      wingSpreadMetres: this.wingSpreadMetres,
+      headlineHeightMetres: this.headlineHeightMetres,
+      codendMeshSizeMm: this.codendMeshSizeMm,
+      groundRopeDepthMetres: this.groundRopeDepthMetres,
+      bottomDepthMetres: this.bottomDepthMetres,
+      speedKnots: this.averageSpeed,
+      isNetLost: false,
       estimatedCatchKg: this.estimatedCatchKg,
-      catches: this.estimatedCatch.map(es => ({
+      catches: this.estimatedCatch.filter(t => !!(t.code && t.code.length === 3 && t.amount)).map(es => ({
         speciesCode: es.code,
         greenWeightEstimateKg: es.amount,
       })),
-      isNonFishOrProtectedSpeciesCatchPresent: this.nonFishProtected,
-      nonFishOrProtectedSpeciesCatches: this.protecteds.map(pr => ({
-        seabirdCaptureDetails: null,
-        estimatedWeightKg: pr.amount,
-        numberUninjured: pr.uninjured,
-        numberInjured: pr.injured,
-        numberDead: pr.dead,
-        tags: []
-      })),
-    }
+    };
+    return JSON.stringify(obj);
   }
 
   get eventHeader() {

@@ -30,7 +30,8 @@ const TRIP_END_URI = SERVER_URL + 'rest-api/trip-end/';
 
 const TRIP_START_PATH = 'v1/trip-start';
 const TRIP_END_PATH = 'v1/trip-end';
-const HAND_GATHERING_EVENT_PATH = 'v1/hand-gathering'
+const HAND_GATHERING_EVENT_PATH = 'v1/hand-gathering';
+const TRAWL_EVENT_PATH = 'v1/trawl';
 
 //const TOKEN = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoyLCJ1c2VybmFtZSI6InRlc3Rza2lwcGVyIiwiZXhwIjoxNTAzMzc3NzMwLCJlbWFpbCI6InNraXBzQHJlZ3VsYXJzaG93LmNvbSIsIm9yaWdfaWF0IjoxNTAzMzc0NzMwfQ.dIt0gBGXWSERN4mmLCE5P_pIwGK-tfh8kH3dJ1OtIJg'
 //const REFRESH_TOKEN = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoyLCJ1c2VybmFtZSI6InRlc3Rza2lwcGVyIiwiZXhwIjoxNTAzMzcyOTk4LCJlbWFpbCI6InNraXBzQHJlZ3VsYXJzaG93LmNvbSIsIm9yaWdfaWF0IjoxNTAzMzY5OTEzfQ.Pf2nupALO2jBlpN3w_EUhKEZwP1xhEECJ6SGb9GDnLo';
@@ -44,12 +45,18 @@ export function createFishingEvent(fishingEventObj) {
     targetSpecies,
     RAStart_date,
     RAEnd_date,
-    locationStart,
-    locationEnd,
+    startLocation,
+    finishLocation,
     tripRAId,
     numberOfPeople,
     estimatedCatchKg,
     estimatedCatch,
+    wingSpreadMetres,
+    headlineHeightMetres,
+    bottomDepthMetres,
+    groundRopeDepthMetres,
+    averageSpeed,
+    codendMeshSizeMm,
   } = fishingEventObj;
 
   const vessel = vesselDB.getFirst();
@@ -82,12 +89,17 @@ export function createFishingEvent(fishingEventObj) {
     datetimeAtStart: RAStart_date.toISOString(),
     datetimeAtEnd: RAEnd_date.toISOString(),
     committed: true,
-    locationAtStart: Helper.geoJSONPointToWKTPoint(locationStart),
-    locationAtEnd: Helper.geoJSONPointToWKTPoint(locationEnd),
+    locationAtStart: Helper.geoJSONPointToWKTPoint(startLocation),
+    locationAtEnd: Helper.geoJSONPointToWKTPoint(finishLocation),
     lineString: null,
     eventSpecificDetails: JSON.stringify({
-      fishingMethod: 'H',
-      numberOfPeople,
+      fishingMethod: "BT",
+      wingSpreadMetres,
+      headlineHeightMetres,
+      bottomDepthMetres,
+      groundRopeDepthMetres,
+      averageSpeed,
+      codendMeshSizeMm,
     }),
     mitigationDeviceCodes: JSON.stringify([]),
     vesselNumber: vessel.registration,
@@ -97,7 +109,7 @@ export function createFishingEvent(fishingEventObj) {
     RAId,
     id: fishingEventObj.RAId,
     json,
-    event_type: HAND_GATHERING_EVENT_PATH,
+    event_type: TRAWL_EVENT_PATH,
     headers: JSON.stringify({
       'Accept': 'application/json',
       'Signature': null,

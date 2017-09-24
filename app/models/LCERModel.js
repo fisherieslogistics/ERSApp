@@ -18,7 +18,7 @@ const LCERModel = [
   },
   {
     label: 'Bottom Depth',
-    id: 'bottomDepth',
+    id: 'bottomDepthMetres',
     valid: valid.greaterThanZero,
     type: 'number',
     unit: 'm',

@@ -1,4 +1,3 @@
-
 import Validator from '../utils/Validator';
 const combined = Validator.combined;
 const valid = Validator.valid;
@@ -10,18 +9,18 @@ const TCERModel = [
     repeating: true,
     realm: { type: 'string' },
   },
-  /*{
+  {
     label: 'Bottom Depth',
-    id: 'bottomDepth',
+    id: 'bottomDepthMetres',
     valid: valid.greaterThanZero,
     type: 'number',
     unit: 'm',
     default: 0,
-    display: { type: 'combined', siblings: ['groundropeDepth'] },
+    display: { type: 'combined', siblings: ['groundRopeDepthMetres'] },
     realm: { type: 'int', optional: true },
-  },*/
+  },
   {
-    label: 'Number of People',
+    label: 'Number of Nets',
     id: 'numberOfNets',
     valid: valid.greaterThanZero,
     type: 'number',
@@ -30,7 +29,7 @@ const TCERModel = [
     display: { type: 'single' },
     realm: { type: 'int' },
   },
-  /*{
+  {
     label: 'Estimated Total Bag Size',
     id: 'estimatedCatchKg',
     valid: valid.anyValue,
@@ -49,96 +48,29 @@ const TCERModel = [
     type: 'number',
     default: null,
     repeating: true,
-    display: { type: 'single' },
+    //display: { type: 'single' },
     realm: { type: 'int', optional: true },
   },
   {
-    label: 'Minimum Mesh Size',
-    id: 'minMeshSizeMm',
+    label: 'Cod End Mesh Size',
+    id: 'codendMeshSizeMm',
     valid: valid.greaterThanZero,
     type: 'float',
     default: 0,
     unit: 'mm',
     repeating: true,
     display: { type: 'single' },
-    realm: { type: 'float' },
+    realm: { type: 'int' },
   },
   {
-    label: 'Start of Haul Location',
-    id: 'NetLeaveDepthLocation',
-    valid: valid.locationValid,
-    type: 'location',
-    default: null,
-    copyFrom: 'locationEnd',
-    displayStage: 'Haul',
-    display: { type: 'single' },
-    optionalRender: true,
-    realm: { type: 'string', optional: true },
-  },
-  {
-    label: 'Start Of Haul Time',
-    id: 'NetLeaveDepthDateTime',
-    valid: valid.anyValue,
-    type: 'datetime',
-    default: null,
-    copyFrom: 'RAEnd_date',
-    display: { type: 'single' },
-    optionalRender: true,
-    realm: { type: 'date', optional: true },
-  },
-  {
-    label: 'End Of Shot Location',
-    id: 'NetAtDepthLocation',
-    valid: valid.locationValid,
-    type: 'location',
-    default: null,
-    copyFrom: 'locationStart',
-    display: { type: 'single' },
-    optionalRender: true,
-    realm: { type: 'string', optional: true },
-  },
-  {
-    label: 'End Of Shot Time',
-    id: 'NetAtDepthDateTime',
-    valid: valid.anyValue,
-    type: 'datetime',
-    default: null,
-    copyFrom: 'RAStart_date',
-    display: { type: 'single' },
-    optionalRender: true,
-    realm: { type: 'date', optional: true },
-  },
-  {
-    label: 'Code End Time',
-    id: 'codendDateTime',
-    valid: valid.anyValue,
-    type: 'datetime',
-    default: null,
-    copyFrom: 'RAEnd_date',
-    displayStage: 'Haul',
-    display: { type: 'single' },
-    optionalRender: true,
-    realm: { type: 'date', optional: true },
-  },*/
-  {
-    label: 'Is Vessel Used',
-    id: 'isNetLost',
-    valid: valid.anyValue,
-    type: 'bool',
-    default: false,
-    displayStage: 'Haul',
-    display: { type: 'single' },
-    realm: { type: 'bool' },
-  },
-  /*{
     label: 'Groundrope Depth',
-    id: 'groundropeDepth',
+    id: 'groundRopeDepthMetres',
     valid: valid.greaterThanZero,
     type: 'number',
     default: 0,
     combinedValid:
       {
-        attributes: ["groundropeDepth", "bottomDepth"],
+        attributes: ["groundRopeDepthMetres", "bottomDepthMetres"],
         func: combined.orderedLessThanOrEqual,
         errorMessage: "Groundrope cannot be below the bottom"
       },
@@ -147,16 +79,16 @@ const TCERModel = [
   },
   {
     label: 'Wing Spread',
-    id: 'wingSpread',
+    id: 'wingSpreadMetres',
     valid: valid.greaterThanZero,
     type: 'number',
     repeating: true,
-    display: { type: 'combined', siblings: ['headlineHeight']}, unit: 'm', order: 1, optionalRender: true,
+    display: { type: 'combined', siblings: ['headlineHeightMetres']}, unit: 'm', order: 1, optionalRender: true,
     realm: { type: 'int', optional: true },
   },
   {
     label: 'Headline Height',
-    id: 'headlineHeight',
+    id: 'headlineHeightMetres',
     valid: valid.greaterThanZero,
     type: 'float',
     unit: 'm',
@@ -177,15 +109,15 @@ const TCERModel = [
     optionalRender: true,
     displayStage: 'Haul',
     realm: { type: 'float', optional: true },
-  },*/
+  },
   {
     id: 'formType', default: 'TCER',
     realm: { type: 'string', default: 'TCER' },
   },
-  /*{
-    id: 'otherSpeciesWeight', default: 0,
+  {
+    id: 'estimatedCatchKg', default: 0,
     realm: { type: 'int', default: 0 },
-  },*/
+  },
   {
     id: 'committed', default: false,
     realm: { type: 'bool', default: false, optional: true },

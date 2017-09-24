@@ -27,8 +27,8 @@ export function endTrip(trip){
       changes,
       newTrip: {
         RAId: uuid(),
-        wingSpread: parseInt(trip.wingSpread),
-        headlineHeight: parseFloat(trip.headlineHeight),
+        wingSpreadMetres: parseInt(trip.wingSpreadMetres),
+        headlineHeightMetres: parseFloat(trip.headlineHeightMetres),
         leavingPort: trip.leavingPort,
         endPort: trip.endPort,
       },

@@ -26,8 +26,8 @@ export function setSelectedCatchesDetail(name) {
 }
 
 export function updateFishingEvent(fishingEvent, changes) {
-  if(changes.locationStart) {
-    changes.statarea = calculateStatArea(changes.locationStart);
+  if(changes.startLocation) {
+    changes.statarea = calculateStatArea(changes.startLocation);
   }
   return (dispatch) => {
     dispatch({
@@ -39,7 +39,7 @@ export function updateFishingEvent(fishingEvent, changes) {
       }
     });
     const keys = Object.keys(changes);
-    if( keys.includes('wingSpread') || keys.includes('headlineHeight') ) {
+    if( keys.includes('wingSpreadMetres') || keys.includes('headlineHeightMetres') ) {
       //TODO update the trip
       //dispatch(updateTrip(changes))
     }
@@ -66,9 +66,9 @@ export function startFishingEvent(tripId, RAId, location) {
   newEvent.RAId = RAId;
   newEvent.RAStart_date = new Date();
   newEvent.numberOfInTrip = trip.fishingEvents.length + 1;
-  //newEvent.wingSpread = trip.wingSpread;
-  //newEvent.headlineHeight = trip.headlineHeight;
-  newEvent.locationStart = Helper.locationToGeoJSONPoint(location);
+  newEvent.wingSpreadMetres = trip.wingSpreadMetres;
+  newEvent.headlineHeightMetres = trip.headlineHeightMetres;
+  newEvent.startLocation = Helper.locationToGeoJSONPoint(location);
 
   FishingEventModel.forEach(field => {
     if(previousEvent && field.repeating) {
@@ -95,7 +95,7 @@ export function startFishingEvent(tripId, RAId, location) {
 
 export function endFishingEvent(fishingEvent, changes, location) {
   return (dispatch) => {
-    changes.locationEnd = Helper.locationToGeoJSONPoint(location);
+    changes.finishLocation = Helper.locationToGeoJSONPoint(location);
 
     dispatch({
       type: 'endFishingEvent',

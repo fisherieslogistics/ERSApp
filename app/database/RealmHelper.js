@@ -80,6 +80,7 @@ export default class RealmHelper {
   }
 
   update(item, changes) {
+    console.log(changes);
     return updateRecord(item, changes);
   }
 

@@ -11,11 +11,11 @@ export function validateModel(model, obj) {
   return model.filter(f => !!f.valid).every(field => !!field.valid.func(obj[field.id], obj));
 }
 
-export function shouldCollapseDepthFields({ bottomDepth, groundropeDepth }) {
-  const bottomDepthValid = Validator.valid.greaterThanZero.func(bottomDepth);
-  const groundropeDepthValid = Validator.valid.greaterThanZero.func(groundropeDepth);
+export function shouldCollapseDepthFields({ bottomDepthMetres, groundropeDepthMetres }) {
+  const bottomDepthValid = Validator.valid.greaterThanZero.func(bottomDepthMetres);
+  const groundropeDepthValid = Validator.valid.greaterThanZero.func(groundropeDepthMetres);
   const bothValid = bottomDepthValid && groundropeDepthValid;
-  const bothEqual = bottomDepth === groundropeDepth;
+  const bothEqual = bottomDepthMetres === groundropeDepthMetres;
   return bothValid && bothEqual;
 }
 
@@ -49,13 +49,13 @@ export function getRenderableTCERDetailModel(fishingEvent, showOptionalFields) {
 
   //If not showOptionalFields, filter out optional fields.  Only if the event is valid to
   model = model.filter(a => !a.optionalRender);
-  // Filter out groundrope depth if shouldCombineDepths and change the label for bottomDepth
+  // Filter out groundrope depth if shouldCombineDepths and change the label for bottomDepthMetres
   if(!shouldCollapseDepthFields(fishingEvent)) {
     return model;
   }
-  return model.filter(field => field.id !== 'groundropeDepth').map(
+  return model.filter(field => field.id !== 'groundropeDepthMetres').map(
     (x) => {
-      if (x.id === 'bottomDepth') {
+      if (x.id === 'bottomDepthMetres') {
         x.label = 'Bottom / Groundrope Depth';
       }
       return x;

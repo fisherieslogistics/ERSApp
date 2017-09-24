@@ -49,6 +49,7 @@ class AttributeEditor extends Component {
   }
 
   onDateChange(dateAsString, datetime) {
+    console.log(dateAsString, datetime);
     return this.props.onChange(this.props.attribute.id, datetime, dateAsString);
   }
 
@@ -179,9 +180,9 @@ class AttributeEditor extends Component {
       case "location":
         let loc;
         const locFields = [
-          'locationStart',
-          'locationEnd',
-          'NetAtDepthLocation',
+          'startLocation',
+          'finishLocation',
+          'startLocation',
           'NetLeaveDepthLocation',
         ];
         //console.log("is it this one", attribute.id, fishingEvent[attribute.id]);

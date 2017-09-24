@@ -1276,7 +1276,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = fll.catchhub;
+				PRODUCT_BUNDLE_IDENTIFIER = catchhub.trawl;
 				PRODUCT_NAME = FLLReporting;
 				TARGETED_DEVICE_FAMILY = 2;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -1302,7 +1302,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = fll.catchhub;
+				PRODUCT_BUNDLE_IDENTIFIER = catchhub.trawl;
 				PRODUCT_NAME = FLLReporting;
 				TARGETED_DEVICE_FAMILY = 2;
 				VERSIONING_SYSTEM = "apple-generic";
