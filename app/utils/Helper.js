@@ -7,6 +7,10 @@ const locationToWKTPoint = (location) => {
   return 'POINT ({o} {a})'.replace('{o}', lon).replace('{a}', lat);
 }
 
+export function update(obj, change) {
+  return Object.assign({}, obj, change);
+}
+
 export default {
 
   getDegreesMinutesFromLocation: (location) => {
