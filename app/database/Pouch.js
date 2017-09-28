@@ -38,7 +38,7 @@ export default class Pouch {
   }
 
   handleChange(changes) {
-    console.log('changes CHANGE', changes, 'changes CHANGE');    
+    console.log('changes CHANGE', changes, 'changes CHANGE');
   }
 
   handleComplete(changes) {
@@ -61,6 +61,7 @@ export default class Pouch {
           { trip_id },
           { document_type: 'fishingEvent' },
         ],
+        sort: 'numberInTrip',
       },
     }).then(results => {
       this.dispatch({
@@ -101,8 +102,8 @@ export default class Pouch {
       _id: uuid(),
       personInCharge: 'Ian',
       ETA: null,
-      startTime: null,
-      endTime: null,
+      datetimeAtStart: null,
+      datetimeAtEnd: null,
       startLocation: null,
       endLocation: null,
       leavingPort: null,
@@ -160,10 +161,6 @@ export default class Pouch {
   }
 
   get(_id) {
-    console.log(_id, 'get this');
-    if(!_id) {
-      debugger;
-    }
     return this.localDB.get(_id);
   }
 
@@ -191,6 +188,7 @@ export default class Pouch {
   }
 
   dispatchUpdate(doc) {
+    console.log(`update-${doc.document_type}`, doc);
     this.dispatch({
       type: `update-${doc.document_type}`,
       payload: { changes: doc },
@@ -213,17 +211,16 @@ export default class Pouch {
 
   update(change, _id) {
     change._id = _id;
-    if(!_id) {
-      console.log('updat eno id');
-      debugger;
-    }
     this.localDB.get(_id).then(doc => {
 
       const newdoc = update(doc, change);
       return this.localDB.put(newdoc).then((res) => {
 
         this.localDB.get(res.id).then(newestdoc => {
+          
+          console.log('dispatchUpdate')
           this.dispatchUpdate(newestdoc);
+        
         });
 
       }).catch((err) => {
