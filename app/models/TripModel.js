@@ -69,12 +69,12 @@ const TripModel = [
   },
   {
    label: 'Sailing Date',
-   id: 'startTime',
-   valid: Validator.valid.startTimeValid,
+   id: 'datetimeAtStart',
+   valid: Validator.valid.datetimeAtStartValid,
    type: 'datetime',
   },
   {
-   id: 'endTime',
+   id: 'datetimeAtEnd',
    valid: Validator.valid.alwaysValid,
    type: 'datetime',
   },
@@ -123,29 +123,25 @@ export class TripHelper {
     this.trip = Object.assign({}, this.trip, change);
   }
 
-  get startDateMoment() {
-    return moment(this.trip.startTime);
+  get datetimeAtStartMoment() {
+    return moment(this.trip.datetimeAtStart);
   }
 
-  get endDateMoment() {
-    return moment(this.trip.endTime);
-  }
-
-  get lastEvent() {
-    return [...this.fishingEvents].pop();
+  get datetimeAtEndMoment() {
+    return moment(this.trip.datetimeAtEnd);
   }
 
   get canStartEvent() {
     if(!this.trip.started) {
       return false;
     }
-    if(!this.lastEvent){
+    /*if(!this.lastEvent){
       return true;
-    }
+    }*/
     if(FORM_TYPE === 'LCER') {
       return true;
     }
-    return !!this.lastEvent.endTime;
+    return true;//!!this.lastEvent.datetimeAtEnd;
   }
 
   get canEndEvent() {
@@ -160,7 +156,7 @@ export class TripHelper {
 
   get canStart() {
     return !this.trip.started && this.trip.leavingPort && this.trip.unloadPort &&
-           this.trip.startTime && this.trip.endTime;
+           this.trip.datetimeAtStart && this.trip.datetimeAtEnd;
   }
 
   get canEnd() {
