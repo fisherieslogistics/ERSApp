@@ -100,14 +100,23 @@ switch(FORM_TYPE) {
 
 const model = TripModel.concat(specificFields);
 
-export class Trip {
+export class TripHelper {
 
-  constructor(trip) {
+  constructor(trip, fishingEvents = []) {
     this.trip = trip;
+    this.fishingEvents = fishingEvents;
   }
 
   get values() {
     return this.trip;
+  }
+  
+  setFishingEvents(fishingEvents) {
+    this.fishingEvents = fishingEvents;
+  }
+  
+  setValues(values) {
+    this.trip = Object.assign({}, this.trip, values);
   }
 
   setValue(change) {
@@ -123,7 +132,7 @@ export class Trip {
   }
 
   get lastEvent() {
-    return [...this.trip.fishingEvents].pop();
+    return [...this.fishingEvents].pop();
   }
 
   get canStartEvent() {
@@ -155,7 +164,7 @@ export class Trip {
   }
 
   get canEnd() {
-    return this.trip.started && this.trip.fishingEvents.every(fe => !!fe.completed);
+    return this.trip.started && this.fishingEvents.every(fe => !!fe.completed);
   }
 
 }
