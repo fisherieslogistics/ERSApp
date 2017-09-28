@@ -31,8 +31,6 @@ export default (state = initialState, action) => {
   }
   switch (type) {
 
-    case 'setViewingEventId':
-      return update(state, { viewingEventId: payload.fishingEventId });
     case 'toggleSuggestBar':
       return update(state, { suggestBarChoices: [],
                              suggestBarSearchTerm: null,
