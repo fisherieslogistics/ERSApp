@@ -46,21 +46,21 @@ class EventEditor extends Component {
   }
 
   addItem(eventAttribute) {
-    this.props.dispatch(addItemToEvent(this.props.fishingEvent, eventAttribute));
+    this.props.dispatch(addItemToEvent(this.props.viewingEvent, eventAttribute));
   }
 
   changeItem(eventAttribute, inputId, value, item) {
     const { code, amount } = item;
     const changes = Object.assign({}, { code, amount }, { [inputId]: value});
-    this.props.dispatch(changeItemInEvent(this.props.fishingEvent, item, changes, eventAttribute));
+    this.props.dispatch(changeItemInEvent(this.props.viewingEvent, item, changes, eventAttribute));
     if(eventAttribute === 'estimatedCatch' && inputId === 'code' &&
-      this.props.fishingEvent.shouldAddEmptyCatch) {
+      this.props.viewingEvent.shouldAddEmptyCatch) {
       this.addItem(eventAttribute);
     }
   }
 
   deleteItem(eventAttribute, item) {
-    this.props.dispatch(deleteItemInEvent(this.props.fishingEvent, item, eventAttribute));
+    this.props.dispatch(deleteItemInEvent(this.props.viewingEvent, item, eventAttribute));
   }
 
   renderDetailEditor() {
@@ -132,10 +132,10 @@ class EventEditor extends Component {
   }
 
   renderDetailViewButtons() {
-    const fEvent = this.props.fishingEvent;
-    const catchesEnabled = !!fEvent.datetimeAtEnd;
+    const { viewingEvent, viewingEventHelper } = this.props;
+    const catchesEnabled = !!viewingEvent.datetimeAtEnd;
     return [
-      this.renderDetailViewButton((catchesEnabled && !fEvent.detailsValid), 'detail', true, 0),
+      this.renderDetailViewButton((catchesEnabled && !viewingEventHelper.detailsValid), 'detail', true, 0),
       //this.renderDetailViewButton(!fEvent.estimatedCatchValid, 'catches', catchesEnabled, /*fEvent.estimatedCatch.length - 1*/0),
       //this.renderDetailViewButton(!fEvent.discardsValid, 'discards', catchesEnabled, fEvent.discards.length),
       //this.renderDetailViewButton(false, 'protecteds', catchesEnabled, fEvent.protecteds.length),
@@ -144,7 +144,7 @@ class EventEditor extends Component {
   }
 
   renderSubmitButton() {
-    const { canSubmit } = this.props.fishingEvent;
+    const { canSubmit } = this.props.viewingEvent;
     const sty = { flex: 0.20, opacity: canSubmit ? 1 : 0.35 }
     return (
       <View style={ sty } key={`_eventEditor_submit_button`}>
@@ -167,9 +167,9 @@ class EventEditor extends Component {
       [
         {text: 'Cancel', onPress: () => null, style: 'cancel'},
         {text: 'Commit', onPress: () => {
-          createFishingEvent(this.props.fishingEvent).then(res => {
+          createFishingEvent(this.props.viewingEvent).then(res => {
             if(res.body && res.body.id) {
-              this.props.dispatch(commitFishingEvent(this.props.fishingEvent));
+              this.props.dispatch(commitFishingEvent(this.props.viewingEvent));
             } else {
               AlertIOS.alert('please try that again when your connected to the internet');
             }
@@ -195,11 +195,11 @@ class EventEditor extends Component {
   }
 
   render(){
-    const { fishingEvent, selectedDetail } = this.props;
-    if(!fishingEvent) {
+    const { viewingEvent, selectedDetail, viewingEventHelper } = this.props;
+    if(!viewingEvent) {
       return null;
     }
-    const { datetimeAtEnd, committed } = fishingEvent;
+    const { datetimeAtEnd, committed } = viewingEvent;
     if(committed) {
       return this.renderMessage("Shot has been signed off and cannot be edited");
     }
@@ -236,13 +236,9 @@ class EventEditor extends Component {
 }
 
 const select = (state) => {
-  let fishingEvent = null;
-  if(state.view.viewingEventId){
-    //fishingEvent = getRecord('fishingEvent', state.view.viewingEventId);
-  }
   const props = {
     fishingEventsUpdated: state.fishingEvents.lastUpdated,
-    fishingEvent: state.fishingEvents.viewingEvent,
+    viewingEvent: state.fishingEvents.viewingEventHelper,
     viewingEventHelper: state.fishingEvents.viewingEventHelper,
     selectedDetail: state.view.selectedFishingDetail,
     lastUpdated: state.view.lastUpdated,
