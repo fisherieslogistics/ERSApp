@@ -23,12 +23,12 @@ class StartTripEditor extends Component {
   onChange(name, value){
     const trip = this.props.trip;
     const changes = {};
-    if(name === 'endTime' || name === 'ETA') {
-      const startTime = new Date();
-      const endTime = moment(startTime).clone().add(parseInt(value) || 0, "days");
-      changes.endTime = endTime.toDate();
-      changes.ETA = endTime.toDate();
-      changes.startTime = startTime;
+    if(name === 'datetimeAtEnd' || name === 'ETA') {
+      const datetimeAtStart = new Date();
+      const datetimeAtEnd = moment(datetimeAtStart).clone().add(parseInt(value) || 0, "days");
+      changes.datetimeAtEnd = datetimeAtEnd.toDate();
+      changes.ETA = datetimeAtEnd.toDate();
+      changes.datetimeAtStart = datetimeAtStart;
     } else {
       changes[name] = value;
     }
@@ -37,9 +37,9 @@ class StartTripEditor extends Component {
     this.props.db.update(changes, trip._id);
   }
 
-  getDayChoices(startTime) {
+  getDayChoices(datetimeAtStart) {
     const choices = [...Array(50).keys()].map((num, i) => {
-      const date = moment(startTime).clone().add(i, "days");
+      const date = moment(datetimeAtStart).clone().add(i, "days");
       return {
         value: i,
         description: date.format("MMM Do YY"),
@@ -72,14 +72,14 @@ class StartTripEditor extends Component {
         extraProps.view = 'ports';
         extraProps.choices = this.props.ports;
       break;
-      case "startTime":
+      case "datetimeAtStart":
         extraProps.mode = "date";
         extraProps.format = "Do MM YYYY";
       break;
       case "ETA":
-        const { endTime, startTime, ETA } = this.props.trip;
-        const startDate = moment(startTime || new Date());
-        const endDate = moment(endTime || new Date());
+        const { datetimeAtEnd, datetimeAtStart, ETA } = this.props.trip;
+        const startDate = moment(datetimeAtStart || new Date());
+        const endDate = moment(datetimeAtEnd || new Date());
         extraProps.sortResultsBy = (a, b) => parseInt(a.value) - parseInt(b.value);
         extraProps.choices = this.getDayChoices(startDate.clone());
         const days = moment.duration(endDate.diff(startDate)).asDays();

@@ -154,7 +154,7 @@ class Trip extends MasterDetail {
   endTrip(){
     AlertIOS.alert(
       `Heading to ${this.props.trip.unloadPort}`,
-      `Arriving in about ${this.props.trip.endDateMoment.fromNow(true)}`,
+      `Arriving in about ${this.props.trip.datetimeAtEndMoment.fromNow(true)}`,
       [
         { text: 'Cancel', style: 'cancel' },
         { text: 'OK', onPress: () => {

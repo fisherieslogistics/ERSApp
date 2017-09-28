@@ -30,11 +30,11 @@ export default class TripsList extends MasterListView {
   }
 
   getDescription(trip) {
-    const { started, startDateMoment, endDateMoment } = trip;
+    const { started, datetimeAtStartMoment, datetimeAtEndMoment } = trip;
     if(!started) {
       return ` At Wharf `;
     }
-    return `${startDateMoment.format('Do MMM')} - ${endDateMoment.format('Do MMM')}`;
+    return `${datetimeAtStartMoment.format('Do MMM')} - ${datetimeAtEndMoment.format('Do MMM')}`;
   }
 
   onPress(trip){
