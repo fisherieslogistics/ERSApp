@@ -60,6 +60,7 @@ export default class Pouch {
         $and: [
           { trip_id },
           { document_type: 'fishingEvent' },
+          { archived: { $ne: true } },
         ],
         sort: 'numberInTrip',
       },
