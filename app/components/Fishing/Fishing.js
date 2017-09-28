@@ -15,7 +15,7 @@ import PositionDisplay from './PositionDisplay';
 import EventEditor from './EventEditor';
 import TopMasterButton from './common/TopMasterButton';
 import BottomMasterButton from './common/BottomMasterButton';
-import { setViewingEventId } from '../../actions/ViewActions';
+import { setViewingEvent } from '../../actions/FishingEventActions';
 import { TextButton } from '../common/Buttons';
 import { MasterToolbar, DetailToolbar } from '../layout/Toolbar';
 import { colors, toolbarStyles } from '../../styles/styles';
@@ -38,13 +38,13 @@ class Fishing extends MasterDetail {
         {text: 'Cancel', onPress: () => null, style: 'Cancel'},
         {text: 'Delete', onPress: (text) => {
           if(text && text.toLowerCase() === 'delete') {
-            const numberOfInTrip = this.props.viewingEvent.numberOfInTrip;
-            //const otherEvents = fishingEventDB.findWhere(` numberOfInTrip > ${numberOfInTrip}`);
+            const numberInTrip = this.props.viewingEvent.numberInTrip;
+            //const otherEvents = fishingEventDB.findWhere(` numberInTrip > ${numberInTrip}`);
             this.props.dispatch(deleteFishingEvent(this.props.viewingEvent));
-            this.props.dispatch(setViewingEventId(null));
+            this.props.dispatch(setViewingEvent(null));
             otherEvents.forEach(
               f => this.props.dispatch(
-                  updateFishingEvent(f, { numberOfInTrip: f.numberOfInTrip - 1 })));
+                  updateFishingEvent(f, { numberInTrip: f.numberInTrip - 1 })));
           }
         }},
       ]
@@ -82,8 +82,8 @@ class Fishing extends MasterDetail {
       right: -60,
     }
 
-    const deleteActive = this.props.viewingEvent &&
-      this.props.viewingEvent.canDelete(this.props.fishingEvents.length);
+    const deleteActive = !!this.props.viewingEvent// &&
+      //this.props.viewingEvent.canDelete(this.props.fishingEvents.length);
 
     const rightProps = (
       <View>
@@ -142,7 +142,7 @@ const select = (state) => {
     trip: state.trip.currentTrip,
     location: state.location,
     averageSpeed: state.location.averagedSpeed.currentAvg,
-    fishingEvents: state.trip.fishingEvents,
+    fishingEvents: state.fishingEvents.fishingEvents,
     signalStrength: state.connection.signalStrength,
     viewingEvent: state.fishingEvents.viewingEvent,
   };
