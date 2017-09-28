@@ -8,7 +8,7 @@ import TripModel from '../../models/TripModel';
 import ModelEditor from '../common/ModelEditor';
 import ports from '../../constants/ports';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { updateTrip } from '../../actions/TripActions';
+
 
 class StartTripEditor extends Component {
 
@@ -21,7 +21,7 @@ class StartTripEditor extends Component {
   }
 
   onChange(name, value){
-    const trip = this.props.trip.values
+    const trip = this.props.trip;
     const changes = {};
     if(name === 'endTime' || name === 'ETA') {
       const startTime = new Date();
@@ -102,7 +102,7 @@ class StartTripEditor extends Component {
         <ModelEditor
           getEditorProps={ this.getEditorProps }
           model={ TripModel }
-          modelValues={ this.props.trip.values }
+          modelValues={ this.props.trip }
           index={ 1 }
           onChange={ this.onChange }
           dispatch={ this.props.dispatch }

@@ -1,4 +1,4 @@
-import
+
 import moment from 'moment';
 import uuid from 'uuid/v1';
 import ProductModel from '../../models/ProductModel';
@@ -6,7 +6,35 @@ import { blankModel } from '../../utils/ModelUtils';
 import JSONPointToLocation from '../../utils/JSONPointToLocation';
 
 
-export
+export default class HandGatheringEventHelper {
+
+  constructor(fishingEvent) {
+    this.fishingEvent = fishingEvent;
+    console.log(fishingEvent);
+    const eventSpecificDetails = JSON.parse(fishingEvent.eventSpecificDetails);
+    this.eventSpecificKeys = Object.keys(fishingEvent.eventSpecificDetails);
+    this.eventKeys = Object.keys(fishingEvent);
+    Object.assign(this, fishingEvent);
+    Object.assign(this, eventSpecificDetails);
+  }
+  
+  setValue(change) {
+    Object.assign(this.fishingEvent, change);
+    Object.assign(this, change);
+  }
+
+  toCouchRecord() {
+    const record = {};
+    const eventSpecificDetails = {};
+    this.eventKeys.forEach(k => {
+      record[k] = this[k];
+    });
+    this.eventSpecificKeys.forEach(k => {
+      eventSpecificDetails[k] = this[k];
+    });
+    record.eventSpecificDetails = JSON.stringify(eventSpecificDetails);
+    return record;
+  }
 
   get startDateMoment() {
     return moment(this.startTime);
@@ -26,13 +54,13 @@ export
 
   get detailsValid() {
     const {
-      locationStart,
+      locationAtStart,
       startTime,
       endTime,
       locationEnd,
     } = this;
 
-    const stage1 = (locationStart && startTime);
+    const stage1 = (locationAtStart && startTime);
     if((!endTime && stage1)) {
       return stage1;
     }
@@ -71,11 +99,10 @@ export
     return true;
   }
 
-  get locationStartDecimal() {
-    return JSONPointToLocation(this.locationStart);
+  get locationAtStartDecimal() {
+    return JSONPointToLocation(this.locationAtStart);
   }
 
-  get locationEndDecimal() {
     return JSONPointToLocation(this.locationEnd);
   }
 
@@ -102,11 +129,11 @@ export
       targetSpeciesCode: this.targetSpecies,
       mitigationDevicesUsed: [],
       startDateTime: this.startTime,
-      locationStart: {
-        "systemDateTime": this.locationStartDecimal.timestamp,
+      locationAtStart: {
+        "systemDateTime": this.locationAtStartDecimal.timestamp,
         "systemLocation": {
-          longitude: this.locationStartDecimal.lon,
-          latitude: this.locationStartDecimal.lat,
+          longitude: this.locationAtStartDecimal.lon,
+          latitude: this.locationAtStartDecimal.lat,
         },
         isManual: false,
       },

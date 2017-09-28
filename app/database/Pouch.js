@@ -1,4 +1,6 @@
 import PouchDB from 'pouchdb-react-native';
+import PouchDBFind from 'pouchdb-find';
+PouchDB.plugin(PouchDBFind);
 import { setInitialTrips } from '../actions/TripActions';
 import uuid from 'uuid/v1';
 import { update } from '../reducers/GeneralMethods';
@@ -11,6 +13,7 @@ const toBind = [
   'setCurrentTrip',
   'setupReduxState',
   'setupInitialTrip',
+  'setCurrentFishingEvents',
 ];
 
 export default class Pouch {
@@ -35,12 +38,48 @@ export default class Pouch {
   }
 
   handleChange(changes) {
-    console.log('there is changes', changes);
-    //console.log('changes CHANGE', changes, 'changes CHANGE');
+    console.log('changes CHANGE', changes, 'changes CHANGE');    
   }
 
   handleComplete(changes) {
-    //console.log('changes COMPLETED', changes, 'changes COMPLETED');
+    
+  }
+  
+  /*reateFishingEventByTripIdIndex() {
+    return this.localDB.createIndex({
+      index: {
+        fields: ['trip_id', 'document_type'],
+      },
+    });
+  }*/
+  
+  setCurrentFishingEvents(trip_id) {
+    
+    return this.localDB.find({
+      selector: {
+        $and: [
+          { trip_id },
+          { document_type: 'fishingEvent' },
+        ],
+      },
+    }).then(results => {
+      this.dispatch({
+        type: 'setFishingEvents',
+        payload: {
+          changes: results.docs,
+        }
+      });
+    }).catch(err => {
+      console.log(err);
+    });
+  }
+  
+  createFishCatchByEventIdIndex() {
+    return this.localDB.createIndex({
+      index: {
+        fields: ['fishingevent_id', 'document_type'],
+      },
+    });
   }
 
   setupListeners() {
@@ -69,12 +108,13 @@ export default class Pouch {
       leavingPort: null,
       unloadPort: null,
       vessel: null,
-      type: 'trip',
+      document_type: 'trip',
     };
 
     const appState = {
       _id: APP_STATE_ID,
       currentTrip: newTrip._id,
+      currentFishingEvents: [],
     };
 
     return Promise.all([
@@ -84,6 +124,8 @@ export default class Pouch {
       this.setupReduxState();
     });
   }
+  
+  
 
   setItems({ ports, vessels, user, species }) {
     user._id = uuid();
@@ -118,6 +160,10 @@ export default class Pouch {
   }
 
   get(_id) {
+    console.log(_id, 'get this');
+    if(!_id) {
+      debugger;
+    }
     return this.localDB.get(_id);
   }
 
@@ -126,30 +172,51 @@ export default class Pouch {
       this.dispatch({ type: 'setCurrentTrip', payload: {
         changes: currentTrip,
       }});
+      this.setCurrentFishingEvents(currentTrip.id);
     });
   }
 
-  create(itemToCreate, type) {
+  create(itemToCreate) {
     if(!itemToCreate._id) {
-      itemToCreate._id = uuid()
+      itemToCreate._id = uuid();
     }
-    return this.localDB.put(newdoc).then((res) => {
+    return this.localDB.put(itemToCreate).then((res) => {
       console.log(res);
+      this.localDB.get(res.id).then(newestdoc => {
+        this.dispatchCreate(newestdoc);
+      });
     }).catch(err => {
       relayErrorMessage(err);
     });
   }
 
   dispatchUpdate(doc) {
-    console.log('dispatchUpdate', doc);
     this.dispatch({
-      type: `update-${doc.type}`,
-      payload: { changes: doc }
+      type: `update-${doc.document_type}`,
+      payload: { changes: doc },
+    });
+  }
+  
+  dispatchCreate(doc) {
+    this.dispatch({
+      type: `create-${doc.document_type}`,
+      payload: { changes: doc },
+    });
+  }
+  
+  dispatchDelete(doc) {
+    this.dispatch({
+      type: `delete-${doc.document_type}`,
+      payload: { changes: doc },
     });
   }
 
   update(change, _id) {
     change._id = _id;
+    if(!_id) {
+      console.log('updat eno id');
+      debugger;
+    }
     this.localDB.get(_id).then(doc => {
 
       const newdoc = update(doc, change);
@@ -169,10 +236,6 @@ export default class Pouch {
     this.localDB.get(APP_STATE_ID).then(appState => {
       this.setCurrentTrip(appState);
     });
-  }
-
-  getCurrentFishingEvents(tripId) {
-
   }
 
   getAllTrips() {

@@ -33,7 +33,7 @@ import { updateVessels } from '../actions/VesselActions';
 import { reducers } from '../reducers/main';
 import serverURL from '../constants/ServerURL';
 
-const createStoreWithMiddleware = applyMiddleware(thunk, AddUsefulToActions, ConnectionMiddleware, PouchMiddleware)(createStore);
+const createStoreWithMiddleware = applyMiddleware(thunk, AddUsefulToActions, ConnectionMiddleware)(createStore);
 const reducer = combineReducers(reducers);
 const store = createStoreWithMiddleware(reducer);
 const blackBack = { backgroundColor: 'black' };
@@ -58,10 +58,10 @@ class App extends Component {
 
   componentDidMount() {
   /*this.iosLocation.addCallbacks((nmeStr) => {
-      //console.log("messageCallback", nmeStr);
+      
     },
     (err) => {
-      //console.log("locErr", err);
+      
     });*/
     this.login();
   }

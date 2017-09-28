@@ -2,14 +2,15 @@
 import { ListView } from 'react-native';
 import React from 'react';
 import {connect} from 'react-redux';
+import moment from 'moment';
 import MasterListView from '../common/MasterListView';
 import Icon8 from '../common/Icon8';
-import { setViewingEventId, setSelectedFishingDetail } from '../../actions/ViewActions';
-
+import { setSelectedFishingDetail } from '../../actions/ViewActions';
+import { setViewingEvent } from '../../actions/FishingEventActions';
 
 import { darkColors as colors, iconStyles } from '../../styles/styles';
 
-const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1.id !== r2.id});
 
 class FishingEventList extends MasterListView {
   constructor(props){
@@ -27,7 +28,7 @@ class FishingEventList extends MasterListView {
       name = 'fishing';
       backgroundColor = colors.blue;
     }
-    if(fe.endTime && !(fe.detailsValid && fe.estimatedCatchValid && fe.discardsValid && fe.protectedsValid)) {
+    if(fe.endTime /*&& !(fe.detailsValid && fe.estimatedCatchValid && fe.discardsValid && fe.protectedsValid)*/) {
       name = 'error';
       backgroundColor= colors.orange;
     }
@@ -55,16 +56,16 @@ class FishingEventList extends MasterListView {
   }
 
   getDescription(fishingEvent) {
-    const { targetSpecies, numberOfInTrip } = fishingEvent;
-    return `${numberOfInTrip}  ${fishingEvent.startDateMoment.format("HH:mm")} ${targetSpecies}`;
+    const { targetSpecies, numberInTrip } = fishingEvent;
+    return `${numberInTrip}  ${moment(fishingEvent.startTime).format("HH:mm")} ${targetSpecies}`;
   }
 
   isSelected(fishingEvent) {
-    return this.props.selectedFishingEvent && fishingEvent.RAId === this.props.selectedFishingEvent.RAId;
+    return this.props.selectedFishingEvent && fishingEvent.id === this.props.selectedFishingEvent.id;
   }
 
   onPress(fishingEvent) {
-    this.props.dispatch(setViewingEventId(fishingEvent.RAId));
+    this.props.dispatch(setViewingEvent(fishingEvent));
     this.props.dispatch(setSelectedFishingDetail('detail'));
   }
 
@@ -77,7 +78,7 @@ const select = (state) => {
   }
   return {
     lastUpdated: state.trip.lastUpdated,
-    dataSource: ds.cloneWithRows([...state.fishingEvents].reverse()),
+    dataSource: ds.cloneWithRows([...state.fishingEvents.fishingEvents].reverse()),
     selectedFishingEvent: viewingEvent,
   }
 }
