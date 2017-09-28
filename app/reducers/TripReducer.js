@@ -1,14 +1,14 @@
 "use strict";
-import { updateWithTimeStamp } from './GeneralMethods';
-import Helper from '../utils/Helper';
-import { Trip } from '../models/TripModel';
+import { updateWithTimeStamp } from '../utils/Helper';
+import { TripHelper } from '../models/TripModel';
 
 
 const initialState = {
   lastUpdated: new Date(),
   selectedHistoryTrips: [],
   trips: [],
-  currentTrip: new Trip({}),
+  currentTrip: {},
+  tripHelper: new TripHelper({}),
   totals: {
     products: [],
     discards: [],
@@ -62,11 +62,13 @@ const TripReducer = (state = initialState, action) => {
     case 'setInitialTrips':
       return updateWithTimeStamp(state, { trips: payload.changes });
     case 'setCurrentTrip':
-      return updateWithTimeStamp(state, { currentTrip: new Trip(payload.changes) });
+      return updateWithTimeStamp(state,
+        { currentTrip: payload.changes, tripHelper: new TripHelper(payload.changes) });
     case 'update-trip':
-      console.log('updating Trip', payload.changes);
-      state.currentTrip.setValue(payload.changes);
-      return updateWithTimeStamp({}, state);
+      const tripHelper = state.tripHelper;
+      tripHelper.setValues(payload.changes);
+      return updateWithTimeStamp(state,
+        { currentTrip: payload.changes, tripHelper: (payload.changes) });
     //case 'endTrip':
     //case 'update-tripState':
     //case 'startTrip':
