@@ -4,10 +4,11 @@ import uuid from 'uuid/v1';
 import { connect } from 'react-redux';
 import { BigButton } from '../../common/Buttons';
 import { colors } from '../../../styles/styles';
-import { setViewingEventId, setSelectedFishingDetail } from '../../../actions/ViewActions';
+import { setSelectedFishingDetail } from '../../../actions/ViewActions';
+import { setViewingEvent } from '../../../actions/FishingEventActions';
 
 import {
-  startFishingEvent,
+  createFishingEvent,
 } from '../../../actions/FishingEventActions';
 
 
@@ -19,31 +20,27 @@ class ShootButton extends Component {
   }
 
   onPress() {
-    if(this.props.trip.canStartEvent){
-      const { trip } = this.props;
-      const RAId = uuid();
-      this.props.dispatch(startFishingEvent(trip.RAId, RAId, this.props.location));
-      this.props.dispatch(setViewingEventId(RAId));
-      this.props.dispatch(setSelectedFishingDetail('detail'));
+    if(this.props.enabled){
+      const { trip, lastEvent, location } = this.props;
+      const newEvent = createFishingEvent(trip._id, lastEvent, location);
+      this.props.db.create(newEvent);
+      //this.props.dispatch(setSelectedFishingDetail('detail'));
     }
   }
 
   render() {
-    const canStart = this.props.trip.canStartEvent;
-    let backgroundColor = colors.green;
-    let textColor = colors.white;
-    if (!canStart) {
-      backgroundColor = colors.backgrounds.dark;
-      textColor = colors.backgrounds.light;
-    }
-
+    
+    const { green, white, backgrounds } = colors;
+    const backgroundColor = this.props.enabled ? green : backgrounds.dark;
+    const textColor = this.props.enabled ? white : backgrounds.light;
+    
     return (
       <BigButton
         text={ 'Start' }
         backgroundColor={ backgroundColor }
         textColor={ textColor }
         onPress={ this.onPress }
-        disabled={ !this.props.trip.started }
+        disabled={ !this.props.enabled }
       />
     );
   }
@@ -51,11 +48,17 @@ class ShootButton extends Component {
 }
 
 const select = (state) => {
-
+  const fevents = state.fishingEvents.fishingEvents;
+  const last = fevents[fevents.length - 1];
+  const enabled = !(last && !last.endTime);
   const props = {
+    numberOf: fevents.length,
     trip: state.trip.currentTrip,
     fishingEvent: state.fishingEvents.viewingEvent,
+    lastEvent: last,
     location: state.location,
+    enabled,
+    db: state.database.db,
   };
   return props;
 }
