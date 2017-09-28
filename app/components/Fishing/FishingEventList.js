@@ -61,7 +61,7 @@ class FishingEventList extends MasterListView {
   }
 
   isSelected(fishingEvent) {
-    return this.props.selectedFishingEvent && fishingEvent.id === this.props.selectedFishingEvent.id;
+    return this.props.viewingEvent._id === fishingEvent._id; 
   }
 
   onPress(fishingEvent) {
@@ -72,14 +72,10 @@ class FishingEventList extends MasterListView {
 }
 
 const select = (state) => {
-  let viewingEvent = null;
-  if(state.view.viewingEventId){
-    viewingEvent = state.fishingEvents.viewingEvent;
-  }
   return {
     lastUpdated: state.trip.lastUpdated,
     dataSource: ds.cloneWithRows([...state.fishingEvents.fishingEvents].reverse()),
-    selectedFishingEvent: viewingEvent,
+    viewingEvent: state.fishingEvents.viewingEvent || {},
   }
 }
 
