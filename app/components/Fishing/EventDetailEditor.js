@@ -13,7 +13,9 @@ import { updateFishingEvent, toggleOptionalFields } from '../../actions/FishingE
 import PlaceholderMessage from '../common/PlaceholderMessage';
 import Validator from '../../utils/Validator';
 import { colors } from '../../styles/styles';
-import { getRenderableTCERDetailModel } from '../../utils/ModelUtils';
+import FishingEventModel from '../../models/FishingEventModel';
+//import { getRenderableTCERDetailModel } from '../../utils/ModelUtils';
+
 
 /* eslint-disable */
 import speciesCodesDesc from '../../constants/species/speciesDesc';
@@ -46,19 +48,29 @@ class EventDetailEditor extends Component{
   onChangeText(name, value, type) {
     const changes = { [name]: value };
     const { fishingEvent } = this.props;
-
-    if(!this.props.showOptionalFields && name === 'bottomDepth') {
+    
+    /*if(!this.props.showOptionalFields && name === 'bottomDepth') {
       if(this.shouldCombineDepths(value, fishingEvent.groundropeDepth)) {
         changes.groundropeDepth = value;
       }
+    }*/
+  
+    if(FishingEventModel.find((field) => field.id === name)){
+      this.props.db.update(changes, fishingEvent._id);
+    } else {
+      const eventDetails = JSON.parse(fishingEvent.eventSpecificDetails);
+      eventDetails[name] = value;
+      const specificChanges = { eventSpecificDetails: JSON.stringify(eventDetails) };
+      this.props.db.update(specificChanges, fishingEvent._id);
     }
-    this.props.dispatch(
-      updateFishingEvent(fishingEvent, changes));
+    
+    
+  
   }
 
   getEditorProps(attribute){
     const extraProps = {};
-    const inputId = `${attribute.id}_${this.props.fishingEvent.RAId}`;
+    const inputId = `${attribute.id}_${this.props.fishingEvent._id}`;
     if(attribute.id === 'targetSpecies') {
       extraProps.choices = this.props.species;
       extraProps.autoCapitalize = 'characters';
@@ -72,7 +84,7 @@ class EventDetailEditor extends Component{
       attribute,
       extraProps,
       inputId,
-      fishingEvent: this.props.fishingEvent,
+      fishingEvent: this.props.viewingEventHelper,
     };
   }
 
@@ -102,7 +114,7 @@ class EventDetailEditor extends Component{
   }
 
   render() {
-    const { fishingEvent, trip, showOptionalFields } = this.props;
+    const { fishingEvent, trip, showOptionalFields, viewingEventHelper } = this.props;
 
     if(!fishingEvent) {
       return this.renderMessage("No shots to edit");
@@ -112,7 +124,10 @@ class EventDetailEditor extends Component{
       return this.renderMessage("Start Trip First");
     }
 
-    const fieldsToRender = getRenderableTCERDetailModel(fishingEvent, showOptionalFields);
+    //const fieldsToRender = getRenderableTCERDetailModel(fishingEvent, showOptionalFields);
+    
+    
+    
     const showMore = this.renderToggleShowMore(!!fishingEvent);
 
     const spacer = { height: 50 };
@@ -126,9 +141,9 @@ class EventDetailEditor extends Component{
         <View style={spacer} />
         <ModelEditor
           getEditorProps={ this.getEditorProps }
-          model={ fieldsToRender }
-          index={fishingEvent.numberInTrip }
-          modelValues={ fishingEvent }
+          model={ viewingEventHelper.fieldsToRender() }
+          index={ fishingEvent.numberInTrip }
+          modelValues={ viewingEventHelper }
           onChange={ this.onChange }
         />
         { showMore }
@@ -139,11 +154,13 @@ class EventDetailEditor extends Component{
 const select = (state) => {
   const props = {
     fishingEvent: state.fishingEvents.viewingEvent,
+    viewingEventHelper: state.fishingEvents.viewingEventHelper,
     trip: state.trip.currentTrip,
     viewLastUpdated: state.view.lastUpdated,
     fishingEventUpdated: state.fishingEvents.lastUpdated,
     showOptionalFields: state.fishingEvents.showOptionalFields,
     species: state.species.all,//speciesDB.findAll('species').map(s => ({ value: s.code, description: s.fullName })),
+    db: state.database.db,
   };
   return props;
 }
