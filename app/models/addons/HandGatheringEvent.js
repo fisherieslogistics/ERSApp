@@ -71,7 +71,8 @@ export default class HandGatheringEventHelper {
     if((!datetimeAtEnd && stage1)) {
       return stage1;
     }
-    const datesSweet =  !!(datetimeAtStart < datetimeAtEnd);
+    const datesSweet = moment(datetimeAtStart).toDate() < moment(datetimeAtEnd).toDate();
+    debugger;
     return !!(stage1 && locationAtEnd && datesSweet);
   }
 
@@ -79,14 +80,14 @@ export default class HandGatheringEventHelper {
     const {
       detailsValid,
       datetimeAtEnd,
-      estimatedCatchValid,
     } = this;
-    return !!(detailsValid && datetimeAtEnd && estimatedCatchValid)
+    return !!(detailsValid && datetimeAtEnd)
   }
 
   get estimatedCatchKg() {
-    const catches = [...this.estimatedCatch];
-    return catches.map(
+    //const catches = [...this.estimatedCatch];
+    
+    return [].map(
       ec => ec.amount).reduce(
         (acc, amount) => acc + amount);
   }
