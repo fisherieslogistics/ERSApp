@@ -16,9 +16,7 @@ export function setCurrentTrip(trip) {
   return {
     type: 'setCurrentTrip',
     payload: {
-      changes: {
-        trip,
-      },
+      changes: trip,
     },
   }
 }

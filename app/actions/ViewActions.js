@@ -9,15 +9,6 @@ export function setSuggestSearchTerm(text) {
   }
 }
 
-export function setViewingEventId(fishingEventId) {
-  return {
-    type: 'setViewingEventId',
-    payload: {
-      fishingEventId,
-    },
-  }
-}
-
 
 export function setSuggestBarValue(value) {
   return {

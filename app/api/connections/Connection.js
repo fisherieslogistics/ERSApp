@@ -10,7 +10,7 @@ export default class Connection {
   }
 
   onLocationError(err) {
-    //console.log(err);
+    
     //this.locationHandler.setNullLocation();
   }
 
@@ -37,7 +37,7 @@ export default class Connection {
   }
 
   onError(error) {
-    //console.log(error);
+    
     this.stop();
     //this.start();
   }
