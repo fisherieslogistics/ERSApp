@@ -133,7 +133,7 @@ class EventEditor extends Component {
 
   renderDetailViewButtons() {
     const fEvent = this.props.fishingEvent;
-    const catchesEnabled = !!fEvent.endTime;
+    const catchesEnabled = !!fEvent.datetimeAtEnd;
     return [
       this.renderDetailViewButton((catchesEnabled && !fEvent.detailsValid), 'detail', true, 0),
       //this.renderDetailViewButton(!fEvent.estimatedCatchValid, 'catches', catchesEnabled, /*fEvent.estimatedCatch.length - 1*/0),
@@ -195,20 +195,20 @@ class EventEditor extends Component {
   }
 
   render(){
-    if(!this.props.fishingEvent) {
+    const { fishingEvent, selectedDetail } = this.props;
+    if(!fishingEvent) {
       return null;
     }
-    if(this.props.fishingEvent.completed || this.props.fishingEvent.committed) {
+    const { datetimeAtEnd, committed } = fishingEvent;
+    if(committed) {
       return this.renderMessage("Shot has been signed off and cannot be edited");
     }
-    const { endTime } = this.props.fishingEvent;
-    let detailAttribute = `${this.props.selectedDetail}`;
-    if(detailAttribute === 'catches') {
+    let detailAttribute = selectedDetail;
+    if(selectedDetail === 'catches') {
       detailAttribute = 'estimatedCatch';
     }
-    const catchesEnabled = !!endTime;
     const canAdd = this.props.selectedDetail !== 'detail';
-    const addButton = this.renderAddButton(detailAttribute, !!(catchesEnabled && canAdd));
+    const addButton = this.renderAddButton(detailAttribute, !!(datetimeAtEnd && canAdd));
     const detailView = this.renderDetailEditor();
     const viewButtons = this.renderDetailViewButtons();
     const wrapper = [styles.detailView, styles.col];
@@ -243,6 +243,7 @@ const select = (state) => {
   const props = {
     fishingEventsUpdated: state.fishingEvents.lastUpdated,
     fishingEvent: state.fishingEvents.viewingEvent,
+    viewingEventHelper: state.fishingEvents.viewingEventHelper,
     selectedDetail: state.view.selectedFishingDetail,
     lastUpdated: state.view.lastUpdated,
   };
