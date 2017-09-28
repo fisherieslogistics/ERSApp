@@ -27,10 +27,10 @@ class HaulButton extends Component {
 
   onPress() {
     const loc = locationToGeoJSONPoint(this.props.location)
-    const changes = {
-      endTime: new Date(),
-      datetimeAtEnd: loc,
-      NetLeaveDepthLocation: loc,
+    
+    const change = {
+      datetimeAtEnd: new Date(),
+      locationAtEnd: loc,
       averageSpeed: this.props.averageSpeed,
     };
 
@@ -40,13 +40,7 @@ class HaulButton extends Component {
       [
         {text: 'Cancel', onPress: () => null, style: 'cancel'},
         {text: 'Haul', onPress: () => {
-          this.props.dispatch(endFishingEvent(
-              //TODO this needs to change for longline - cos you need the viewing event not the 'last event';
-              this.props.fishingEvent, changes, this.props.location));
-
-          this.props.dispatch(setViewingEvent(this.props.fishingEvent));
-          this.props.dispatch(setSelectedFishingDetail('detail'));
-
+          this.props.db.update(change, this.props.fishingEvent._id);
         }}
 
       ]
@@ -57,8 +51,8 @@ class HaulButton extends Component {
     let backgroundColor = colors.red;
     let textColor = colors.white;
     let onPress = this.onPress;
-    const { fishingEventHelper } = this.props;
-    if ((fishingEventHelper && fishingEventHelper.canEnd)) {
+    const { viewingEventHelper } = this.props;
+    if ((viewingEventHelper && viewingEventHelper.canEnd)) {
       backgroundColor = colors.backgrounds.dark;
       textColor = colors.backgrounds.light;
       onPress = null;
@@ -93,10 +87,12 @@ const select = (state) => {
 
   const props = {
     trip: state.trip.currentTrip,
-    fishingEvent: state.fishingEvent.viewingEvent,
+    fishingEvent: state.fishingEvents.viewingEvent,
     location: state.location,
     averageSpeed: state.location.averagedSpeed.currentAvg,
-    fishingEventHelper: state.fishingEvents.fishingEventHelper,
+    viewingEventHelper: state.fishingEvents.viewingEventHelper,
+    db: state.database.db,
+    lastUpdated: state.fishingEvents.lastUpdated,
   };
   return props;
 }
