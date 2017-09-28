@@ -65,10 +65,10 @@ const TripReducer = (state = initialState, action) => {
       return updateWithTimeStamp(state,
         { currentTrip: payload.changes, tripHelper: new TripHelper(payload.changes) });
     case 'update-trip':
-      const tripHelper = state.tripHelper;
+      const tripHelper = state.tripHelper || new TripHelper(payload.changes);
       tripHelper.setValues(payload.changes);
       return updateWithTimeStamp(state,
-        { currentTrip: payload.changes, tripHelper: (payload.changes) });
+        { currentTrip: payload.changes, tripHelper });
     //case 'endTrip':
     //case 'update-tripState':
     //case 'startTrip':
