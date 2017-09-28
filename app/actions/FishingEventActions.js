@@ -1,16 +1,27 @@
 "use strict";
+import uuid from 'uuid/v1';
 import {
   calculateStatArea,
 } from '../reducers/GeneralMethods';
 import { blankModel } from '../utils/ModelUtils';
 import { locationToGeoJSONPoint } from '../utils/Helper';
 import FishingEventModel from '../models/FishingEventModel';
-
+import HandGatheringEventModel from '../models/HandGatheringEventModel';
+import HandGatheringEventHelper from '../models/addons/HandGatheringEvent';
 
 export function toggleOptionalFields() {
   return {
     type: 'toggleOptionalFields',
     payload: {}
+  }
+}
+
+export function setViewingEvent(fishingEvent) {
+  return {
+    type: 'setViewingEvent',
+    payload: {
+      changes: fishingEvent,
+    },
   }
 }
 
@@ -53,10 +64,13 @@ export function commitFishingEvent(fishingEvent) {
   }
 }
 
-export function startFishingEvent(tripId, RAId, location, trip, previousEvent) {
-  let newEvent = blankModel(FishingEventModel);
-  newEvent.tripRAId = `${trip.RAId}`;
-  newEvent.RAId = RAId;
+export function createFishingEvent(trip_id, previousEvent, location) {
+  const newEvent = blankModel(FishingEventModel);
+  const newEventSpecifics = blankModel(HandGatheringEventModel);
+
+  newEvent.eventSpecificDetails = JSON.stringify(newEventSpecifics);
+  newEvent.id = uuid();
+  newEvent.trip_id = trip_id;
   newEvent.startTime = new Date();
   newEvent.numberInTrip = previousEvent ? (previousEvent.numberInTrip) + 1 : 1;
   newEvent.locationAtStart = locationToGeoJSONPoint(location);
@@ -68,20 +82,11 @@ export function startFishingEvent(tripId, RAId, location, trip, previousEvent) {
     if(field.copyFrom) {
       const copiedValue = newEvent[field.copyFrom];
       const change = { [field.id]: copiedValue };
-      newEvent = Object.assign({}, newEvent, change);
+      Object.assign(newEvent, change);
     }
   });
-
-
-  return {
-      type: 'startFishingEvent',
-
-      payload: {
-        newEvent,
-        tripId: trip.RAId,
-      },
-    };
-
+  
+  return newEvent;
 }
 
 export function endFishingEvent(fishingEvent, changes, location) {
