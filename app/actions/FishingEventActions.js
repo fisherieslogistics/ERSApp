@@ -32,7 +32,7 @@ export function setSelectedCatchesDetail(name) {
   }
 }
 
-export function updateFishingEvent(fishingEvent, changes) {
+export function updateFishingEvent(fishingEvent) {
   /*if(changes.locationAtStart) {
     changes.statarea = calculateStatArea(changes.locationAtStart);
   }
@@ -74,7 +74,7 @@ export function createFishingEvent(trip_id, previousEvent, location) {
   newEvent.datetimeAtStart = new Date();
   newEvent.numberInTrip = previousEvent ? (previousEvent.numberInTrip) + 1 : 1;
   newEvent.locationAtStart = locationToGeoJSONPoint(location);
-
+  debugger;
   FishingEventModel.forEach(field => {
     if(previousEvent && field.repeating) {
       newEvent[field.id] = previousEvent[field.id];
@@ -90,9 +90,8 @@ export function createFishingEvent(trip_id, previousEvent, location) {
 }
 
 export function endFishingEvent(fishingEvent, changes, location) {
-  return (dispatch) => {
+  /*eturn (dispatch) => {
     changes.locationAtEnd = locationToGeoJSONPoint(location);
-
     dispatch({
       type: 'endFishingEvent',
 
@@ -112,7 +111,7 @@ export function endFishingEvent(fishingEvent, changes, location) {
     const previousEvent = fishingEvents.find(
       fe => fe.numberInTrip === (fishingEvent.numberInTrip - 1));
     dispatch(repeatEventCatches(fishingEvent, previousEvent.replicatedEstimatedCatch));*/
-  };
+  
 }
 
 export function deleteFishingEvent(fishingEvent) {
