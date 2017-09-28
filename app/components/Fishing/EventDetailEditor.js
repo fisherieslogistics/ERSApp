@@ -127,7 +127,7 @@ class EventDetailEditor extends Component{
         <ModelEditor
           getEditorProps={ this.getEditorProps }
           model={ fieldsToRender }
-          index={fishingEvent.numberOfInTrip }
+          index={fishingEvent.numberInTrip }
           modelValues={ fishingEvent }
           onChange={ this.onChange }
         />

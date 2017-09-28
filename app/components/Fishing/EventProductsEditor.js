@@ -46,7 +46,7 @@ export default class EventProductsEditor extends CatchesEditor {
           getEditorProps={ getEditorProps }
           model={ OtherSpeciesWeightModel }
           modelValues={ this.props.fishingEvent }
-          index={ this.props.fishingEvent.numberOfInTrip }
+          index={ this.props.fishingEvent.numberInTrip }
           onChange={ onChange }
         />
       </View>
