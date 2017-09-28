@@ -1,8 +1,7 @@
 import Sexagesimal from 'sexagesimal';
 import moment from 'moment';
 
-
-const locationToWKTPoint = (location) => {
+export function locationToWKTPoint(location) {
   const { lon, lat } = location;
   return 'POINT ({o} {a})'.replace('{o}', lon).replace('{a}', lat);
 }
@@ -11,9 +10,11 @@ export function update(obj, change) {
   return Object.assign({}, obj, change);
 }
 
-export default {
+export function updateWithTimeStamp(obj, change){
+  return update(obj, change, { lastUpdated: moment().milliseconds() });
+}
 
-  getDegreesMinutesFromLocation: (location) => {
+export function getDegreesMinutesFromLocation(location) {
     const lat = Sexagesimal.format(location.lat, 'lat').split(" ");
     const lon = Sexagesimal.format(location.lon, 'lon').split(" ");
     let ew = "East";
@@ -34,97 +35,97 @@ export default {
       ew,
       ns
     };
-  },
+  };
 
-  NMEATimeToMoment: (time) => {
-    const datetime = moment();
-    datetime.minutes(parseInt(time.slice(2, 4)));
-    datetime.seconds(parseInt(time.slice(4, 6)));
-    datetime.hours(parseInt(time.slice(0, 2)));
-    return datetime;
-  },
+export function NMEATimeToMoment(time) {
+  const datetime = moment();
+  datetime.minutes(parseInt(time.slice(2, 4)));
+  datetime.seconds(parseInt(time.slice(4, 6)));
+  datetime.hours(parseInt(time.slice(0, 2)));
+  return datetime;
+};
 
-  parseLocation: (degMin, lonHemisphere, latHemisphere) => {
-    const lat = parseInt(degMin.latDegrees) + (parseFloat(parseInt(degMin.latMinutes) / 60)) + (parseFloat(degMin.latSeconds) / 3600);
-    const lon = parseInt(degMin.lonDegrees) + (parseFloat(parseInt(degMin.lonMinutes) / 60)) + (parseFloat(degMin.lonSeconds) / 3600);
-    return {
-      lon: lonHemisphere === 'East' ? lon : (lon * -1),
-      lat: latHemisphere === 'North' ? lat : (lat * -1)
-    };
-  },
+function toDecimal(degrees, mins, seconds, hemisphere) {
+  const dec = parseInt(degrees) + (parseFloat(parseInt(mins) / 60)) + (parseFloat(seconds) / 3600);
+  return ['East', 'North'].find(hemisphere) ? dec : (dec *-1);
+}
 
-  locationToGeoJSONPoint: (location) => {
-    const { lon, lat, time, timestamp, sentence, speed, fix, satellites } = location;
-    if(!(location && Math.abs(lat) && Math.abs(lon))) {
-      return null;
+export function parseLocation(degMin, lonHemisphere, latHemisphere) {
+  return {
+    lon: toDecimal(lonDegrees, lonMinutes, lonSeconds, lonHemisphere),
+    lat: toDecimal(latDegrees, latMinutes, latSeconds, latHemisphere),
+  };
+};
+
+export function locationToGeoJSONPoint(location) {
+  const { lon, lat, time, timestamp, sentence, speed, fix, satellites } = location;
+  if(!(location && Math.abs(lat) && Math.abs(lon))) {
+    return null;
+  }
+  const properties = { time, timestamp, sentence, speed, fix, satellites };
+  const coordinates = [lon, lat];
+  const geometry= {
+    type: "Point",
+    coordinates,
+    properties,
+  };
+  return JSON.stringify(geometry);
+};
+
+export function geoJSONPointToWKTPoint(geoJSONPoint) {
+  const point = JSON.parse(geoJSONPoint);
+  const lat = point.coordinates[1];
+  const lon = point.coordinates[0];
+  return locationToWKTPoint({ lat, lon });
+};
+
+export function getTotals(estimatedCatch) {
+  const totals = {};
+  [...estimatedCatch].filter(p => p.code && p.amount).forEach((p) => {
+    if(p.amount){
+      totals[p.code] = ((totals[p.code] || 0) + parseInt(p.amount));
     }
-    const properties = { time, timestamp, sentence, speed, fix, satellites };
-    const coordinates = [lon, lat];
-    const geometry= {
-      type: "Point",
-      coordinates,
-      properties,
-    };
-    return JSON.stringify(geometry);
-  },
+  });
+  return Object.keys(totals).map((k) => ({code: k, amount: parseInt(totals[k])}));
+};
 
-  locationToWKTPoint,
+export function tripCanStart(trip) {
+  if(trip.started) {
+    return false;
+  }
+  return [
+    'leavingPort',
+    'startTime',
+    'endTime',
+    'unloadPort',
+    'headlineHeight',
+    'wingSpread'
+  ].every(key => !!trip[key]);
+};
 
-  geoJSONPointToWKTPoint: (geoJSONPoint) => {
-    const point = JSON.parse(geoJSONPoint);
-    const lat = point.coordinates[1];
-    const lon = point.coordinates[0];
-    return locationToWKTPoint({ lat, lon });
-  },
+export function createHistoryTrip(trip, fishingEvents){
+  const {
+    startTime,
+    endTime,
+    leavingPort,
+    unloadPort,
+    id,
+  } = trip;
 
-  getTotals: (estimatedCatch) => {
-    const totals = {};
-    [...estimatedCatch].filter(p => p.code && p.amount).forEach((p) => {
-      if(p.amount){
-        totals[p.code] = ((totals[p.code] || 0) + parseInt(p.amount));
-      }
-    });
-    return Object.keys(totals).map((k) => ({code: k, amount: parseInt(totals[k])}));
-  },
-  tripCanStart: (trip) => {
-    if(trip.started) {
-      return false;
-    }
-    return [
-      'leavingPort',
-      'startTime',
-      'endTime',
-      'unloadPort',
-      'headlineHeight',
-      'wingSpread'
-    ].every(key => !!trip[key]);
-  },
-
-  createHistoryTrip(trip, fishingEvents){
-    const {
-      startTime,
-      endTime,
-      leavingPort,
-      unloadPort,
-      id,
-    } = trip;
-
-    const newEvents = fishingEvents.map(fe => {
-      const { discards, estimatedCatch } = fe;
-      return {
-        discards: discards.map(d => ({ code: d.code, amount: d.amount })),
-        estimatedCatch: estimatedCatch.map(d => ({ code: d.code, amount: d.amount })),
-      }
-    });
-
+  const newEvents = fishingEvents.map(fe => {
+    const { discards, estimatedCatch } = fe;
     return {
-      startTime,
-      leavingPort,
-      unloadPort,
-      endTime,
-      fishingEvents: newEvents,
-      id,
-    };
-  },
+      discards: discards.map(d => ({ code: d.code, amount: d.amount })),
+      estimatedCatch: estimatedCatch.map(d => ({ code: d.code, amount: d.amount })),
+    }
+  });
 
+  return {
+    startTime,
+    leavingPort,
+    unloadPort,
+    endTime,
+    fishingEvents: newEvents,
+    id,
+  };
 }
