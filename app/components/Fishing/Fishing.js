@@ -113,10 +113,13 @@ class Fishing extends MasterDetail {
   }
 
   renderMasterToolbar(){
-    const canEndEvent = this.props.viewingEvent && this.props.viewingEvent.canEnd;
+    const { viewingEvent, viewingEventHelper, fishingEventsUpdated } = this.props;
+    const canEndEvent = viewingEvent && viewingEventHelper.canEnd;
+
     const button = (
       <TopMasterButton
         canEndEvent={ canEndEvent }
+        lastUpdated={ fishingEventsUpdated }
       />
     );
     return(
@@ -145,6 +148,7 @@ const select = (state) => {
     fishingEvents: state.fishingEvents.fishingEvents,
     signalStrength: state.connection.signalStrength,
     viewingEvent: state.fishingEvents.viewingEvent,
+    viewingEventHelper: state.fishingEvents.viewingEventHelper,
   };
   return props;
 }
