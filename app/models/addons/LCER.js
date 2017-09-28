@@ -24,7 +24,7 @@ export
   }
 
   get detailsValid() {
-    const stage1 = (this.targetSpecies && this.numberOfHooks && this.locationStart && this.startTime);
+    const stage1 = (this.targetSpecies && this.numberOfHooks && this.locationAtStart && this.startTime);
     if((!this.endTime && stage1)) {
       return stage1;
     }
