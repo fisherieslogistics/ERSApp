@@ -9,7 +9,8 @@ import {
 import { locationToGeoJSONPoint }from '../../../utils/Helper';
 import { connect } from 'react-redux';
 import { colors } from '../../../styles/styles';
-import { setViewingEventId, setSelectedFishingDetail } from '../../../actions/ViewActions';
+import { setSelectedFishingDetail } from '../../../actions/ViewActions';
+import { setViewingEvent } from '../../../actions/FishingEventActions';
 import { styles } from '../../common/Buttons/Button';
 
 import {
@@ -28,7 +29,7 @@ class HaulButton extends Component {
     const loc = locationToGeoJSONPoint(this.props.location)
     const changes = {
       endTime: new Date(),
-      locationEnd: loc,
+      datetimeAtEnd: loc,
       NetLeaveDepthLocation: loc,
       averageSpeed: this.props.averageSpeed,
     };
@@ -43,7 +44,7 @@ class HaulButton extends Component {
               //TODO this needs to change for longline - cos you need the viewing event not the 'last event';
               this.props.fishingEvent, changes, this.props.location));
 
-          this.props.dispatch(setViewingEventId(this.props.fishingEvent.RAId));
+          this.props.dispatch(setViewingEvent(this.props.fishingEvent));
           this.props.dispatch(setSelectedFishingDetail('detail'));
 
         }}
@@ -56,8 +57,8 @@ class HaulButton extends Component {
     let backgroundColor = colors.red;
     let textColor = colors.white;
     let onPress = this.onPress;
-    const { trip, fishingEvent } = this.props;
-    if (!(trip.canEndEvent && fishingEvent && fishingEvent.canEnd)) {
+    const { fishingEventHelper } = this.props;
+    if ((fishingEventHelper && fishingEventHelper.canEnd)) {
       backgroundColor = colors.backgrounds.dark;
       textColor = colors.backgrounds.light;
       onPress = null;
@@ -95,6 +96,7 @@ const select = (state) => {
     fishingEvent: state.fishingEvent.viewingEvent,
     location: state.location,
     averageSpeed: state.location.averagedSpeed.currentAvg,
+    fishingEventHelper: state.fishingEvents.fishingEventHelper,
   };
   return props;
 }

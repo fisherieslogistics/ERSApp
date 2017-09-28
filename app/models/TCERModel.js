@@ -67,7 +67,7 @@ const TCERModel = [
     valid: valid.locationValid,
     type: 'location',
     default: null,
-    copyFrom: 'locationEnd',
+    copyFrom: 'datetimeAtEnd',
     displayStage: 'Haul',
     display: { type: 'single' },
     optionalRender: true,

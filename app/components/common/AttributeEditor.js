@@ -180,8 +180,8 @@ class AttributeEditor extends Component {
       case "location":
         let loc;
         const locFields = [
-          'locationStart',
           'locationEnd',
+          'locationAtStart',
           'NetAtDepthLocation',
           'NetLeaveDepthLocation',
         ];
