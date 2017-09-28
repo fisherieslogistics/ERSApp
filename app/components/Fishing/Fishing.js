@@ -38,13 +38,28 @@ class Fishing extends MasterDetail {
         {text: 'Cancel', onPress: () => null, style: 'Cancel'},
         {text: 'Delete', onPress: (text) => {
           if(text && text.toLowerCase() === 'delete') {
-            const numberInTrip = this.props.viewingEvent.numberInTrip;
-            //const otherEvents = fishingEventDB.findWhere(` numberInTrip > ${numberInTrip}`);
-            this.props.dispatch(deleteFishingEvent(this.props.viewingEvent));
-            this.props.dispatch(setViewingEvent(null));
-            otherEvents.forEach(
-              f => this.props.dispatch(
-                  updateFishingEvent(f, { numberInTrip: f.numberInTrip - 1 })));
+            
+            const { viewingEvent, fishingEvents } = this.props;
+            this.props.db.update({ archived: true }, viewingEvent._id);
+            const index = fishingEvents.findIndex(f => f._id === viewingEvent._id);
+            const otherEvents = [...fishingEvents];
+            otherEvents.splice(index, 1);
+            
+            const fixedEvents = otherEvents.map(fe => {
+              if(fe.numberInTrip < viewingEvent.numberInTrip) {
+                return fe;
+              }
+              return Object.assign({}, fe, { numberInTrip: fe.numberInTrip - 1});
+            });
+            
+            this.props.dispatch({
+              type: 'setFishingEvents',
+              payload: { changes: fixedEvents },
+            });
+            this.props.dispatch({
+              type: 'setViewingEvent',
+              payload: { changes: null },
+            });
           }
         }},
       ]
@@ -149,6 +164,7 @@ const select = (state) => {
     signalStrength: state.connection.signalStrength,
     viewingEvent: state.fishingEvents.viewingEvent,
     viewingEventHelper: state.fishingEvents.viewingEventHelper,
+    db: state.database.db,
   };
   return props;
 }
