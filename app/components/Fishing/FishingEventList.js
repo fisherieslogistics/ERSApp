@@ -24,11 +24,11 @@ class FishingEventList extends MasterListView {
   eventStatus(fe){
     let backgroundColor = colors.green;
     let name = 'ok';
-    if(!fe.endTime){
+    if(!fe.datetimeAtEnd){
       name = 'fishing';
       backgroundColor = colors.blue;
     }
-    if(fe.endTime /*&& !(fe.detailsValid && fe.estimatedCatchValid && fe.discardsValid && fe.protectedsValid)*/) {
+    if(fe.datetimeAtEnd /*&& !(fe.detailsValid && fe.estimatedCatchValid && fe.discardsValid && fe.protectedsValid)*/) {
       name = 'error';
       backgroundColor= colors.orange;
     }
@@ -57,7 +57,7 @@ class FishingEventList extends MasterListView {
 
   getDescription(fishingEvent) {
     const { targetSpecies, numberInTrip } = fishingEvent;
-    return `${numberInTrip}  ${moment(fishingEvent.startTime).format("HH:mm")} ${targetSpecies}`;
+    return `${numberInTrip}  ${moment(fishingEvent.datetimeAtStart).format("HH:mm")} ${targetSpecies}`;
   }
 
   isSelected(fishingEvent) {
