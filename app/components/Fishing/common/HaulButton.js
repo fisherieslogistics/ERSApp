@@ -13,10 +13,6 @@ import { setSelectedFishingDetail } from '../../../actions/ViewActions';
 import { setViewingEvent } from '../../../actions/FishingEventActions';
 import { styles } from '../../common/Buttons/Button';
 
-import {
-  endFishingEvent
-} from '../../../actions/FishingEventActions';
-
 
 class HaulButton extends Component {
 
@@ -33,14 +29,13 @@ class HaulButton extends Component {
       locationAtEnd: loc,
       averageSpeed: this.props.averageSpeed,
     };
-
     AlertIOS.alert(
       "Hauling",
       'Hauling Gear Now?',
       [
         {text: 'Cancel', onPress: () => null, style: 'cancel'},
         {text: 'Haul', onPress: () => {
-          this.props.db.update(change, this.props.fishingEvent._id);
+          this.props.db.update(change, this.props.viewingEvent._id);
         }}
 
       ]
@@ -51,8 +46,9 @@ class HaulButton extends Component {
     let backgroundColor = colors.red;
     let textColor = colors.white;
     let onPress = this.onPress;
-    const { viewingEventHelper } = this.props;
-    if ((viewingEventHelper && viewingEventHelper.canEnd)) {
+    const { viewingEventHelper, viewingEvent } = this.props;
+    
+    if (!(viewingEvent && viewingEventHelper.canEnd)) {
       backgroundColor = colors.backgrounds.dark;
       textColor = colors.backgrounds.light;
       onPress = null;
@@ -80,14 +76,9 @@ class HaulButton extends Component {
 
 const select = (state) => {
 
-  let fishingEvent = null;
-  if(state.view.viewingEventId){
-  //  fishingEvent = getRecord('fishingEvent', state.view.viewingEventId);
-  }
-
   const props = {
     trip: state.trip.currentTrip,
-    fishingEvent: state.fishingEvents.viewingEvent,
+    viewingEvent: state.fishingEvents.viewingEvent,
     location: state.location,
     averageSpeed: state.location.averagedSpeed.currentAvg,
     viewingEventHelper: state.fishingEvents.viewingEventHelper,
