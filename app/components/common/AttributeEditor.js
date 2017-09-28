@@ -185,11 +185,11 @@ class AttributeEditor extends Component {
           'NetAtDepthLocation',
           'NetLeaveDepthLocation',
         ];
-        //console.log("is it this one", attribute.id, fishingEvent[attribute.id]);
+        
         if(locFields.includes(attribute.id)) {
-          //console.log("set the beast", attribute.id);
+          
           loc = JSONPointToLocation(fishingEvent[attribute.id]);
-          //console.log("set the beast2", loc);
+          
         }
         return (
           <LocationEditor

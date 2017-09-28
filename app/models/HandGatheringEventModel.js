@@ -1,9 +1,9 @@
+
 const HandGatheringEventModel = [
   {
     id: 'fishingMethod',
     default: 'H',
     repeating: true,
-
   },
   {
     id: 'numberOfPeople',
@@ -12,7 +12,6 @@ const HandGatheringEventModel = [
     display: { type: 'single' },
     default: 1,
     repeating: true,
-
   },
 ];
 
