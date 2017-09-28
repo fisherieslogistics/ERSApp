@@ -50,7 +50,7 @@ class ShootButton extends Component {
 const select = (state) => {
   const fevents = state.fishingEvents.fishingEvents;
   const last = fevents[fevents.length - 1];
-  const enabled = !(last && !last.endTime);
+  const enabled = !(last && !last.datetimeAtEnd);
   const props = {
     numberOf: fevents.length,
     trip: state.trip.currentTrip,
