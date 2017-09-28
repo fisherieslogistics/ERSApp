@@ -6,7 +6,7 @@ import {
   View,
   Text,
 } from 'react-native';
-import Helper from '../../../utils/Helper';
+import { locationToGeoJSONPoint }from '../../../utils/Helper';
 import { connect } from 'react-redux';
 import { colors } from '../../../styles/styles';
 import { setViewingEventId, setSelectedFishingDetail } from '../../../actions/ViewActions';
@@ -25,7 +25,7 @@ class HaulButton extends Component {
   }
 
   onPress() {
-    const loc = Helper.locationToGeoJSONPoint(this.props.location)
+    const loc = locationToGeoJSONPoint(this.props.location)
     const changes = {
       endTime: new Date(),
       locationEnd: loc,

@@ -3,7 +3,7 @@ import {
   calculateStatArea,
 } from '../reducers/GeneralMethods';
 import { blankModel } from '../utils/ModelUtils';
-import Helper from '../utils/Helper';
+import { locationToGeoJSONPoint } from '../utils/Helper';
 import FishingEventModel from '../models/FishingEventModel';
 
 
@@ -22,7 +22,6 @@ export function setSelectedCatchesDetail(name) {
 }
 
 export function updateFishingEvent(fishingEvent, changes) {
-  if(changes.locationStart) {
     changes.statarea = calculateStatArea(changes.locationStart);
   }
   return (dispatch) => {
@@ -59,7 +58,7 @@ export function startFishingEvent(tripId, RAId, location, trip, previousEvent) {
   newEvent.RAId = RAId;
   newEvent.startTime = new Date();
   newEvent.numberOfInTrip = trip.fishingEvents.length + 1;
-  newEvent.locationStart = Helper.locationToGeoJSONPoint(location);
+  newEvent.locationAtStart = locationToGeoJSONPoint(location);
 
   FishingEventModel.forEach(field => {
     if(previousEvent && field.repeating) {

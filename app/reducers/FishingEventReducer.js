@@ -1,6 +1,7 @@
 import {
+  updateWithTimeStamp,
   update,
-} from './GeneralMethods';
+} from '../utils/Helper';
 
 const initialState = {
   lastUpdated: new Date(),

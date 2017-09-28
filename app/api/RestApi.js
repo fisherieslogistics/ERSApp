@@ -1,6 +1,5 @@
 import request from 'superagent';
 import AsyncStorage from 'AsyncStorage';
-import Helper from '../utils/Helper';
 import SERVER_URL from '../constants/ServerURL';
 
 const USER_NAME = 'testskipper';

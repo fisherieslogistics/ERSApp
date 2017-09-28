@@ -1,4 +1,4 @@
-import Helper from '../utils/Helper';
+import { NMEATimeToMoment } from '../utils/Helper';
 
 const initialState = {
   lat: null,
@@ -25,7 +25,7 @@ export default (state = initialState, action) => {
       if(!payload.date) {
         return update(state, payload);
       }
-      const time = Helper.NMEATimeToMoment(payload.time).toDate();
+      const time = NMEATimeToMoment(payload.time).toDate();
       return update(state, update(payload, { time }));
     case 'GPSpeedUpdate':
       const { averagedSpeed } = state;

@@ -10,7 +10,11 @@ import { connect } from 'react-redux';
 import {inputStyles, colors} from '../../styles/styles';
 import FLRadioButton from '../common/FLRadioButton';
 import { RadioButtons } from 'react-native-radio-buttons';
-import Helper from '../../utils/Helper';
+import { 
+  getDegreesMinutesFromLocation,
+  parseLocation,
+  locationToGeoJSONPoint,
+} from '../../utils/Helper';
 import InputView from './InputView';
 import { updateFishingEvent } from '../../actions/FishingEventActions';
 
@@ -90,11 +94,11 @@ class CoordinateEditor extends Component {
       return;
     }
     const newLocation = Object.assign({}, this.props.location);
-    const degMin = Helper.getDegreesMinutesFromLocation(newLocation);
+    const degMin = getDegreesMinutesFromLocation(newLocation);
     degMin[key] = value;
-    const parsedLocation = Helper.parseLocation(degMin, degMin.ew, degMin.ns);
+    const parsedLocation = parseLocation(degMin, degMin.ew, degMin.ns);
     const changes = {}
-    changes[this.props.attribute.id] = Helper.locationToGeoJSONPoint(parsedLocation);
+    changes[this.props.attribute.id] = locationToGeoJSONPoint(parsedLocation);
     this.props.dispatch(updateFishingEvent(this.props.fishingEvent, changes));
   }
 
@@ -118,18 +122,18 @@ class CoordinateEditor extends Component {
   }
 
   onHemisphereChange(val){
-    const degMin = Helper.getDegreesMinutesFromLocation(this.props.location);
+    const degMin = getDegreesMinutesFromLocation(this.props.location);
     let loc;
     switch (this.props.coordType) {
       case 'lat':
-        loc = Helper.parseLocation(degMin, degMin.ew, val);
+        loc = parseLocation(degMin, degMin.ew, val);
         break;
       case 'lon':
-        loc = Helper.parseLocation(degMin, val, degMin.ns);
+        loc = parseLocation(degMin, val, degMin.ns);
         break;
     }
     const changes = {};
-    changes[this.props.attribute.id] = Helper.locationToGeoJSONPoint(loc);
+    changes[this.props.attribute.id] = locationToGeoJSONPoint(loc);
     this.props.dispatch(updateFishingEvent(this.props.fishingEvent, changes));
   }
 
@@ -147,7 +151,7 @@ class CoordinateEditor extends Component {
 
   render() {
     const _props = this.editorProps(this.props.coordType, this.props.location);
-    const degMin = Helper.getDegreesMinutesFromLocation(this.props.location);
+    const degMin = getDegreesMinutesFromLocation(this.props.location);
     const hemisphere = this.props.coordType === 'lat' ? degMin.ns : degMin.ew;
     return (
       <View

@@ -15,10 +15,6 @@ function update(obj, change, stamps={}) {
   return Object.assign({}, obj, change, stamps);
 }
 
-function updateWithTimeStamp(obj, change){
-  return update(obj, change, { lastUpdated: moment().milliseconds() });
-}
-
 function getQMA(code, location) {
   /*const area = QMAlocations.filter(
     x => x.properties.SpeciesCod === code).find(
@@ -44,5 +40,4 @@ export {
   update,
   calculateStatArea,
   getQMA,
-  updateWithTimeStamp,
 };

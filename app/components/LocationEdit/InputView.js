@@ -7,7 +7,9 @@ import {
 
 import React, { Component } from 'react';
 import { inputStyles, colors } from '../../styles/styles';
-import Helper from '../../utils/Helper';
+import {
+  getDegreesMinutesFromLocation,
+} from '../../utils/Helper';
 import FocusOnDemandTextInput from '../common/FocusOnDemandTextInput';
 
 const styles = StyleSheet.create({
@@ -34,7 +36,7 @@ export default class InputView extends Component {
 
   constructor(props){
     super(props);
-    const degMin = Helper.getDegreesMinutesFromLocation(this.props.location);
+    const degMin = getDegreesMinutesFromLocation(this.props.location);
     this.state = {
       text: degMin[this.props.name].toString(),
     }
@@ -43,7 +45,7 @@ export default class InputView extends Component {
   }
 
   componentWillReceiveProps(props){
-    const degMin = Helper.getDegreesMinutesFromLocation(props.location);
+    const degMin = getDegreesMinutesFromLocation(props.location);
     const val = degMin[props.name];
     const renderedVal = isNaN(parseInt(val)) ? "" : val.toString();
     this.setState({

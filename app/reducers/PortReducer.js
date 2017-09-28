@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { updateWithTimeStamp } from './GeneralMethods';
+import { updateWithTimeStamp } from '../utils/Helper';
 
 const initialState = {
   all: [],
