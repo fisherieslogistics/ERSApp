@@ -29,7 +29,7 @@ export
       targetSpecies,
       wingSpread,
       headlineHeight,
-      locationStart,
+      locationAtStart,
       startTime,
       endTime,
       bottomDepth,
@@ -38,7 +38,7 @@ export
       locationEnd,
     } = this;
 
-    const stage1 = (targetSpecies && wingSpread && headlineHeight && locationStart && startTime);
+    const stage1 = (targetSpecies && wingSpread && headlineHeight && locationAtStart && startTime);
     if((!endTime && stage1)) {
       return stage1;
     }
