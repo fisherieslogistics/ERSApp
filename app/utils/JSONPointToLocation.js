@@ -16,7 +16,7 @@ export default function JSONPointToLocation(pointStr) {
       speed: 0,
     };
   }
-  //console.log(loc, "here is the beast");
+  
   const { coordinates, properties } = loc;
   const  { time, timestamp, sentence, fix, speed, course } = properties;
   return {
