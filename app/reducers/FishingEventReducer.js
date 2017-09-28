@@ -19,12 +19,17 @@ export default (state = initialState, action) => {
 
   const { type, payload } = action;
   let { fishingEvents } = state;
+  fishingEvents.sort((f1, f2) => (f1.numberInTrip > f2.numberInTrip) ? 1 : -1);
   switch(type) {
     case 'update-fishingEvent':
       let eventIndex = fishingEvents.findIndex(
-        x => x.id == payload._id);
+        x => x.id == payload.changes.id);
       fishingEvents[eventIndex] = payload.changes;
-      return updateWithTimeStamp(state, { fishingEvents });
+      return updateWithTimeStamp(state, {
+          fishingEvents: [...fishingEvents],
+          viewingEventHelper: new HandGatheringEventHelper(payload.changes),
+          viewingEvent: payload.changes,
+        });
     case 'create-fishingEvent':
       fishingEvents.push(payload.changes);
       return updateWithTimeStamp(state, {
