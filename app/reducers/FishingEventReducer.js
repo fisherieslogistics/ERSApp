@@ -22,6 +22,9 @@ export default (state = initialState, action) => {
   fishingEvents.sort((f1, f2) => (f1.numberInTrip > f2.numberInTrip) ? 1 : -1);
   switch(type) {
     case 'update-fishingEvent':
+      if(payload.changes.archived === true) {
+        return state;
+      }
       let eventIndex = fishingEvents.findIndex(
         x => x.id == payload.changes.id);
       fishingEvents[eventIndex] = payload.changes;
