@@ -47,10 +47,10 @@ export function NMEATimeToMoment(time) {
 
 function toDecimal(degrees, mins, seconds, hemisphere) {
   const dec = parseInt(degrees) + (parseFloat(parseInt(mins) / 60)) + (parseFloat(seconds) / 3600);
-  return ['East', 'North'].find(hemisphere) ? dec : (dec *-1);
+  return ['East', 'North'].find(f => f === hemisphere) ? dec : (dec *-1);
 }
 
-export function parseLocation(degMin, lonHemisphere, latHemisphere) {
+export function parseLocation({ lonDegrees, lonMinutes, lonSeconds }, lonHemisphere, latHemisphere) {
   return {
     lon: toDecimal(lonDegrees, lonMinutes, lonSeconds, lonHemisphere),
     lat: toDecimal(latDegrees, latMinutes, latSeconds, latHemisphere),
@@ -95,8 +95,8 @@ export function tripCanStart(trip) {
   }
   return [
     'leavingPort',
-    'startTime',
-    'endTime',
+    'datetimeAtStart',
+    'datetimeAtEnd',
     'unloadPort',
     'headlineHeight',
     'wingSpread'
@@ -105,8 +105,8 @@ export function tripCanStart(trip) {
 
 export function createHistoryTrip(trip, fishingEvents){
   const {
-    startTime,
-    endTime,
+    datetimeAtStart,
+    datetimeAtEnd,
     leavingPort,
     unloadPort,
     id,
@@ -121,10 +121,10 @@ export function createHistoryTrip(trip, fishingEvents){
   });
 
   return {
-    startTime,
+    datetimeAtStart,
     leavingPort,
     unloadPort,
-    endTime,
+    datetimeAtEnd,
     fishingEvents: newEvents,
     id,
   };
