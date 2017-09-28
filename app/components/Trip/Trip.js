@@ -18,7 +18,9 @@ import {
   emptySelectedHistoryTrips,
   setSelectedTripDetail,
 } from '../../actions/TripActions';
-import { setSelectedTab, setViewingEventId } from '../../actions/ViewActions';
+import { setSelectedTab } from '../../actions/ViewActions';
+import { setViewingEvent } from '../../actions/FishingEventActions';
+
 import StartTripEditor from './StartTripEditor';
 import TotalsList from './TotalsList';
 //import ProfileEditor from '../User/ProfileEditor';
@@ -31,6 +33,7 @@ import { colors, textStyles } from '../../styles/styles';
 import { MasterToolbar } from '../layout/Toolbar';
 import { BigButton } from '../common/Buttons';
 import Label from '../common/Label';
+import { TripHelper } from '../../models/TripModel';
 
 const masterChoices = [
  'Trip',
@@ -78,6 +81,7 @@ class Trip extends MasterDetail {
 
   constructor (props){
     super(props);
+    this.tripHelper = new TripHelper({});
     this.masterChoices = masterChoices;
     this.icons = icons;
     this.startTrip = this.startTrip.bind(this);
@@ -89,10 +93,13 @@ class Trip extends MasterDetail {
   }
 
   updateTrip(attribute, value){
-    //this.props.dispatch(updateTrip(attribute, value, this.props.trip.RAId, { ...this.props.trip }));
+    this.props.db.update(trip.id, {[attribute]: value });
   }
 
   componentWillReceiveProps(nextProps) {
+    
+    this.tripHelper = new TripHelper(nextProps.trip || {})
+    
     if(this.props.selectedDetail !== nextProps.selectedDetail ||
        this.props.selectedTab !== nextProps.selectedTab) {
       this.props.dispatch(emptySelectedHistoryTrips());
@@ -102,7 +109,6 @@ class Trip extends MasterDetail {
   tripsListOnPress(trip){
     this.props.dispatch(addSelectedHistoryTrip(trip));
   }
-
   renderTotalsListView(){
     return (
       <View style={ wrapStyles }>
@@ -136,8 +142,8 @@ class Trip extends MasterDetail {
         { text: 'Cancel', style: 'cancel' },
         { text: 'OK', onPress: () => {
 
-
-          //this.props.dispatch(startTrip());
+          console.log(this.props.trip._id)
+          this.props.db.update({ started: true }, this.props.trip._id);
           this.props.dispatch(setSelectedTab('fishing'));
 
         }},
@@ -154,17 +160,17 @@ class Trip extends MasterDetail {
         { text: 'OK', onPress: () => {
 
           this.props.dispatch(endTrip(this.props.trip));
-          this.props.dispatch(setViewingEventId(null));
+          this.props.dispatch(setViewingEvent(null));
         }},
       ]
     );
   }
 
   getMessages() {
-    if (this.props.trip.canStart) {
+    if (this.tripHelper.canStart) {
      return ["Ready to go press Start Trip"];
     }
-    if (this.props.trip.canEnd) {
+    if (this.tripHelper.canEnd) {
       return ["Press End Trip when your heading in"];
     }
     /*const numUncompletedShots = [...this.props.trip.fishingEvents].filter(
@@ -256,9 +262,9 @@ class Trip extends MasterDetail {
   }
 
   onMasterButtonPress() {
-    if(this.props.trip.canStart) {
+    if(this.tripHelper.canStart) {
       return this.startTrip();
-    } else if(this.props.trip.canEnd) {
+    } else if(this.tripHelper.canEnd) {
       return this.endTrip();
     } else {
       AsyncStorage.removeItem('refreshToken', () => {})
@@ -269,12 +275,12 @@ class Trip extends MasterDetail {
     let backgroundColor = colors.backgrounds.dark;
     let text = "FLL";
     let textColor = 'rgba(255, 255, 255, 0.2)';
-    if(this.props.trip.canStart) {
+    if(this.tripHelper.canStart) {
       backgroundColor = colors.green;
       textColor = colors.white;
       text = "Start Trip";
     }
-    if(this.props.trip.canEnd) {
+    if(this.tripHelper.canEnd) {
       backgroundColor = colors.red;
       textColor = colors.white;
     }
@@ -374,6 +380,8 @@ class Trip extends MasterDetail {
 }
 
 const select = (state) => {
+  const t = state.trip.currentTrip;
+  
   return {
     tripUpdated: state.trip.lastUpdated,
     view: state.view,
