@@ -28,7 +28,7 @@ export
     if((!this.endTime && stage1)) {
       return stage1;
     }
-    return !!(stage1 && (this.startTime < this.endTime) && this.locationEnd && this.averageSpeed);
+    return !!(stage1 && (this.startTime < this.endTime) && this.locationAtEnd && this.averageSpeed);
   }
 
   get estimatedCatchValid() {
@@ -50,8 +50,8 @@ export
     return JSONPointToLocation(this.locationStart);
   }
 
-  get locationEndDecimal() {
-    return JSONPointToLocation(this.locationEnd);
+  get locationAtEndDecimal() {
+    return JSONPointToLocation(this.locationAtEnd);
   }
 
   get replicatedEstimatedCatch() {

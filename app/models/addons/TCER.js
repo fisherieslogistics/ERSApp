@@ -35,7 +35,7 @@ export
       bottomDepth,
       groundropeDepth,
       averageSpeed,
-      locationEnd,
+      locationAtEnd,
     } = this;
 
     const stage1 = (targetSpecies && wingSpread && headlineHeight && locationAtStart && startTime);
@@ -44,7 +44,7 @@ export
     }
     const datesSweet =  !!(startTime < endTime);
     const depths = !!(bottomDepth && groundropeDepth);
-    return !!(stage1 && !!locationEnd && !!averageSpeed && depths && datesSweet);
+    return !!(stage1 && !!locationAtEnd && !!averageSpeed && depths && datesSweet);
   }
 
   get canSubmit() {
@@ -82,8 +82,8 @@ export
     return JSONPointToLocation(this.locationStart);
   }
 
-  get locationEndDecimal() {
-    return JSONPointToLocation(this.locationEnd);
+  get locationAtEndDecimal() {
+    return JSONPointToLocation(this.locationAtEnd);
   }
 
   get NetLeaveDepthLocationDecimal() {
@@ -136,10 +136,10 @@ export
       isNetLost: this.isNetLost,
       finishDateTime: this.endTime,
       finishLocation: {
-        "systemDateTime": this.locationEndDecimal.timestamp,
+        "systemDateTime": this.locationAtEndDecimal.timestamp,
         "systemLocation": {
-          longitude: this.locationEndDecimal.lon,
-          latitude: this.locationEndDecimal.lat,
+          longitude: this.locationAtEndDecimal.lon,
+          latitude: this.locationAtEndDecimal.lat,
         },
         isManual: false
       },

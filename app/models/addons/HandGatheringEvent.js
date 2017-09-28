@@ -57,7 +57,7 @@ export default class HandGatheringEventHelper {
       locationAtStart,
       startTime,
       endTime,
-      locationEnd,
+      locationAtEnd,
     } = this;
 
     const stage1 = (locationAtStart && startTime);
@@ -65,7 +65,7 @@ export default class HandGatheringEventHelper {
       return stage1;
     }
     const datesSweet =  !!(startTime < endTime);
-    return !!(stage1 && locationEnd && datesSweet);
+    return !!(stage1 && locationAtEnd && datesSweet);
   }
 
   get canSubmit() {
@@ -103,7 +103,7 @@ export default class HandGatheringEventHelper {
     return JSONPointToLocation(this.locationAtStart);
   }
 
-    return JSONPointToLocation(this.locationEnd);
+    return JSONPointToLocation(this.locationAtEnd);
   }
 
   get replicatedEstimatedCatch() {
@@ -140,10 +140,10 @@ export default class HandGatheringEventHelper {
       numberOfPeople: this.numberOfPeople,
       finishDateTime: this.endTime,
       finishLocation: {
-        "systemDateTime": this.locationEndDecimal.timestamp,
+        "systemDateTime": this.locationAtEndDecimal.timestamp,
         "systemLocation": {
-          longitude: this.locationEndDecimal.lon,
-          latitude: this.locationEndDecimal.lat,
+          longitude: this.locationAtEndDecimal.lon,
+          latitude: this.locationAtEndDecimal.lat,
         },
         isManual: false
       },

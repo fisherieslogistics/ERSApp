@@ -91,7 +91,7 @@ export function createFishingEvent(trip_id, previousEvent, location) {
 
 export function endFishingEvent(fishingEvent, changes, location) {
   return (dispatch) => {
-    changes.locationEnd = Helper.locationToGeoJSONPoint(location);
+    changes.locationAtEnd = Helper.locationToGeoJSONPoint(location);
 
     dispatch({
       type: 'endFishingEvent',
