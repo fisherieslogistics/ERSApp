@@ -33,12 +33,12 @@ export function setSelectedCatchesDetail(name) {
 }
 
 export function updateFishingEvent(fishingEvent, changes) {
-  if(changes.locationAtStart) {
+  /*if(changes.locationAtStart) {
     changes.statarea = calculateStatArea(changes.locationAtStart);
   }
   return (dispatch) => {
     dispatch({
-      type: 'updateFishingEvent',
+      type: 'update-FishingEvent',
 
       payload: {
         RAId: fishingEvent.RAId,
@@ -50,18 +50,18 @@ export function updateFishingEvent(fishingEvent, changes) {
       //TODO update the trip
       //dispatch(update-trip(changes))
     }
-  }
+  }*/
 }
 
 export function commitFishingEvent(fishingEvent) {
-  return {
+  /*return {
     type: 'updateFishingEvent',
 
     payload: {
       RAId: fishingEvent.RAId,
       changes: { committed: true, completed: true, signed: true },
     },
-  }
+  }*/
 }
 
 export function createFishingEvent(trip_id, previousEvent, location) {
@@ -71,7 +71,7 @@ export function createFishingEvent(trip_id, previousEvent, location) {
   newEvent.eventSpecificDetails = JSON.stringify(newEventSpecifics);
   newEvent.id = uuid();
   newEvent.trip_id = trip_id;
-  newEvent.startTime = new Date();
+  newEvent.datetimeAtStart = new Date();
   newEvent.numberInTrip = previousEvent ? (previousEvent.numberInTrip) + 1 : 1;
   newEvent.locationAtStart = locationToGeoJSONPoint(location);
 
@@ -91,7 +91,7 @@ export function createFishingEvent(trip_id, previousEvent, location) {
 
 export function endFishingEvent(fishingEvent, changes, location) {
   return (dispatch) => {
-    changes.locationAtEnd = Helper.locationToGeoJSONPoint(location);
+    changes.locationAtEnd = locationToGeoJSONPoint(location);
 
     dispatch({
       type: 'endFishingEvent',
