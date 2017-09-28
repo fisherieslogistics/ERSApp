@@ -135,7 +135,7 @@ export default {
       }
       return valid;
     },
-    startTimeValid: (orderedAttributes, obj) => {
+    datetimeAtStartValid: (orderedAttributes, obj) => {
       const timeStart = obj[orderedAttributes[0]];
       const timeEnd = obj[orderedAttributes[1]];
 

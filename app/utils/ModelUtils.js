@@ -39,7 +39,7 @@ export function getRenderableTCERDetailModel(fishingEvent, showOptionalFields) {
   let model = [...FishingEventModel];
 
   // filter out non display and If not hauled, filter out haul fields
-  if(!fishingEvent.endTime){
+  if(!fishingEvent.datetimeAtEnd){
     model = model.filter(field => field.display && field.displayStage !== 'Haul');
   }
 

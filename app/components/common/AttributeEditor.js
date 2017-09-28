@@ -112,6 +112,10 @@ class AttributeEditor extends Component {
           console.warn("PASSING A MOMENT");
           date = value.toDate();
         }
+        
+        if(typeof value === 'string'){
+          date = new Date(value);
+        }
 
         return (
           <DatePicker
