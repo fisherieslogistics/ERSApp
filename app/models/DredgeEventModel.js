@@ -76,7 +76,7 @@ const TCERModel = [
     valid: valid.anyValue,
     type: 'datetime',
     default: null,
-    copyFrom: 'endTime',
+    copyFrom: 'datetimeAtEnd',
     display: { type: 'single' },
     optionalRender: true,
 
@@ -98,7 +98,7 @@ const TCERModel = [
     valid: valid.anyValue,
     type: 'datetime',
     default: null,
-    copyFrom: 'startTime',
+    copyFrom: 'datetimeAtStart',
     display: { type: 'single' },
     optionalRender: true,
 
@@ -109,7 +109,7 @@ const TCERModel = [
     valid: valid.anyValue,
     type: 'datetime',
     default: null,
-    copyFrom: 'endTime',
+    copyFrom: 'datetimeAtEnd',
     displayStage: 'Haul',
     display: { type: 'single' },
     optionalRender: true,

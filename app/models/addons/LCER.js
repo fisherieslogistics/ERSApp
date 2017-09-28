@@ -7,16 +7,16 @@ import JSONPointToLocation from '../../utils/JSONPointToLocation';
 
 export
 
-  get startDateMoment() {
-    return moment(this.startTime);
+  get datetimeAtStartMoment() {
+    return moment(this.datetimeAtStart);
   }
 
-  get endDateMoment() {
-    return moment(this.endTime);
+  get datetimeAtEndMoment() {
+    return moment(this.datetimeAtEnd);
   }
 
   get canEnd() {
-    return !this.endTime;
+    return !this.datetimeAtEnd;
   }
 
   get shouldAddEmptyCatch() {
@@ -24,11 +24,11 @@ export
   }
 
   get detailsValid() {
-    const stage1 = (this.targetSpecies && this.numberOfHooks && this.locationAtStart && this.startTime);
-    if((!this.endTime && stage1)) {
+    const stage1 = (this.targetSpecies && this.numberOfHooks && this.locationAtStart && this.datetimeAtStart);
+    if((!this.datetimeAtEnd && stage1)) {
       return stage1;
     }
-    return !!(stage1 && (this.startTime < this.endTime) && this.locationAtEnd && this.averageSpeed);
+    return !!(stage1 && (this.datetimeAtStart < this.datetimeAtEnd) && this.locationAtEnd && this.averageSpeed);
   }
 
   get estimatedCatchValid() {

@@ -1,6 +1,8 @@
 
 import moment from 'moment';
 import uuid from 'uuid/v1';
+import FishingEventModel from '../../models/FishingEventModel';
+import HandGatheringEventModel from '../../models/HandGatheringEventModel';
 import ProductModel from '../../models/ProductModel';
 import { blankModel } from '../../utils/ModelUtils';
 import JSONPointToLocation from '../../utils/JSONPointToLocation';
@@ -16,6 +18,11 @@ export default class HandGatheringEventHelper {
     this.eventKeys = Object.keys(fishingEvent);
     Object.assign(this, fishingEvent);
     Object.assign(this, eventSpecificDetails);
+  }
+  
+  fieldsToRender() {
+    return FishingEventModel.concat(HandGatheringEventModel).filter(
+      field => !!field.display);
   }
   
   setValue(change) {
@@ -36,16 +43,16 @@ export default class HandGatheringEventHelper {
     return record;
   }
 
-  get startDateMoment() {
-    return moment(this.startTime);
+  get datetimeAtStartMoment() {
+    return moment(this.datetimeAtStart);
   }
 
-  get endDateMoment() {
-    return moment(this.endTime);
+  get datetimeAtEndMoment() {
+    return moment(this.datetimeAtEnd);
   }
 
   get canEnd() {
-    return !this.endTime;
+    return !this.datetimeAtEnd;
   }
 
   get shouldAddEmptyCatch() {
@@ -55,26 +62,26 @@ export default class HandGatheringEventHelper {
   get detailsValid() {
     const {
       locationAtStart,
-      startTime,
-      endTime,
+      datetimeAtStart,
+      datetimeAtEnd,
       locationAtEnd,
     } = this;
 
-    const stage1 = (locationAtStart && startTime);
-    if((!endTime && stage1)) {
+    const stage1 = (locationAtStart && datetimeAtStart);
+    if((!datetimeAtEnd && stage1)) {
       return stage1;
     }
-    const datesSweet =  !!(startTime < endTime);
+    const datesSweet =  !!(datetimeAtStart < datetimeAtEnd);
     return !!(stage1 && locationAtEnd && datesSweet);
   }
 
   get canSubmit() {
     const {
       detailsValid,
-      endTime,
+      datetimeAtEnd,
       estimatedCatchValid,
     } = this;
-    return !!(detailsValid && endTime && estimatedCatchValid)
+    return !!(detailsValid && datetimeAtEnd && estimatedCatchValid)
   }
 
   get estimatedCatchKg() {
@@ -103,6 +110,7 @@ export default class HandGatheringEventHelper {
     return JSONPointToLocation(this.locationAtStart);
   }
 
+  get locationAtEndDecimal() {
     return JSONPointToLocation(this.locationAtEnd);
   }
 
@@ -128,7 +136,7 @@ export default class HandGatheringEventHelper {
       method: 'H',
       targetSpeciesCode: this.targetSpecies,
       mitigationDevicesUsed: [],
-      startDateTime: this.startTime,
+      startDateTime: this.datetimeAtStart,
       locationAtStart: {
         "systemDateTime": this.locationAtStartDecimal.timestamp,
         "systemLocation": {
@@ -138,7 +146,7 @@ export default class HandGatheringEventHelper {
         isManual: false,
       },
       numberOfPeople: this.numberOfPeople,
-      finishDateTime: this.endTime,
+      finishDateTime: this.datetimeAtEnd,
       finishLocation: {
         "systemDateTime": this.locationAtEndDecimal.timestamp,
         "systemLocation": {

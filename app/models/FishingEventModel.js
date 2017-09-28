@@ -37,7 +37,7 @@ const FishingEventModel = [
     type: 'datetime',
     combinedValid: {
       attributes: ['datetimeAtStart', 'datetimeAtEnd'],
-      func: Validator.combined.startTimeValid,
+      func: Validator.combined.datetimeAtStartValid,
       errorMessage: "start time must be before end time"
     },
     display: { type: 'combined', siblings: ['locationAtStart'] },

@@ -8,16 +8,16 @@ import JSONPointToLocation from '../../utils/JSONPointToLocation';
 
 export
 
-  get startDateMoment() {
-    return moment(this.startTime);
+  get datetimeAtStartMoment() {
+    return moment(this.datetimeAtStart);
   }
 
-  get endDateMoment() {
-    return moment(this.endTime);
+  get datetimeAtEndMoment() {
+    return moment(this.datetimeAtEnd);
   }
 
   get canEnd() {
-    return !this.endTime;
+    return !this.datetimeAtEnd;
   }
 
   get shouldAddEmptyCatch() {
@@ -30,19 +30,19 @@ export
       wingSpread,
       headlineHeight,
       locationAtStart,
-      startTime,
-      endTime,
+      datetimeAtStart,
+      datetimeAtEnd,
       bottomDepth,
       groundropeDepth,
       averageSpeed,
       locationAtEnd,
     } = this;
 
-    const stage1 = (targetSpecies && wingSpread && headlineHeight && locationAtStart && startTime);
-    if((!endTime && stage1)) {
+    const stage1 = (targetSpecies && wingSpread && headlineHeight && locationAtStart && datetimeAtStart);
+    if((!datetimeAtEnd && stage1)) {
       return stage1;
     }
-    const datesSweet =  !!(startTime < endTime);
+    const datesSweet =  !!(datetimeAtStart < datetimeAtEnd);
     const depths = !!(bottomDepth && groundropeDepth);
     return !!(stage1 && !!locationAtEnd && !!averageSpeed && depths && datesSweet);
   }
@@ -50,10 +50,10 @@ export
   get canSubmit() {
     const {
       detailsValid,
-      endTime,
+      datetimeAtEnd,
       estimatedCatchValid,
     } = this;
-    return !!(detailsValid && endTime && estimatedCatchValid)
+    return !!(detailsValid && datetimeAtEnd && estimatedCatchValid)
   }
 
   get estimatedCatchKg() {
@@ -103,7 +103,7 @@ export
   }
 
   canDelete(latestInTrip) {
-    return !this.completed && (this.numberOfInTrip === latestInTrip);
+    return !this.completed && (this.numberInTrip === latestInTrip);
   }
 
   get nonFishProtectedsExist() {
@@ -116,7 +116,7 @@ export
       method: 'BT',
       targetSpeciesCode: this.targetSpecies,
       mitigationDevicesUsed: [],
-      startDateTime: this.startTime,
+      startDateTime: this.datetimeAtStart,
       locationStart: {
         "systemDateTime": this.locationStartDecimal.timestamp,
         "systemLocation": {
@@ -134,7 +134,7 @@ export
       bottomDepthMetres: this.bottomDepth,
       speedKnots: this.averageSpeed,
       isNetLost: this.isNetLost,
-      finishDateTime: this.endTime,
+      finishDateTime: this.datetimeAtEnd,
       finishLocation: {
         "systemDateTime": this.locationAtEndDecimal.timestamp,
         "systemLocation": {
