@@ -114,13 +114,13 @@ class AttributeEditor extends Component {
         }
         
         if(typeof value === 'string') {
-          debugger;
           date = new Date(value);
         }
-        console.log(attribute, value);
+
         if(!value) {
           return null;
         }
+
         return (
           <DatePicker
             date={ date }

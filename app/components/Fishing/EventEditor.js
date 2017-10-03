@@ -45,24 +45,6 @@ class EventEditor extends Component {
     return choice === this.props.selectedCatchesDetail;
   }
 
-  addItem(eventAttribute) {
-    this.props.dispatch(addItemToEvent(this.props.viewingEvent, eventAttribute));
-  }
-
-  changeItem(eventAttribute, inputId, value, item) {
-    const { code, amount } = item;
-    const changes = Object.assign({}, { code, amount }, { [inputId]: value});
-    this.props.dispatch(changeItemInEvent(this.props.viewingEvent, item, changes, eventAttribute));
-    if(eventAttribute === 'estimatedCatch' && inputId === 'code' &&
-      this.props.viewingEvent.shouldAddEmptyCatch) {
-      this.addItem(eventAttribute);
-    }
-  }
-
-  deleteItem(eventAttribute, item) {
-    this.props.dispatch(deleteItemInEvent(this.props.viewingEvent, item, eventAttribute));
-  }
-
   renderDetailEditor() {
     switch (this.props.selectedDetail) {
       case "catches":
@@ -136,7 +118,7 @@ class EventEditor extends Component {
     const catchesEnabled = !!viewingEvent.datetimeAtEnd;
     return [
       this.renderDetailViewButton((catchesEnabled && !viewingEventHelper.detailsValid), 'detail', true, 0),
-      //this.renderDetailViewButton(!fEvent.estimatedCatchValid, 'catches', catchesEnabled, /*fEvent.estimatedCatch.length - 1*/0),
+      this.renderDetailViewButton(false, 'catches', catchesEnabled, ''/*fEvent.estimatedCatch.length - 1*/),
       //this.renderDetailViewButton(!fEvent.discardsValid, 'discards', catchesEnabled, fEvent.discards.length),
       //this.renderDetailViewButton(false, 'protecteds', catchesEnabled, fEvent.protecteds.length),
       this.renderSubmitButton(),
@@ -167,16 +149,7 @@ class EventEditor extends Component {
       [
         {text: 'Cancel', onPress: () => null, style: 'cancel'},
         {text: 'Commit', onPress: () => {
-          createFishingEvent(this.props.viewingEvent).then(res => {
-            if(res.body && res.body.id) {
-              this.props.dispatch(commitFishingEvent(this.props.viewingEvent));
-            } else {
-              AlertIOS.alert('please try that again when your connected to the internet');
-            }
-          }).catch(err => {
-            console.log(err);
-            AlertIOS.alert('please try that again when your connected to the internet');
-          });
+          this.props.db.update({ committed: true }, this.props.viewingEvent._id);
         }}
       ]
     );
@@ -242,6 +215,8 @@ const select = (state) => {
     viewingEventHelper: state.fishingEvents.viewingEventHelper,
     selectedDetail: state.view.selectedFishingDetail,
     lastUpdated: state.view.lastUpdated,
+    db: state.database.db,
+    fishCatches: state.fishingEvents.viewingFishCatches,
   };
   return props;
 }

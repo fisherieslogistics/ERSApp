@@ -12,7 +12,7 @@ export default class HandGatheringEventHelper {
 
   constructor(fishingEvent) {
     this.fishingEvent = fishingEvent;
-    console.log(fishingEvent);
+    this.fishCatches = [];
     const eventSpecificDetails = JSON.parse(fishingEvent.eventSpecificDetails);
     this.eventSpecificKeys = Object.keys(fishingEvent.eventSpecificDetails);
     this.eventKeys = Object.keys(fishingEvent);
@@ -72,7 +72,7 @@ export default class HandGatheringEventHelper {
       return stage1;
     }
     const datesSweet = moment(datetimeAtStart).toDate() < moment(datetimeAtEnd).toDate();
-    debugger;
+    console.log(stage1, locationAtEnd, datesSweet);
     return !!(stage1 && locationAtEnd && datesSweet);
   }
 

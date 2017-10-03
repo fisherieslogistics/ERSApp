@@ -13,13 +13,15 @@ const initialState = {
   viewingEventHelper: null,
   selectedDetail: 'detail',
   canStartEvent: true,
+  fishCatches: [],
+  viewingFishCatches: [],
 };
 
 export default (state = initialState, action) => {
 
   const { type, payload } = action;
-  let { fishingEvents } = state;
-  fishingEvents.sort((f1, f2) => (f1.numberInTrip > f2.numberInTrip) ? 1 : -1);
+  let { fishingEvents, fishCatches } = state;
+  
   switch(type) {
     case 'update-fishingEvent':
       if(payload.changes.archived === true) {
@@ -40,13 +42,31 @@ export default (state = initialState, action) => {
         viewingEvent: payload.changes,
         viewingEventHelper: new HandGatheringEventHelper(payload.changes),
         selectedDetail: 'detail',
+        viewingFishCatches: [],
       });
     case 'setFishingEvents':
-      return updateWithTimeStamp(state, { fishingEvents: payload.changes });
+      payload.changes.sort((f1, f2) => (f1.numberInTrip > f2.numberInTrip) ? 1 : -1);
+      return updateWithTimeStamp(state,
+        { fishingEvents: payload.changes });
+    case 'setFishCatches':
+      payload.changes.sort((f1, f2) => (f1.amount > f2.amount) ? 1 : -1);
+      return updateWithTimeStamp(state,
+        { fishCatches: payload.changes });
     case 'setViewingEvent':
+      const catches = fishCatches.filter(
+        fc => fc.fishingEvent_id === payload.changes._id);
+      catches.sort((f1, f2) => (f1.amount > f2.amount) ? 1 : -1);
       return updateWithTimeStamp(state, {
         viewingEvent: payload.changes,
         viewingEventHelper: new HandGatheringEventHelper(payload.changes),
+        viewingFishCatches: catches,
+      });
+    case 'create-fishCatch':
+      fishCatches.push(payload.changes);
+      state.viewingFishCatches.push(payload.changes);
+      return updateWithTimeStamp(state, {
+        fishCatches: [...fishCatches],
+        viewingFishCatches: [...viewingFishCatches],
       });
     case 'updateSpecies':
     case 'updateState':
@@ -54,7 +74,6 @@ export default (state = initialState, action) => {
     case 'updateCustom':
     case 'updateDiscard':
     case 'updateProtected':
-    case 'addProduct':
     case 'addDiscard':
     case 'addProtected':
     case 'deleteProduct':

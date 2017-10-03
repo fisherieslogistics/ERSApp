@@ -10,41 +10,59 @@ import ProtectedModel from '../../models/ProtectedModel';
 
 class FishingEventCatchesEditor extends Component {
 
+  addItem(eventAttribute) {
+    this.props.dispatch(addItemToEvent(this.props.viewingEvent, eventAttribute));
+  }
+  
+  changeItem(eventAttribute, inputId, value, item) {
+    const { code, amount } = item;
+    const changes = Object.assign({}, { code, amount }, { [inputId]: value});
+    this.props.dispatch(changeItemInEvent(this.props.viewingEvent, item, changes, eventAttribute));
+    if(eventAttribute === 'estimatedCatch' && inputId === 'code' &&
+      this.props.viewingEvent.shouldAddEmptyCatch) {
+      this.addItem(eventAttribute);
+    }
+  }
+
+  deleteItem(eventAttribute, item) {
+    this.props.db.delete();
+  }
+
   render() {
 
     const {
-      fishingEvent,
-      deleteItem,
-      addItem,
-      changeItem,
+      viewingEvent,
+      dispatch,
+      species,
+      fishCatches,
+      viewLastUpdated,
+      selectedDetail,
     } = this.props;
 
     const props = {
-      fishingEvent,
-      deleteItem,
-      addItem,
-      changeItem,
+      fishingEvent: viewingEvent,
+      deleteItem: this.deleteItem,
+      addItem: this.addItem,
+      changeItem: this.changeItem,
+      species: species,
     }
-
+    
     switch (this.props.selectedDetail) {
       case "catches":
         return (
           <EventProductsEditor
-            { ...props }
+            {...props}
             model={ ProductModel }
-            species={ this.props.species }
-            dispatch={ this.props.dispatch }
-            items={ this.props.fishingEvent.estimatedCatch }
-            viewLastUpdated={ this.props.viewLastUpdated }
-          />
-        );
-      case "discards":
+            dispatch={ dispatch }
+            items={ viewingFishCatches }
+            viewLastUpdated={ viewLastUpdated }
+          />);
+      /*case "discards":
         return (
           <EventDiscardsEditor
             { ...props }
             model={ DiscardModel }
-            species={ this.props.species }
-            items={ this.props.fishingEvent.discards }
+            items={ /*this.props.viewingEvent.discards }
             viewLastUpdated={ this.props.viewLastUpdated }
           />
         );
@@ -53,24 +71,21 @@ class FishingEventCatchesEditor extends Component {
           <EventProtectedsEditor
             { ...props }
             model={ ProtectedModel }
-            items={ this.props.fishingEvent.protecteds }
+            items={ this.props.viewingEvent.protecteds }
             viewLastUpdated={ this.props.viewLastUpdated }
           />
-        );
+        );*/
     }
   }
 }
 
-const select = (state) => {
-  let fishingEvent = null;
-  if(state.view.viewingEventId){
-  //  fishingEvent = getRecord('fishingEvent', state.view.viewingEventId);
-  }
+const select = (state) => {  
   return {
     lastUpdated: state.fishingEvents.lastUpdated,
-    fishingEvent: state.fishingEvents.viewingEvent,
+    viewingEvent: state.fishingEvents.viewingEvent,
+    viewingFishCatches: state.fishingEvents.viewingFishCatches,
     viewLastUpdated: state.view.lastUpdated,
-    species: state.species.all,//getRecords('species'),
+    species: state.species.all,
   };
 }
 
