@@ -45,7 +45,7 @@ class EventEditor extends Component {
   isDetailSelected(choice) {
     return choice === this.props.selectedCatchesDetail;
   }
-  
+
   addItem(eventAttribute) {
     console.log(eventAttribute);
     //this.props.dispatch(addItemToEvent(this.props.viewingEvent, eventAttribute));
@@ -53,8 +53,8 @@ class EventEditor extends Component {
 
   changeItem(eventAttribute, inputId, value, item) {
     console.log(eventAttribute);
-    /*const { code, amount } = item;
-    const changes = Object.assign({}, { code, amount }, { [inputId]: value});
+    /*const { code, weightKgs } = item;
+    const changes = Object.assign({}, { code, weightKgs }, { [inputId]: value});
     this.props.dispatch(changeItemInEvent(this.props.viewingEvent, item, changes, eventAttribute));
     if(eventAttribute === 'estimatedCatch' && inputId === 'code' &&
       this.props.viewingEvent.shouldAddEmptyCatch) {
@@ -78,6 +78,7 @@ class EventEditor extends Component {
             addItem={ this.addItem }
             changeItem={ this.changeItem }
             deleteItem={ this.deleteItem }
+            species={ this.props.species }
           />
         );
       default:
@@ -239,6 +240,7 @@ const select = (state) => {
     lastUpdated: state.view.lastUpdated,
     db: state.database.db,
     fishCatches: state.fishingEvents.viewingFishCatches,
+    species: state.species.all,
   };
   return props;
 }

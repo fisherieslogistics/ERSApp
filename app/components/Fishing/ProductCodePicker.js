@@ -9,10 +9,11 @@ function compare(i1, i2) {
 
 class ProductCodePicker extends SuggestPickerClass {
 
-  filterChoices({ favourites, fishingEvent }, choices) {
-    const usedCodes = fishingEvent.estimatedCatch.map(p => p.code);
+  filterChoices() {
+    const { favourites, fishingEvent, fishCatches, species } = this.props;
+    const usedCodes = fishCatches.map(p => p.code);
     const faves = [...favourites];
-    const filteredChoices = choices.filter(c => !usedCodes.includes(c.value) || c.value === this.props.value);
+    const filteredChoices = species.filter(c => !usedCodes.includes(c.value) || c.value === this.props.value);
     return filteredChoices.sort((c1, c2) => compare(faves.indexOf(c2.value), faves.indexOf(c1.value)));
   }
 
@@ -25,7 +26,7 @@ class ProductCodePicker extends SuggestPickerClass {
   }
 
   setSuggestChoices() {
-    const nextChoices = this.filterChoices(this.props, this.props.choices);
+    const nextChoices = this.filterChoices();
     this.props.dispatch(setSuggestChoices(nextChoices));
   }
 
@@ -38,6 +39,9 @@ const select = (state) => ({
     suggestBarInputId: state.view.suggestBarInputId,
     suggestBarSearchTerm: state.view.suggestBarSearchTerm,
     focusedInputId: state.view.focusedInputId,
+    species: state.species.all,
+    fishingEvent: state.fishingEvents.viewingEvent,
+    fishCatches: state.fishingEvents.viewingFishCatches,
 });
 
 export default connect(select)(ProductCodePicker);
