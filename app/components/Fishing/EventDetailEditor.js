@@ -48,13 +48,13 @@ class EventDetailEditor extends Component{
   onChangeText(name, value, type) {
     const changes = { [name]: value };
     const { fishingEvent } = this.props;
-    
+
     /*if(!this.props.showOptionalFields && name === 'bottomDepth') {
       if(this.shouldCombineDepths(value, fishingEvent.groundropeDepth)) {
         changes.groundropeDepth = value;
       }
     }*/
-  
+
     if(FishingEventModel.find((field) => field.id === name)){
       this.props.db.update(changes, fishingEvent._id);
     } else {
@@ -63,9 +63,9 @@ class EventDetailEditor extends Component{
       const specificChanges = { eventSpecificDetails: JSON.stringify(eventDetails) };
       this.props.db.update(specificChanges, fishingEvent._id);
     }
-    
-    
-  
+
+
+
   }
 
   getEditorProps(attribute){
@@ -125,9 +125,9 @@ class EventDetailEditor extends Component{
     }
 
     //const fieldsToRender = getRenderableTCERDetailModel(fishingEvent, showOptionalFields);
-    
-    
-    
+
+
+
     const showMore = this.renderToggleShowMore(!!fishingEvent);
 
     const spacer = { height: 50 };
@@ -159,7 +159,7 @@ const select = (state) => {
     viewLastUpdated: state.view.lastUpdated,
     fishingEventUpdated: state.fishingEvents.lastUpdated,
     showOptionalFields: state.fishingEvents.showOptionalFields,
-    species: state.species.all,//speciesDB.findAll('species').map(s => ({ value: s.code, description: s.fullName })),
+    species: state.species.all,
     db: state.database.db,
   };
   return props;
