@@ -4,6 +4,8 @@ import {
 import React from 'react';
 import ModelEditor from '../common/ModelEditor';
 import OtherSpeciesWeightModel from '../../models/OtherSpeciesWeightModel';
+import ProcuctModel from '../../models/ProductModel';
+import { blankModel } from '../../utils/ModelUtils';
 import CatchesEditor from './common/CatchesEditor';
 import speciesDesc from '../../constants/species/speciesDesc';
 import statesDesc from '../../constants/species/statesDesc';
@@ -19,10 +21,14 @@ export default class EventProductsEditor extends CatchesEditor {
 
   renderEditors(){
     const inputs = [];
+    const num = 10 - this.props.items.length;
     this.props.items.forEach((p, i) => {
       inputs.push(this.renderEditor(p, i));
     });
-    inputs.push(this.renderOtherSpeciesEditor());
+    for(var i = 0; i < num; i++) {
+      inputs.push(this.renderEditor(blankModel(ProcuctModel), i + this.props.items.length));
+    }
+    //inputs.push(this.renderOtherSpeciesEditor());
     return inputs;
   }
 
@@ -34,7 +40,7 @@ export default class EventProductsEditor extends CatchesEditor {
   renderOtherSpeciesEditor() {
     return null
     /*const onChange = (name, value) => this.onChangeOtherSpeciesWeight(value);
-    const inputId = `other_species_amount_editor_${ this.props.fishingEvent.RAId }`;
+    const inputId = `other_species_weightKgs_editor_${ this.props.fishingEvent.RAId }`;
     const getEditorProps = () => ({
       inputId,
     });
@@ -60,7 +66,6 @@ export default class EventProductsEditor extends CatchesEditor {
       eventAttribute: 'estimatedCatch',
       maxLength: 3,
       error: this.itemHasError(item),
-      fishingEvent: this.props.fishingEvent,
     };
   }
 
@@ -90,7 +95,7 @@ export default class EventProductsEditor extends CatchesEditor {
       case 'state':
         props.extraProps = this.getExtraProps(item, attribute);
         break;
-      case 'amount':
+      case 'weightKgs':
         props.extraProps = { persistKeyboard: true };
         break;
       default:
