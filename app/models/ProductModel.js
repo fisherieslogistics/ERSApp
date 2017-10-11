@@ -9,7 +9,7 @@ const species = {
   valid: valid.productCode,
   default: "",
   type: "productCodePicker",
-  display: { type: 'combined', siblings: ['amount'] },
+  display: { type: 'combined', siblings: ['weightKgs'] },
 
 };
 
@@ -19,7 +19,7 @@ const speciesWithState = {
   valid: valid.productCode,
   default: "",
   type: "productCodePicker",
-  display: { type: 'combined', siblings: ['amount' ] },
+  display: { type: 'combined', siblings: ['weightKgs' ] },
   /*combinedValid: {
     attributes: ['code'],
     func: Validator.combined.validSpeciesAndState,
@@ -51,9 +51,9 @@ const state = {
 
 };
 
-const amount = {
+const weightKgs = {
   label: 'Green Weight',
-  id: 'amount',
+  id: 'weightKgs',
   valid: valid.productWeight,
   type: 'number',
   default: 0,
@@ -66,8 +66,8 @@ const id = {
   default: null,
 
 };
-const ProductModel = [species, amount, id];
-const DiscardModel = [species, amount, id];
+const ProductModel = [species, weightKgs, id];
+const DiscardModel = [species, weightKgs, id];
 
 
 export default ProductModel;

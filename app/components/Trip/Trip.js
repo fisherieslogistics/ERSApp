@@ -62,13 +62,13 @@ const messageWrapperStyle  = { margin: 10 };
 const messageTextStyle = { color: 'white', fontSize: 18 };
 
 const productsHeader = [
-  { code: 'Totals', amount: '', color: 'red'},
-  { code: 'Species Code', amount: 'Total KG', color: 'orange' },
+  { code: 'Totals', weightKgs: '', color: 'red'},
+  { code: 'Species Code', weightKgs: 'Total KG', color: 'orange' },
 ];
 const discardsHeader = [
-  { code: '', amount: '', color: 'green' },
-  { code: 'Discards', amount: '', color: 'red' },
-  { code: 'Species Code', amount: 'Total KG', color: 'orange' },
+  { code: '', weightKgs: '', color: 'green' },
+  { code: 'Discards', weightKgs: '', color: 'red' },
+  { code: 'Species Code', weightKgs: 'Total KG', color: 'orange' },
 ];
 
 

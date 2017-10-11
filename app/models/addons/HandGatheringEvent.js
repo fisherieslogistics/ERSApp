@@ -88,19 +88,19 @@ export default class HandGatheringEventHelper {
     //const catches = [...this.estimatedCatch];
     
     return [].map(
-      ec => ec.amount).reduce(
-        (acc, amount) => acc + amount);
+      ec => ec.weightKgs).reduce(
+        (acc, weightKgs) => acc + weightKgs);
   }
 
   get estimatedCatchValid() {
     const catchToCheck =  [ ...this.estimatedCatch];
     //last one is always a blank;
     catchToCheck.pop();
-    return this.estimatedCatch.length && catchToCheck.every(ec => (ec.code && ec.amount));
+    return this.estimatedCatch.length && catchToCheck.every(ec => (ec.code && ec.weightKgs));
   }
 
   get discardsValid() {
-    return !this.discards.length || [ ...this.discards ].every(ec => (ec.code && ec.amount));
+    return !this.discards.length || [ ...this.discards ].every(ec => (ec.code && ec.weightKgs));
   }
 
   get protectedsValid() {
@@ -120,7 +120,7 @@ export default class HandGatheringEventHelper {
       return [];
     }
     return this.estimatedCatch.map(
-      c => Object.assign({}, blankModel(ProductModel), { code: c.code, amount: 0, RAId: uuid() }));
+      c => Object.assign({}, blankModel(ProductModel), { code: c.code, weightKgs: 0, RAId: uuid() }));
   }
 
   canDelete() {
@@ -158,12 +158,12 @@ export default class HandGatheringEventHelper {
       },
       catches: this.estimatedCatch.map(es => ({
         speciesCode: es.code,
-        greenWeightEstimateKg: es.amount,
+        greenWeightEstimateKg: es.weightKgs,
       })),
       isNonFishOrProtectedSpeciesCatchPresent: this.nonFishProtected,
       nonFishOrProtectedSpeciesCatches: this.protecteds.map(pr => ({
         seabirdCaptureDetails: null,
-        estimatedWeightKg: pr.amount,
+        estimatedWeightKg: pr.weightKgs,
         numberUninjured: pr.uninjured,
         numberInjured: pr.injured,
         numberDead: pr.dead,

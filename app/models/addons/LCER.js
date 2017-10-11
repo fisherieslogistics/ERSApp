@@ -35,11 +35,11 @@ export
     const catchToCheck =  [ ...this.estimatedCatch];
     //last one is always a blank;
     catchToCheck.pop();
-    return this.estimatedCatch.length && catchToCheck.every(ec => (ec.code && ec.amount));
+    return this.estimatedCatch.length && catchToCheck.every(ec => (ec.code && ec.weightKgs));
   }
 
   get discardsValid() {
-    return !this.discards.length || [ ...this.discards ].every(ec => (ec.code && ec.amount));
+    return !this.discards.length || [ ...this.discards ].every(ec => (ec.code && ec.weightKgs));
   }
 
   get protectedsValid() {
@@ -59,7 +59,7 @@ export
       return [];
     }
     return this.estimatedCatch.map(
-      c => Object.assign({}, blankModel(ProductModel), { code: c.code, amount: 0, RAId: uuid() }));
+      c => Object.assign({}, blankModel(ProductModel), { code: c.code, weightKgs: 0, RAId: uuid() }));
   }
 
   get nonFishProtectedsExist() {

@@ -25,20 +25,20 @@ const getTotalsList = (tripIds) => {
   trips.forEach(t => t.fishingEvents.forEach(
     (fe) => {
       fe.estimatedCatch.forEach(ec => {
-        if(ec.code && ec.amount) {
+        if(ec.code && ec.weightKgs) {
           if(catchObj[ec.code]) {
-            catchObj[ec.code] += ec.amount;
+            catchObj[ec.code] += ec.weightKgs;
           } else {
-            catchObj[ec.code] = ec.amount;
+            catchObj[ec.code] = ec.weightKgs;
           }
         }
       });
       fe.discards.forEach(d => {
-        if(d.code && d.amount) {
+        if(d.code && d.weightKgs) {
           if(discardObj[d.code]) {
-            discardObj[d.code] += d.amount;
+            discardObj[d.code] += d.weightKgs;
           } else {
-            discardObj[d.code] = d.amount;
+            discardObj[d.code] = d.weightKgs;
           }
         }
       });
@@ -47,9 +47,9 @@ const getTotalsList = (tripIds) => {
 
   return {
     products: Object.keys(catchObj).map(
-      k => ({code: k, amount: catchObj[k]})),
+      k => ({code: k, weightKgs: catchObj[k]})),
     discards: Object.keys(discardObj).map(
-      k => ({code: k, amount: discardObj[k]})),
+      k => ({code: k, weightKgs: discardObj[k]})),
   };
 }
 

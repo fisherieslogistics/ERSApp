@@ -49,13 +49,13 @@ export default (state = initialState, action) => {
       return updateWithTimeStamp(state,
         { fishingEvents: payload.changes });
     case 'setFishCatches':
-      payload.changes.sort((f1, f2) => (f1.amount > f2.amount) ? 1 : -1);
+      payload.changes.sort((f1, f2) => (f1.weightKgs > f2.weightKgs) ? 1 : -1);
       return updateWithTimeStamp(state,
         { fishCatches: payload.changes });
     case 'setViewingEvent':
       const catches = fishCatches.filter(
         fc => fc.fishingEvent_id === payload.changes._id);
-      catches.sort((f1, f2) => (f1.amount > f2.amount) ? 1 : -1);
+      catches.sort((f1, f2) => (f1.weightKgs > f2.weightKgs) ? 1 : -1);
       return updateWithTimeStamp(state, {
         viewingEvent: payload.changes,
         viewingEventHelper: new HandGatheringEventHelper(payload.changes),

@@ -180,8 +180,8 @@ export function changeItemInEvent(fishingEvent, item, changes, eventAttribute) {
   if(changes.code) {
     changes.code = changes.code.toUpperCase();
   }
-  if(isNaN(changes.amount)) {
-    changes.amount = 0;
+  if(isNaN(changes.weightKgs)) {
+    changes.weightKgs = 0;
   }
   return {
     type: actionNames[eventAttribute],
