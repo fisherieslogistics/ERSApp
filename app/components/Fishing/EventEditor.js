@@ -32,6 +32,7 @@ const toBind = [
   'changeItem',
   'commit',
 ];
+
 const addButtonProps = { text: "Add", color: colors.green, wrapstyle: { flex: 0.20 }  }
 
 class EventEditor extends Component {
@@ -43,6 +44,27 @@ class EventEditor extends Component {
 
   isDetailSelected(choice) {
     return choice === this.props.selectedCatchesDetail;
+  }
+  
+  addItem(eventAttribute) {
+    console.log(eventAttribute);
+    //this.props.dispatch(addItemToEvent(this.props.viewingEvent, eventAttribute));
+  }
+
+  changeItem(eventAttribute, inputId, value, item) {
+    console.log(eventAttribute);
+    /*const { code, amount } = item;
+    const changes = Object.assign({}, { code, amount }, { [inputId]: value});
+    this.props.dispatch(changeItemInEvent(this.props.viewingEvent, item, changes, eventAttribute));
+    if(eventAttribute === 'estimatedCatch' && inputId === 'code' &&
+      this.props.viewingEvent.shouldAddEmptyCatch) {
+      this.addItem(eventAttribute);
+    }*/
+  }
+
+  deleteItem(eventAttribute, item) {
+    console.log(item);
+    //this.props.dispatch(deleteItemInEvent(this.props.viewingEvent, item, eventAttribute));
   }
 
   renderDetailEditor() {

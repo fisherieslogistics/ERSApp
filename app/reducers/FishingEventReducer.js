@@ -65,8 +65,8 @@ export default (state = initialState, action) => {
       fishCatches.push(payload.changes);
       state.viewingFishCatches.push(payload.changes);
       return updateWithTimeStamp(state, {
-        fishCatches: [...fishCatches],
-        viewingFishCatches: [...viewingFishCatches],
+        fishCatches: [...state.fishCatches],
+        viewingFishCatches: [...state.viewingFishCatches],
       });
     case 'updateSpecies':
     case 'updateState':

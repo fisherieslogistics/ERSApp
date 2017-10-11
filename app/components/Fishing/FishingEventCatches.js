@@ -36,6 +36,7 @@ class FishingEventCatchesEditor extends Component {
       species,
       fishCatches,
       viewLastUpdated,
+      viewingFishCatches,
       selectedDetail,
     } = this.props;
 
