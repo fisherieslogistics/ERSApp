@@ -121,7 +121,7 @@ class SuggestBar extends Component {
     }
     const onPress = () => this.onResultPress(resultValue);
     return (
-      <TouchableOpacity key={i + "_Suggest"}
+      <TouchableOpacity key={i + "_Suggest_" + resultValue }
         onPress={onPress}
         style={[styles.result, backgroundStyle]}
       >

@@ -23,7 +23,7 @@ const styles = {
     padding: 0,
     margin: 0,
     flexDirection: 'row',
-    flex: 0.85,
+    flex: 1,
   },
   bottomStyle: {
     flex: 0.15,

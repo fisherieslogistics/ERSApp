@@ -72,7 +72,6 @@ class EventDetailEditor extends Component{
     const extraProps = {};
     const inputId = `${attribute.id}_${this.props.fishingEvent._id}`;
     if(attribute.id === 'targetSpecies') {
-      extraProps.choices = this.props.species;
       extraProps.autoCapitalize = 'characters';
       extraProps.maxLength = 3;
     }
