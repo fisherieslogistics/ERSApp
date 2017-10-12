@@ -13,15 +13,25 @@ class FishingEventCatchesEditor extends Component {
   addItem(eventAttribute) {
     this.props.dispatch(addItemToEvent(this.props.viewingEvent, eventAttribute));
   }
-  
-  changeItem(eventAttribute, inputId, value, item) {
-    const { code, amount } = item;
-    const changes = Object.assign({}, { code, amount }, { [inputId]: value});
-    this.props.dispatch(changeItemInEvent(this.props.viewingEvent, item, changes, eventAttribute));
+
+  changeItem = (eventAttribute, inputId, value, item) => {
+    const { code, weightKgs } = item;
+    const changes = Object.assign({}, { code, weightKgs }, { [inputId]: value});
+    if(changes.code === item.code && item.weightKgs === changes.weightKgs) {
+      return;
+    }
+    if(item._id) {
+      this.props.db.update(changes, item._id);
+    } else {
+      changes.fishingEvent_id = this.props.viewingEvent._id;
+      changes.document_type = 'fishCatch';
+      this.props.db.create(changes);
+    }
+    /*this.props.dispatch(changeItemInEvent(this.props.viewingEvent, item, changes, eventAttribute));
     if(eventAttribute === 'estimatedCatch' && inputId === 'code' &&
       this.props.viewingEvent.shouldAddEmptyCatch) {
       this.addItem(eventAttribute);
-    }
+    }*/
   }
 
   deleteItem(eventAttribute, item) {
@@ -47,7 +57,7 @@ class FishingEventCatchesEditor extends Component {
       changeItem: this.changeItem,
       species: species,
     }
-    
+
     switch (this.props.selectedDetail) {
       case "catches":
         return (
@@ -57,7 +67,8 @@ class FishingEventCatchesEditor extends Component {
             dispatch={ dispatch }
             items={ viewingFishCatches }
             viewLastUpdated={ viewLastUpdated }
-          />);
+          />
+      );
       /*case "discards":
         return (
           <EventDiscardsEditor
@@ -80,13 +91,14 @@ class FishingEventCatchesEditor extends Component {
   }
 }
 
-const select = (state) => {  
+const select = (state) => {
   return {
     lastUpdated: state.fishingEvents.lastUpdated,
     viewingEvent: state.fishingEvents.viewingEvent,
     viewingFishCatches: state.fishingEvents.viewingFishCatches,
     viewLastUpdated: state.view.lastUpdated,
     species: state.species.all,
+    db: state.database.db,
   };
 }
 
