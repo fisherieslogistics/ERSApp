@@ -42,40 +42,71 @@ export default class Pouch {
   }
 
   handleComplete(changes) {
-    
+
   }
-  
-  /*reateFishingEventByTripIdIndex() {
-    return this.localDB.createIndex({
-      index: {
-        fields: ['trip_id', 'document_type'],
-      },
-    });
-  }*/
-  
-  setCurrentFishingEvents(trip_id) {
-    
-    return this.localDB.find({
+
+  setCurrentFishCatches(fishingEvents, resolve, reject) {
+    debugger;
+    console.log([...fishingEvents].map(f => f._id));
+    this.localDB.find({
       selector: {
         $and: [
-          { trip_id },
-          { document_type: 'fishingEvent' },
+          { fishingEvent_id: { $in: fishingEvents.map(f => f._id) } },
+          { document_type: 'fishCatch' },
           { archived: { $ne: true } },
         ],
-        sort: 'numberInTrip',
+        sort: 'weightKgs',
       },
     }).then(results => {
       this.dispatch({
-        type: 'setFishingEvents',
+        type: 'setFishCatches',
         payload: {
           changes: results.docs,
         }
       });
+      resolve()
     }).catch(err => {
       console.log(err);
+      reject(err);
     });
   }
-  
+
+  setCurrentFishingEvents(trip_id) {
+
+    const next = (fishingEvents, resolve, reject) => {
+      return this.setCurrentFishCatches(fishingEvents, resolve, reject);
+    };
+
+    return new Promise((resolve, reject) => {
+
+      this.localDB.find({
+        selector: {
+          $and: [
+            { trip_id },
+            { document_type: 'fishingEvent' },
+            { archived: { $ne: true } },
+          ],
+          sort: 'numberInTrip',
+        },
+      }).then(results => {
+
+        this.dispatch({
+          type: 'setFishingEvents',
+          payload: {
+            changes: results.docs,
+          }
+        });
+
+        next(results.docs, resolve, reject);
+
+      }).catch(err => {
+        debugger;
+        console.log(err);
+        reject(err);
+      });
+    });
+  }
+
   createFishCatchByEventIdIndex() {
     return this.localDB.createIndex({
       index: {
@@ -126,8 +157,8 @@ export default class Pouch {
       this.setupReduxState();
     });
   }
-  
-  
+
+
 
   setItems({ ports, vessels, user, species }) {
     user._id = uuid();
@@ -195,14 +226,14 @@ export default class Pouch {
       payload: { changes: doc },
     });
   }
-  
+
   dispatchCreate(doc) {
     this.dispatch({
       type: `create-${doc.document_type}`,
       payload: { changes: doc },
     });
   }
-  
+
   dispatchDelete(doc) {
     this.dispatch({
       type: `delete-${doc.document_type}`,
@@ -218,10 +249,10 @@ export default class Pouch {
       return this.localDB.put(newdoc).then((res) => {
 
         this.localDB.get(res.id).then(newestdoc => {
-          
+
           console.log('dispatchUpdate')
           this.dispatchUpdate(newestdoc);
-        
+
         });
 
       }).catch((err) => {
