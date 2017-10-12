@@ -102,9 +102,6 @@ class Fishing extends MasterDetail {
 
     const rightProps = (
       <View>
-        <View style={ circleWrapper }>
-
-        </View>
 
       <TextButton
         text={ 'Delete' }
