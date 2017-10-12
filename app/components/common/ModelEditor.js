@@ -91,9 +91,9 @@ class ModelEditor extends React.Component {
     }
   }
 
-  renderInput(attribute, numInputs = 1) {
+  renderInput(attribute, index, numInputs = 1) {
 
-    const otherProps = this.props.getEditorProps(attribute, this.props.modelValues, this.props.index);
+    const otherProps = this.props.getEditorProps(attribute, this.props.modelValues, index);
 
     const inputId = otherProps.inputId;
 
@@ -138,7 +138,8 @@ class ModelEditor extends React.Component {
           setFocusedInputId={ this.setFocusedInputId }
           inputId={ inputId }
           isFocused={ isFocused }
-          index={ this.props.index }
+          onlyBlurChange={ true }
+          index={ index }
           value={ value }
           onChange={ this.props.onChange }
           focusedInputId={ this.props.focusedInputId }
@@ -148,8 +149,8 @@ class ModelEditor extends React.Component {
     );
   }
   //Single Editor
-  renderInputWrapper(attribute, inputs){
-    const inputRowId = `${attribute.id}_${attribute.type}_input_view_${this.props.index}`;
+  renderInputWrapper(attribute, inputs, index){
+    const inputRowId = `${attribute.id}_${attribute.type}_input_view_${index}`;
     return (
       <View
         style={ this.props.wrapperStyle }
@@ -162,12 +163,12 @@ class ModelEditor extends React.Component {
     );
   }
 
-  renderAttribute(attribute) {
+  renderAttribute(attribute, index) {
     switch (attribute.display.type) {
 
       case "single": {
-        const input = this.renderInput(attribute);
-        return this.renderInputWrapper(attribute, [input]);
+        const input = this.renderInput(attribute, index);
+        return this.renderInputWrapper(attribute, [input], index);
       }
       case "combined": {
         const siblings = attribute.display.siblings.map(
@@ -175,9 +176,9 @@ class ModelEditor extends React.Component {
 
         const numInputs = siblings.length + 1;
         const inputs = [attribute, ...siblings].map(
-          (attr) => attr ? this.renderInput(attr, numInputs) : null);
+          (attr) => attr ? this.renderInput(attr, index, numInputs) : null);
 
-        return this.renderInputWrapper(attribute, inputs);
+        return this.renderInputWrapper(attribute, inputs, index);
       }
     }
   }
