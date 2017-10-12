@@ -109,7 +109,7 @@ class CatchesEditor extends Component{
     return (
       <KeyboardAwareScrollView
         viewIsInsideTabBar
-        extraHeight={ 500 }
+        extraHeight={ 140 }
         bouncesZoom={ false }
         alwaysBounceVertical={ false }
         keyboardShouldPersistTaps={ 'always' }

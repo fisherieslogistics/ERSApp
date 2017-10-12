@@ -14,7 +14,6 @@ import PlaceholderMessage from '../common/PlaceholderMessage';
 import Validator from '../../utils/Validator';
 import { colors } from '../../styles/styles';
 import FishingEventModel from '../../models/FishingEventModel';
-//import { getRenderableTrawlEventDetailModel } from '../../utils/ModelUtils';
 
 
 /* eslint-disable */
@@ -131,7 +130,7 @@ class EventDetailEditor extends Component{
     return (
       <KeyboardAwareScrollView
         viewIsInsideTabBar
-        extraHeight={ 150 }
+        extraHeight={ 140 }
         bouncesZoom={ false }
         alwaysBounceVertical={ false }
         style={{ padding: 6 }}

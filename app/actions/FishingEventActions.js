@@ -9,8 +9,19 @@ import FishingEventModel from '../models/FishingEventModel';
 import HandGatheringEventModel from '../models/HandGatheringEventModel';
 import HandGatheringEventHelper from '../models/addons/HandGatheringEvent';
 import TrawlEventModel from '../models/TrawlEventModel';
-import TrawlEventHelper from '../models/addons/HandGatheringEvent';
+import TrawlEventHelper from '../models/addons/TrawlEvent';
+import MPIFormType from '../constants/MPIFormType';
 
+let eventSpecificModel = TrawlEventModel;
+let fishingEventHelper = TrawlEventHelper;
+
+switch (MPIFormType) {
+  case 'HandGatheringEvent':
+    eventSpecificModel = HandGatheringEventModel;
+    fishingEventHelper = HandGatheringEventHelper;
+    break;
+  default:
+}
 
 
 export function toggleOptionalFields() {
@@ -69,15 +80,16 @@ export function commitFishingEvent(fishingEvent) {
 }
 
 export function createFishingEvent(trip_id, previousEvent, location) {
-  const newEvent = blankModel(FishingEventModel);
-  const newEventSpecifics = blankModel(HandGatheringEventModel);
 
-  newEvent.eventSpecificDetails = JSON.stringify(newEventSpecifics);
+  const newEvent = blankModel(FishingEventModel);
+  const eventSpecificDetails = blankModel(eventSpecificModel);
+
   newEvent.id = uuid();
   newEvent.trip_id = trip_id;
   newEvent.datetimeAtStart = new Date();
   newEvent.numberInTrip = previousEvent ? (previousEvent.numberInTrip) + 1 : 1;
   newEvent.locationAtStart = locationToGeoJSONPoint(location);
+  
   FishingEventModel.forEach(field => {
     if(previousEvent && field.repeating) {
       newEvent[field.id] = previousEvent[field.id];
@@ -88,7 +100,22 @@ export function createFishingEvent(trip_id, previousEvent, location) {
       Object.assign(newEvent, change);
     }
   });
-
+  
+  if(previousEvent) {
+    const previousEventSpecificDetails = JSON.parse(previousEvent.eventSpecificDetails);
+    eventSpecificModel.forEach(field => {
+      if(previousEvent && field.repeating) {
+        eventSpecificDetails[field.id] = previousEventSpecificDetails[field.id];
+      }
+      if(field.copyFrom) {
+        const copiedValue = previousEventSpecificDetails[field.copyFrom];
+        const change = { [field.id]: copiedValue };
+        Object.assign(eventSpecificDetails, change);
+      }
+    });
+  }
+  
+  newEvent.eventSpecificDetails = JSON.stringify(eventSpecificDetails);
   return newEvent;
 }
 

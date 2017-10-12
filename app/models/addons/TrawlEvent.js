@@ -1,14 +1,19 @@
-import
 import moment from 'moment';
-import ProductModel from '../../models/ProductModel';
+import TrawlEventModel from '../../models/TrawlEventModel';
+import FishingEventModel from '../../models/FishingEventModel';
+
 import { blankModel } from '../../utils/ModelUtils';
 import uuid from 'uuid/v1';
 import JSONPointToLocation from '../../utils/JSONPointToLocation';
 
 
-export
+export default class TrawlEventHelper {
+  
+  constructor(trawlEvent) {
+    Object.assign(this, trawlEvent);
+  }
 
-  get datetimeAtStartMoment() {
+  datetimeAtStartMoment() {
     return moment(this.datetimeAtStart);
   }
 
@@ -21,7 +26,7 @@ export
   }
 
   get shouldAddEmptyCatch() {
-    return !this.estimatedCatch.find(p => !p.code);
+    return false;
   }
 
   get detailsValid() {
@@ -57,21 +62,19 @@ export
   }
 
   get estimatedCatchKg() {
-    const catches = [...this.estimatedCatch];
-    return catches.map(
-      ec => ec.weightKgs).reduce(
-        (acc, weightKgs) => acc + weightKgs);
+    return 0;
   }
 
   get estimatedCatchValid() {
-    const catchToCheck =  [ ...this.estimatedCatch];
+    //const catchToCheck =  [ ...this.estimatedCatch];
     //last one is always a blank;
-    catchToCheck.pop();
-    return this.estimatedCatch.length && catchToCheck.every(ec => (ec.code && ec.weightKgs));
+    return true;
+    //catchToCheck.pop();
+    //return this.estimatedCatch.length && catchToCheck.every(ec => (ec.code && ec.weightKgs));
   }
 
   get discardsValid() {
-    return !this.discards.length || [ ...this.discards ].every(ec => (ec.code && ec.weightKgs));
+    return //!this.discards.length || [ ...this.discards ].every(ec => (ec.code && ec.weightKgs));
   }
 
   get protectedsValid() {
@@ -95,6 +98,7 @@ export
   }
 
   get replicatedEstimatedCatch() {
+    return [];
     if(!this.estimatedCatch) {
       return [];
     }
@@ -176,6 +180,11 @@ export
         tags: []
       })),
     }
+  }
+  
+  fieldsToRender() {
+    return FishingEventModel.concat(TrawlEventModel).filter(
+      field => !!field.display);
   }
 
   get eventHeader() {

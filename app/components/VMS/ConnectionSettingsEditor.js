@@ -204,7 +204,7 @@ class ConnectionsSettingsEditor extends Component {
     return (
       <KeyboardAwareScrollView
         viewIsInsideTabBar
-        extraHeight={ 150 }
+        extraHeight={ 140 }
         bouncesZoom={false}
         alwaysBounceVertical={false}
       >

@@ -9,7 +9,7 @@ const TrawlEventModel = [
     default: 'BT',
     repeating: true,
   },
-  /*{
+  {
     label: 'Bottom Depth',
     id: 'bottomDepth',
     valid: valid.greaterThanZero,
@@ -18,17 +18,8 @@ const TrawlEventModel = [
     default: 0,
     display: { type: 'combined', siblings: ['groundropeDepth'] },
 
-  },*/
-  {
-    label: 'Number of People',
-    id: 'numberOfNets',
-    valid: valid.greaterThanZero,
-    type: 'number',
-    default: 1,
-    repeating: true,
-    display: { type: 'single' },
   },
-  /*{
+  {
     label: 'Estimated Total Bag Size',
     id: 'estimatedCatchKg',
     valid: valid.anyValue,
@@ -38,7 +29,6 @@ const TrawlEventModel = [
     displayStage: 'Haul',
     unit: 'kg',
     display: { type: 'single' },
-
   },
   {
     label: 'Vessel Pair Number',
@@ -48,7 +38,6 @@ const TrawlEventModel = [
     default: null,
     repeating: true,
     display: { type: 'single' },
-
   },
   {
     label: 'Minimum Mesh Size',
@@ -59,7 +48,6 @@ const TrawlEventModel = [
     unit: 'mm',
     repeating: true,
     display: { type: 'single' },
-
   },
   {
     label: 'Start of Haul Location',
@@ -71,18 +59,6 @@ const TrawlEventModel = [
     displayStage: 'Haul',
     display: { type: 'single' },
     optionalRender: true,
-
-  },
-  {
-    label: 'Start Of Haul Time',
-    id: 'NetLeaveDepthDateTime',
-    valid: valid.anyValue,
-    type: 'datetime',
-    default: null,
-    copyFrom: 'datetimeAtEnd',
-    display: { type: 'single' },
-    optionalRender: true,
-
   },
   {
     label: 'End Of Shot Location',
@@ -96,29 +72,6 @@ const TrawlEventModel = [
 
   },
   {
-    label: 'End Of Shot Time',
-    id: 'NetAtDepthDateTime',
-    valid: valid.anyValue,
-    type: 'datetime',
-    default: null,
-    copyFrom: 'datetimeAtStart',
-    display: { type: 'single' },
-    optionalRender: true,
-
-  },
-  {
-    label: 'Code End Time',
-    id: 'codendDateTime',
-    valid: valid.anyValue,
-    type: 'datetime',
-    default: null,
-    copyFrom: 'datetimeAtEnd',
-    displayStage: 'Haul',
-    display: { type: 'single' },
-    optionalRender: true,
-
-  },*/
-  {
     label: 'Is Net Lost',
     id: 'isNetLost',
     valid: valid.anyValue,
@@ -128,7 +81,7 @@ const TrawlEventModel = [
     display: { type: 'single' },
 
   },
-  /*{
+  {
     label: 'Groundrope Depth',
     id: 'groundropeDepth',
     valid: valid.greaterThanZero,
@@ -174,16 +127,11 @@ const TrawlEventModel = [
     unit: 'kt',
     optionalRender: true,
     displayStage: 'Haul',
-
-  },*/
+  },
   {
     id: 'formType', default: 'TrawlEvent',
 
   },
-  /*{
-    id: 'otherSpeciesWeight', default: 0,
-
-  },*/
   {
     id: 'committed', default: false,
 

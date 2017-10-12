@@ -3,6 +3,23 @@ import {
   update,
 } from '../utils/Helper';
 import HandGatheringEventHelper from '../models/addons/HandGatheringEvent';
+//import FishingEventModel from '../models/FishingEventModel';
+import HandGatheringEventModel from '../models/HandGatheringEventModel';
+import TrawlEventModel from '../models/TrawlEventModel';
+import TrawlEventHelper from '../models/addons/TrawlEvent';
+import MPIFormType from '../constants/MPIFormType';
+
+let eventSpecificModel = TrawlEventModel;
+let fishingEventHelper = TrawlEventHelper;
+
+switch (MPIFormType) {
+  case 'HandGatheringEvent':
+    eventSpecificModel = HandGatheringEventModel;
+    fishingEventHelper = HandGatheringEventHelper;
+    break;
+  default:
+}
+
 
 const initialState = {
   lastUpdated: new Date(),
@@ -35,7 +52,7 @@ export default (state = initialState, action) => {
     case 'update-fishingEvent':
       return updateWithTimeStamp(state, {
           fishingEvents: replaceByArray(payload.changes, fishingEvents),
-          viewingEventHelper: new HandGatheringEventHelper(payload.changes),
+          viewingEventHelper: new fishingEventHelper(payload.changes),
           viewingEvent: payload.changes,
         });
     case 'create-fishingEvent':
@@ -43,7 +60,7 @@ export default (state = initialState, action) => {
       return updateWithTimeStamp(state, {
         fishingEvents: [...fishingEvents],
         viewingEvent: payload.changes,
-        viewingEventHelper: new HandGatheringEventHelper(payload.changes),
+        viewingEventHelper: new fishingEventHelper(payload.changes),
         selectedDetail: 'detail',
         viewingFishCatches: [],
       });
@@ -61,7 +78,7 @@ export default (state = initialState, action) => {
       catches.sort((f1, f2) => (f1.weightKgs > f2.weightKgs) ? 1 : -1);
       return updateWithTimeStamp(state, {
         viewingEvent: payload.changes,
-        viewingEventHelper: new HandGatheringEventHelper(payload.changes),
+        viewingEventHelper: new fishingEventHelper(payload.changes),
         viewingFishCatches: catches,
       });
     case 'create-fishCatch':

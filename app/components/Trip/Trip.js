@@ -20,7 +20,6 @@ import {
 } from '../../actions/TripActions';
 import { setSelectedTab } from '../../actions/ViewActions';
 import { setViewingEvent } from '../../actions/FishingEventActions';
-
 import StartTripEditor from './StartTripEditor';
 import TotalsList from './TotalsList';
 //import ProfileEditor from '../User/ProfileEditor';
@@ -324,7 +323,7 @@ class Trip extends MasterDetail {
         return (
           <KeyboardAwareScrollView
             viewIsInsideTabBar
-            extraHeight={ 150 }
+            extraHeight={ 140 }
             bouncesZoom={false}
             alwaysBounceVertical={false}
           >
