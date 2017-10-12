@@ -24,9 +24,11 @@ const styles = {
   },
   style: {
     width: 200,
+    padding: 5,
   },
   label: {
     width: 30,
+    padding: 5,
   },
 };
 
