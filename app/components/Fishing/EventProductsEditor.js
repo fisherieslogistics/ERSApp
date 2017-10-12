@@ -16,7 +16,6 @@ export default class EventProductsEditor extends CatchesEditor {
   constructor(props) {
     super(props);
     this.eventAttribute = 'estimatedCatch';
-    this.onChangeOtherSpeciesWeight = this.onChangeOtherSpeciesWeight.bind(this);
   }
 
   renderEditors(){
@@ -26,46 +25,20 @@ export default class EventProductsEditor extends CatchesEditor {
       inputs.push(this.renderEditor(p, i));
     });
     for(var i = 0; i < num; i++) {
-      inputs.push(this.renderEditor(blankModel(ProcuctModel), i + this.props.items.length));
+      const blankFish = blankModel(ProcuctModel);
+      blankFish._id = `blankFish_${i}`;
+      blankFish._isblank = true;
+      inputs.push(this.renderEditor(blankFish, i + this.props.items.length));
     }
-    //inputs.push(this.renderOtherSpeciesEditor());
     return inputs;
   }
 
-  onChangeOtherSpeciesWeight(value) {
-    const { fishingEvent } = this.props;
-    this.props.dispatch(updateFishingEvent(fishingEvent, { 'otherSpeciesWeight': value }));
-  }
-
-  renderOtherSpeciesEditor() {
-    return null
-    /*const onChange = (name, value) => this.onChangeOtherSpeciesWeight(value);
-    const inputId = `other_species_weightKgs_editor_${ this.props.fishingEvent.RAId }`;
-    const getEditorProps = () => ({
-      inputId,
-    });
-    return (
-      <View
-        key={`${inputId}-containter`}
-      >
-        <ModelEditor
-          getEditorProps={ getEditorProps }
-          model={ OtherSpeciesWeightModel }
-          modelValues={ this.props.fishingEvent }
-          index={ this.props.fishingEvent.numberInTrip }
-          onChange={ onChange }
-        />
-      </View>
-    )*/
-  }
-
-  getExtraProps(item, attribute) {
+  getExtraProps(item, attribute, index) {
      return {
-      choices: this.getSuggestions(attribute.id, item.code),
       autoCapitalize: "characters",
-      eventAttribute: 'estimatedCatch',
       maxLength: 3,
       error: this.itemHasError(item),
+      inputId: `${attribute.id}_${item._id}_${index}`,
     };
   }
 
@@ -82,10 +55,9 @@ export default class EventProductsEditor extends CatchesEditor {
   }
 
   getEditorProps(attribute, item, index) {
-    const inputId = `${attribute.id}_${item.RAId}`;
+    const inputId = `${attribute.id}_${item._id}_${index}`;
     const props = {
       attribute,
-      index,
       inputId,
       fishingEvent: this.props.fishingEvent,
     };
@@ -93,7 +65,7 @@ export default class EventProductsEditor extends CatchesEditor {
     switch (attribute.id) {
       case 'code':
       case 'state':
-        props.extraProps = this.getExtraProps(item, attribute);
+        props.extraProps = this.getExtraProps(item, attribute, index);
         break;
       case 'weightKgs':
         props.extraProps = { persistKeyboard: true };
