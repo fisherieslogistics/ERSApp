@@ -41,7 +41,10 @@ class EditOnBlurInput extends Component {
     }
   }
 
-  onBlur(){
+  onBlur(e){
+    if(!e) {
+      return;
+    }
     this.props.onChange(this.getCorrectedValue(this.state.value));
     this.props.handleBlur(this.props.inputId);
     this.setState({
