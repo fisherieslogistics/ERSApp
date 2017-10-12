@@ -46,7 +46,6 @@ export default class Pouch {
   }
 
   setCurrentFishCatches(fishingEvents, resolve, reject) {
-    debugger;
     console.log([...fishingEvents].map(f => f._id));
     this.localDB.find({
       selector: {
@@ -100,7 +99,6 @@ export default class Pouch {
         next(results.docs, resolve, reject);
 
       }).catch(err => {
-        debugger;
         console.log(err);
         reject(err);
       });
@@ -220,7 +218,6 @@ export default class Pouch {
   }
 
   dispatchUpdate(doc) {
-    console.log(`update-${doc.document_type}`, doc);
     this.dispatch({
       type: `update-${doc.document_type}`,
       payload: { changes: doc },
@@ -234,11 +231,17 @@ export default class Pouch {
     });
   }
 
-  dispatchDelete(doc) {
+  dispatchDelete(_id, document_type) {
     this.dispatch({
-      type: `delete-${doc.document_type}`,
-      payload: { changes: doc },
+      type: `delete-${document_type}`,
+      payload: { changes: _id },
     });
+  }
+
+  delete(_id, document_type) {
+    this.localDB.get(_id).then(
+      doc => this.localDB.remove(doc).then(
+        () => this.dispatchDelete(_id, document_type)));
   }
 
   update(change, _id) {
@@ -266,31 +269,5 @@ export default class Pouch {
       this.setCurrentTrip(appState);
     });
   }
-
-  getAllTrips() {
-
-  }
-
-  /*localDB.allDocs({include_docs: true})
-    .then(results => {
-      const trips = results.filter(row => row.doc.type === 'trip');
-
-      this.dispatch(setInitialTrips(trips));
-
-    }).catch(err => console.log.bind(console, '[Fetch all]'));
-
-
-
-    syncStates.forEach(state => {
-      sync.on(state, setCurrentState.bind(this, state));
-
-      function setCurrentState(state) {
-        console.log('[Sync:' + state + ']');
-
-        this.setState({
-          syncStatus: state
-        });
-      }
-    });*/
 
 }
