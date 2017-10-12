@@ -179,7 +179,7 @@ class EventEditor extends Component {
   }
 
   renderMessage(message){
-    const style = { padding: 15, marginTop: 30, flex: 1 };
+    const style = { padding: 15, marginTop: 30, flex: 1, height: 180, background: 'red' };
     return (
       <View style={style}>
         <PlaceholderMessage
@@ -203,24 +203,22 @@ class EventEditor extends Component {
     if(selectedDetail === 'catches') {
       detailAttribute = 'estimatedCatch';
     }
-    const canAdd = this.props.selectedDetail !== 'detail';
-    const addButton = this.renderAddButton(detailAttribute, !!(datetimeAtEnd && canAdd));
+    const canAdd = ['protecteds', 'discards'].includes(selectedDetail);
+    const addButton = null;
+    this.renderAddButton(detailAttribute, !!(canAdd && datetimeAtEnd));
     const detailView = this.renderDetailEditor();
     const viewButtons = this.renderDetailViewButtons();
-    const wrapper = [styles.detailView, styles.col];
-    const detailRowStyle = [styles.row, styles.fill, styles.detailWrap];
+    const detailRowStyle = [];
 
     return(
-      <View style={ wrapper }>
-        <View style={ styles.row }>
-          <View style={ styles.buttonRowStyle }>
+      <View style={ [styles.fill, styles.col] }>
+        <View style={[styles.row, { flex: 0.06 }] }>
 
-            { viewButtons }
-            { addButton }
+          { viewButtons }
+          { addButton }
 
-          </View>
         </View>
-        <View style={ detailRowStyle }>
+        <View style={ [styles.row, { flex: 0.94 } ] }>
 
           { detailView }
 
