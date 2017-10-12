@@ -17,7 +17,7 @@ export default class BottomMasterButton extends Component {
 
   render() {
     switch (FORM_TYPE) {
-      case 'TCER':
+      case 'TrawlEvent':
       case 'HandGatheringEvent':
         return null;
       case 'LCER':

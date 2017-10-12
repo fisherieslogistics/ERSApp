@@ -7,7 +7,7 @@ import React from 'react';
 import { colors, shadowStyles, toolbarStyles } from '../../styles/styles';
 
 const MasterToolbar = (props) => (
-    <View style={[toolbarStyles.master, props.style, { backgroundColor: colors.backgrounds.dark }]}>
+    <View style={[toolbarStyles.master, props.style]}>
       <View style={toolbarStyles.inner}>
         {props.center}
       </View>
@@ -16,7 +16,7 @@ const MasterToolbar = (props) => (
 
 const DetailToolbar = (props) => (
     <View
-      style={[ toolbarStyles.master, shadowStyles.shadow, props.style ]}
+      style={[ toolbarStyles.master, shadowStyles.shadow, props.style, { backgroundColor: '#000'} ]}
     >
       <View style={[toolbarStyles.detailCenter]}>
         { props.center }

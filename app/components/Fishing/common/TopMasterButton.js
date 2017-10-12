@@ -8,7 +8,7 @@ export default class TopMasterButton extends Component {
 
   render() {
     switch (FORM_TYPE) {
-      case 'TCER':
+      case 'TrawlEvent':
       case 'HandGatheringEvent':
         if(this.props.canEndEvent) {
           return (<HaulButton />);

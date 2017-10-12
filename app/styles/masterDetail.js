@@ -10,17 +10,14 @@ export default {
   },
   col: {
     flexDirection: 'column',
-    flex: 1
   },
   row: {
     flexDirection: 'row',
-    flex: 1
   },
   background:{
     backgroundColor: colors.backgrounds.dark,
   },
   master: {
-    flexDirection: 'column',
     alignSelf: 'stretch',
     flex: 0.3,
   },

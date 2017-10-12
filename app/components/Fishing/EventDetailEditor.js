@@ -14,7 +14,7 @@ import PlaceholderMessage from '../common/PlaceholderMessage';
 import Validator from '../../utils/Validator';
 import { colors } from '../../styles/styles';
 import FishingEventModel from '../../models/FishingEventModel';
-//import { getRenderableTCERDetailModel } from '../../utils/ModelUtils';
+//import { getRenderableTrawlEventDetailModel } from '../../utils/ModelUtils';
 
 
 /* eslint-disable */
@@ -63,9 +63,7 @@ class EventDetailEditor extends Component{
       const specificChanges = { eventSpecificDetails: JSON.stringify(eventDetails) };
       this.props.db.update(specificChanges, fishingEvent._id);
     }
-
-
-
+  
   }
 
   getEditorProps(attribute){
@@ -123,7 +121,7 @@ class EventDetailEditor extends Component{
       return this.renderMessage("Start Trip First");
     }
 
-    //const fieldsToRender = getRenderableTCERDetailModel(fishingEvent, showOptionalFields);
+    //const fieldsToRender = getRenderableTrawlEventDetailModel(fishingEvent, showOptionalFields);
 
 
 
@@ -136,8 +134,8 @@ class EventDetailEditor extends Component{
         extraHeight={ 150 }
         bouncesZoom={ false }
         alwaysBounceVertical={ false }
+        style={{ padding: 6 }}
       >
-        <View style={spacer} />
         <ModelEditor
           getEditorProps={ this.getEditorProps }
           model={ viewingEventHelper.fieldsToRender() }

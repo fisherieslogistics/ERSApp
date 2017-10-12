@@ -113,6 +113,7 @@ class CatchesEditor extends Component{
         bouncesZoom={ false }
         alwaysBounceVertical={ false }
         keyboardShouldPersistTaps={ 'always' }
+        style={{ padding: 6 }}
       >
         <View
           style={ spacer }

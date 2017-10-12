@@ -5,6 +5,7 @@ export default {
      backgroundColor: colors.backgrounds.veryDark,
      flexDirection: 'row',
      height: 70,
+     flex: 1,
    },
    inner:{
      alignSelf: 'stretch',

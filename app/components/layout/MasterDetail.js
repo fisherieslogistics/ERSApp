@@ -15,7 +15,6 @@ const styles = {
   outerStyle: {
     padding: 0,
     margin: 0,
-    flexDirection: 'column',
     flex: 1,
     alignItems: 'flex-start',
   },
@@ -23,7 +22,6 @@ const styles = {
     padding: 0,
     margin: 0,
     flexDirection: 'row',
-    flex: 1,
   },
   bottomStyle: {
     flex: 0.15,
@@ -40,6 +38,14 @@ const icons = {
     b: 'fishing',
     c: 'fishing-boat-filled',
 };
+
+const masterWrapperStyle = [masterDetailStyles.master, shadowStyles.shadowRight];
+const masterToolbarStyle = [shadowStyles.shadowDown, masterDetailStyles.row];
+const masterViewStyle = [masterDetailStyles.col, masterDetailStyles.bgtop, { flex: 1 }];
+
+const detailWrapperStyle = masterDetailStyles.detail;
+const detailToolbarStyle = [shadowStyles.shadowDown, masterDetailStyles.row];
+const detailViewStyle = [masterDetailStyles.col, { flex: 1} ];
 
 
 class MasterDetail extends Component {
@@ -110,7 +116,7 @@ class MasterDetail extends Component {
     );
   }
 
-  renderMasterView(){
+  renderMasterView() {
     const masterListView = this.renderMasterListView();
     const bottomView = this.renderBottomMasterView();
     return (
@@ -152,37 +158,44 @@ class MasterDetail extends Component {
   renderDetailToolbar(){
     return (<DetailToolbar />);
   }
-
-  getMasterDetailProps(){
-    return {
-      detail: this.renderDetailView(),
-      master: this.renderMasterView(),
-      detailToolbar: this.renderDetailToolbar(),
-      masterToolbar: this.renderMasterToolbar(),
-    }
+  
+  renderMaster() {
+    return (
+      <View style={ masterWrapperStyle }>
+        <View style={ masterToolbarStyle }>
+          { this.renderMasterToolbar() }
+        </View>
+        <View style={ masterViewStyle }>
+          { this.renderMasterView() }
+        </View>
+      </View>
+    );
+  }
+  
+  renderDetail() {
+    return (
+      <View style={ detailWrapperStyle }>
+        <View style={ detailToolbarStyle }>
+          { this.renderDetailToolbar() }
+        </View>
+        <View style={ detailViewStyle }>
+          { this.renderDetailView() }
+        </View>
+      </View>
+    );
   }
 
   render() {
-    const { detail, master, masterToolbar, detailToolbar } = this.getMasterDetailProps();
+    const detailView = this.renderDetail();
+    const masterView = this.renderMaster();
+    
     return (
       <View style={[masterDetailStyles.wrapper]}>
-        <View style={[masterDetailStyles.row]}>
-          <View style={[masterDetailStyles.master, shadowStyles.shadowRight]}>
-            <View>
-              { masterToolbar }
-            </View>
-            <View style={[masterDetailStyles.col,masterDetailStyles.bgtop]}>
-              { master }
-            </View>
-          </View>
-          <View style={[masterDetailStyles.detail]}>
-            <View style={[shadowStyles.shadowDown, masterDetailStyles.bgleft]}>
-              { detailToolbar }
-            </View>
-            <View style={[masterDetailStyles.col, masterDetailStyles.detail]}>
-              { detail }
-            </View>
-          </View>
+        <View style={[masterDetailStyles.row, { flex: 1 }]}>
+          
+          { masterView }
+          { detailView }
+        
         </View>
       </View>
     );
