@@ -17,21 +17,24 @@ const initialState = {
   viewingFishCatches: [],
 };
 
+const removeById = (_id, list) => [...list.filter(x => x._id !== _id)];
+
+const replaceByArray = (newDoc, list) => {
+  let index = list.findIndex(
+    x => x._id == newDoc._id);
+  list[index] = newDoc;
+  return [...list];
+}
+
 export default (state = initialState, action) => {
 
   const { type, payload } = action;
-  let { fishingEvents, fishCatches } = state;
-  
+  let { fishingEvents, fishCatches, viewingFishCatches } = state;
+
   switch(type) {
     case 'update-fishingEvent':
-      if(payload.changes.archived === true) {
-        return state;
-      }
-      let eventIndex = fishingEvents.findIndex(
-        x => x.id == payload.changes.id);
-      fishingEvents[eventIndex] = payload.changes;
       return updateWithTimeStamp(state, {
-          fishingEvents: [...fishingEvents],
+          fishingEvents: replaceByArray(payload.changes, fishingEvents),
           viewingEventHelper: new HandGatheringEventHelper(payload.changes),
           viewingEvent: payload.changes,
         });
@@ -62,11 +65,22 @@ export default (state = initialState, action) => {
         viewingFishCatches: catches,
       });
     case 'create-fishCatch':
-      fishCatches.push(payload.changes);
-      state.viewingFishCatches.push(payload.changes);
+      fishCatches.push(payload.changes)
+      viewingFishCatches.push(payload.changes);
       return updateWithTimeStamp(state, {
-        fishCatches: [...state.fishCatches],
-        viewingFishCatches: [...state.viewingFishCatches],
+        fishCatches: [...fishCatches],
+        viewingFishCatches: [...viewingFishCatches],
+      });
+    case 'update-fishCatch':
+      return updateWithTimeStamp(state, {
+        fishCatches: replaceByArray(payload.changes, fishCatches),
+        viewingFishCatches: fishCatches.filter(
+          fc => fc.fishingEvent_id === state.viewingEvent._id),
+        });
+    case 'delete-fishCatch':
+      return updateWithTimeStamp(state, {
+        fishCatches: removeById(payload.changes, fishCatches),
+        viewingFishCatches: removeById(payload.changes, viewingFishCatches),
       });
     case 'updateSpecies':
     case 'updateState':
@@ -76,11 +90,10 @@ export default (state = initialState, action) => {
     case 'updateProtected':
     case 'addDiscard':
     case 'addProtected':
-    case 'deleteProduct':
     case 'deleteDiscard':
     case 'deleteProtected':
     case 'signForm':
-      
+
       return update(state, {
         lastUpdated: new Date(),
       });
