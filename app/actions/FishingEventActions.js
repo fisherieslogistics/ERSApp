@@ -8,6 +8,9 @@ import { locationToGeoJSONPoint } from '../utils/Helper';
 import FishingEventModel from '../models/FishingEventModel';
 import HandGatheringEventModel from '../models/HandGatheringEventModel';
 import HandGatheringEventHelper from '../models/addons/HandGatheringEvent';
+import TrawlEventModel from '../models/TrawlEventModel';
+import TrawlEventHelper from '../models/addons/HandGatheringEvent';
+
 
 export function toggleOptionalFields() {
   return {
