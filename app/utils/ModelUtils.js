@@ -1,5 +1,5 @@
 import FishingEventModel from '../models/FishingEventModel';
-import TCERModel from '../models/TCERModel';
+import TrawlEventModel from '../models/TrawlEventModel';
 import Validator from './Validator';
 
 
@@ -28,14 +28,14 @@ export function blankModel(model) {
 }
 
 export function getFishingEventModel(){
-  return FishingEventModel.concat(TCERModel);
+  return FishingEventModel.concat(TrawlEventModel);
 }
 
 export function getRenderableAttributes(model) {
   return model.filter(attributeShouldRender);
 }
 
-export function getRenderableTCERDetailModel(fishingEvent, showOptionalFields) {
+export function getRenderableTrawlEventDetailModel(fishingEvent, showOptionalFields) {
   let model = [...FishingEventModel];
 
   // filter out non display and If not hauled, filter out haul fields

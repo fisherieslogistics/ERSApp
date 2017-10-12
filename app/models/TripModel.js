@@ -3,7 +3,7 @@ import Validator from '../utils/Validator';
 import FORM_TYPE from '../constants/MPIFormType';
 
 
-const TCERFields = [
+const TrawlEventFields = [
 
   {
     label: 'Wing Spread',
@@ -93,8 +93,8 @@ switch(FORM_TYPE) {
   case 'LCER':
     specificFields = LCERFields;
     break;
-  case 'TCER':
-    specificFields = TCERFields;
+  case 'TrawlEvent':
+    specificFields = TrawlEventFields;
     break;
 }
 

@@ -1,7 +1,7 @@
 
 import Validator from '../utils/Validator';
 
-import TCERModel from './TCERModel';
+import TrawlEventModel from './TrawlEventModel';
 import LCERModel from './LCERModel';
 import HandGatheringEventModel from './HandGatheringEventModel';
 import FORM_TYPE from '../constants/MPIFormType';
@@ -25,7 +25,7 @@ const FishingEventModel = [
   {
     id: 'targetSpecies', valid: valid.targetSpecies,
     'label': 'Target Species',
-    type: 'picker',
+    type: 'productCodePicker',
     default: "",
     display: { type: 'single' },
     repeating: true,

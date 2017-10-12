@@ -3,7 +3,7 @@ import Validator from '../utils/Validator';
 const combined = Validator.combined;
 const valid = Validator.valid;
 
-const TCERModel = [
+const TrawlEventModel = [
   {
     id: 'fishingMethod',
     default: 'BT',
@@ -177,7 +177,7 @@ const TCERModel = [
 
   },*/
   {
-    id: 'formType', default: 'TCER',
+    id: 'formType', default: 'TrawlEvent',
 
   },
   /*{
@@ -190,4 +190,4 @@ const TCERModel = [
   }
 ];
 
-export default TCERModel;
+export default TrawlEventModel;
