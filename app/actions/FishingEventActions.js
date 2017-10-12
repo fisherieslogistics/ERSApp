@@ -85,7 +85,7 @@ export function createFishingEvent(trip_id, previousEvent, location) {
       Object.assign(newEvent, change);
     }
   });
-  
+
   return newEvent;
 }
 
@@ -111,7 +111,7 @@ export function endFishingEvent(fishingEvent, changes, location) {
     const previousEvent = fishingEvents.find(
       fe => fe.numberInTrip === (fishingEvent.numberInTrip - 1));
     dispatch(repeatEventCatches(fishingEvent, previousEvent.replicatedEstimatedCatch));*/
-  
+
 }
 
 export function deleteFishingEvent(fishingEvent) {
@@ -134,40 +134,6 @@ export function repeatEventCatches(fishingEvent, catches) {
         estimatedCatch: [...catches],
       },
     },
-  };
-}
-
-export function addItemToEvent(fishingEvent, eventAttribute) {
-  const actionNames = {
-    estimatedCatch: 'addProduct',
-    discards: 'addDiscard',
-    protecteds: 'addProtected',
-  }
-  if(!(eventAttribute in actionNames)){
-    throw new Error('NO')
-  }
-  return {
-    type: actionNames[eventAttribute],
-
-    payload: {
-      RAId: fishingEvent.RAId,
-    },
-  };
-}
-
-export function deleteItemInEvent(fishingEvent, item, eventAttribute) {
-  const actionNames = {
-    estimatedCatch: 'deleteProduct',
-    discards: 'deleteDiscard',
-    protecteds: 'deleteProtected',
-  }
-  return {
-    type: actionNames[eventAttribute],
-
-    payload: {
-      fishingEventId: fishingEvent.RAId,
-      RAId: item.RAId,
-    }
   };
 }
 
