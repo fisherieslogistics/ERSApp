@@ -12,6 +12,7 @@ import TrawlEventModel from '../models/TrawlEventModel';
 import TrawlEventHelper from '../models/addons/HandGatheringEvent';
 
 
+
 export function toggleOptionalFields() {
   return {
     type: 'toggleOptionalFields',
@@ -77,7 +78,6 @@ export function createFishingEvent(trip_id, previousEvent, location) {
   newEvent.datetimeAtStart = new Date();
   newEvent.numberInTrip = previousEvent ? (previousEvent.numberInTrip) + 1 : 1;
   newEvent.locationAtStart = locationToGeoJSONPoint(location);
-  debugger;
   FishingEventModel.forEach(field => {
     if(previousEvent && field.repeating) {
       newEvent[field.id] = previousEvent[field.id];
