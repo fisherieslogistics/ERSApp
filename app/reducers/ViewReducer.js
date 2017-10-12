@@ -32,11 +32,12 @@ export default (state = initialState, action) => {
   switch (type) {
 
     case 'toggleSuggestBar':
-      return update(state, { suggestBarChoices: [],
+      console.log(payload)
+      return update(state, {
                              suggestBarSearchTerm: null,
                              suggestBarValue: null,
-                             suggestBarVisible: payload.visible,
-                             suggestBarInputId: payload.inputId,
+                             suggestBarVisible: payload.changes.visible,
+                             suggestBarInputId: payload.changes.inputId,
                              lastUpdated: new Date(),
                            });
     case 'orientation':

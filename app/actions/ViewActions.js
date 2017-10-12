@@ -41,8 +41,10 @@ export function toggleSuggestBar(visible, inputId) {
   return {
     type: 'toggleSuggestBar',
     payload: {
-      visible,
-      inputId,
+      changes: {
+        visible,
+        inputId,
+      }
     },
   }
 }
