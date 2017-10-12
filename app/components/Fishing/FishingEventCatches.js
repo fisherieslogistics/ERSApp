@@ -20,22 +20,20 @@ class FishingEventCatchesEditor extends Component {
     if(changes.code === item.code && item.weightKgs === changes.weightKgs) {
       return;
     }
-    if(item._id) {
-      this.props.db.update(changes, item._id);
-    } else {
+    if(item._isblank) {
       changes.fishingEvent_id = this.props.viewingEvent._id;
       changes.document_type = 'fishCatch';
       this.props.db.create(changes);
+    } else {
+      this.props.db.update(changes, item._id);
     }
-    /*this.props.dispatch(changeItemInEvent(this.props.viewingEvent, item, changes, eventAttribute));
-    if(eventAttribute === 'estimatedCatch' && inputId === 'code' &&
-      this.props.viewingEvent.shouldAddEmptyCatch) {
-      this.addItem(eventAttribute);
-    }*/
   }
 
-  deleteItem(eventAttribute, item) {
-    this.props.db.delete();
+  deleteItem = (eventAttribute, item) => {
+    if(item._isblank) {
+      return
+    }
+    this.props.db.delete(item._id, 'fishCatch');
   }
 
   render() {
