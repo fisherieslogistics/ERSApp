@@ -110,7 +110,6 @@ export function createFishingEvent(fishingEventObj) {
 //`${TRIP_EVENT_URI}${RAId}/`,
 
 export function createTrip(tripObj, loc) {
-  console.log(loc);
 
   const {
     RAId,
@@ -169,16 +168,16 @@ export function patchTrip(tripObj, loc) {
     softwareVersion: SOFTWARE_VERSION,
     eventId: event_id,
   }
-
+  tripObj.id = tripObj.serverId;
   const json = tripObj.endToJSON(vessel.registration, user.username, header, loc.lat.toFixed(4), loc.lon.toFixed(4));
   const objectToSend = {
-    id: tripObj.RAId,
+    id: tripObj.serverId,
     json,
     event_type: TRIP_END_PATH,
     headers: tripObj.fishServeHeadersJSON,
   }
 
-  return postToAPI(TRIP_END_URI, objectToSend);
+  return postToAPI(`${TRIP_END_URI}${tripObj.serverId}/`, objectToSend);
 }
 
 function getObjects(URI) {
