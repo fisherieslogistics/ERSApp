@@ -54,14 +54,6 @@ export
     return JSONPointToLocation(this.locationAtEnd);
   }
 
-  get replicatedEstimatedCatch() {
-    if(!this.estimatedCatch) {
-      return [];
-    }
-    return this.estimatedCatch.map(
-      c => Object.assign({}, blankModel(ProductModel), { code: c.code, weightKgs: 0, RAId: uuid() }));
-  }
-
   get nonFishProtectedsExist() {
     return !!this.protecteds.length;
   }
