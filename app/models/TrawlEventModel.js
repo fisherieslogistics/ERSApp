@@ -25,7 +25,6 @@ const TrawlEventModel = [
     valid: valid.anyValue,
     type: 'number',
     default: 0,
-    repeating: true,
     displayStage: 'Haul',
     unit: 'kg',
     display: { type: 'single' },
@@ -93,7 +92,9 @@ const TrawlEventModel = [
         func: combined.orderedLessThanOrEqual,
         errorMessage: "Groundrope cannot be below the bottom"
       },
-    display: { type: 'child'}, unit: 'm', optionalRender: false,
+    display: { type: 'child'},
+    unit: 'm',
+    optionalRender: false,
 
   },
   {
@@ -101,9 +102,9 @@ const TrawlEventModel = [
     id: 'wingSpread',
     valid: valid.greaterThanZero,
     type: 'number',
+    default: 0,
     repeating: true,
     display: { type: 'combined', siblings: ['headlineHeight']}, unit: 'm', order: 1, optionalRender: true,
-
   },
   {
     label: 'Headline Height',
