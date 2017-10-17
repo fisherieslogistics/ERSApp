@@ -68,13 +68,10 @@ class EditOnBlurInput extends Component {
       case "number":
         const num = parseInt(value);
         if(isNaN(num)){
-          return "";
+          console.log(num, this.props.attribute.id)
+          return this.props.attribute.unit ? "0" : "";
         }
-        if(num) {
-          return num.toFixed(0);
-        }
-        return "";
-
+        return num.toFixed(0);
       case "float":
         return isNaN(parseFloat(value)) ? "0.00" : parseFloat(value).toFixed(2).toString();
       default:
@@ -84,7 +81,7 @@ class EditOnBlurInput extends Component {
 
   getRenderedValue(value){
     const unit = this.props.attribute.unit || "";
-    return `${this.getCorrectedValue(value)} ${value && unit}`;
+    return `${this.getCorrectedValue(value)} ${unit}`;
   }
 
   render(){
