@@ -20,11 +20,11 @@ export function shouldCollapseDepthFields({ bottomDepth, groundropeDepth }) {
 }
 
 export function blankModel(model) {
-  const blankModel = {};
+  const blank = {};
   model.forEach(attribute => {
-    blankModel[attribute.id] = attribute.default;
+    blank[attribute.id] = attribute.default;
   });
-  return blankModel;
+  return blank;
 }
 
 export function getFishingEventModel(){
