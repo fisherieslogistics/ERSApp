@@ -6,7 +6,7 @@ import uuid from 'uuid/v1';
 import { update } from '../reducers/GeneralMethods';
 import { relayErrorMessage } from '../api/RestApi';
 
-const REMOTE_URI = 'http://localhost:5984/reporting';
+const REMOTE_URI = 'http://localhost:5984/';
 const APP_STATE_ID = 'AppState';
 
 const toBind = [
@@ -22,8 +22,8 @@ export default class Pouch {
     this.dispatch = dispatch;
     this.localDB = new PouchDB('reporting');
     this.remoteDB = new PouchDB(REMOTE_URI, { auth: {
-      username: 'reporting',
-      password: 'reportingadmin'
+      username: 'replicator',
+      password: 'fishplicator'
     }});
     toBind.forEach(k => {
       this[k] = this[k].bind(this);
