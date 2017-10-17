@@ -10,7 +10,14 @@ import JSONPointToLocation from '../../utils/JSONPointToLocation';
 export default class TrawlEventHelper {
   
   constructor(trawlEvent) {
-    Object.assign(this, trawlEvent);
+    FishingEventModel.forEach(attr => {
+      this[attr.id] = trawlEvent[attr.id];
+    });
+    const eventSpecificDetails = {};
+    TrawlEventModel.forEach(attr => {
+      eventSpecificDetails[attr.id] = trawlEvent[attr.id];
+    });
+    this.eventSpecificDetails = eventSpecificDetails;
   }
 
   datetimeAtStartMoment() {
@@ -31,17 +38,20 @@ export default class TrawlEventHelper {
 
   get detailsValid() {
     const {
-      targetSpecies,
-      wingSpread,
-      headlineHeight,
+      locationAtEnd,
       locationAtStart,
       datetimeAtStart,
       datetimeAtEnd,
+    } = this;
+    
+    const {
+      targetSpecies,
+      wingSpread,
+      headlineHeight,
       bottomDepth,
       groundropeDepth,
       averageSpeed,
-      locationAtEnd,
-    } = this;
+    } = this.eventSpecificDetails;
 
     const stage1 = (targetSpecies && wingSpread && headlineHeight && locationAtStart && datetimeAtStart);
     if((!datetimeAtEnd && stage1)) {
@@ -55,14 +65,10 @@ export default class TrawlEventHelper {
   get canSubmit() {
     const {
       detailsValid,
-      datetimeAtEnd,
       estimatedCatchValid,
-    } = this;
+    } = this.eventSpecificDetails;
+    { datetimeAtEnd } = this;
     return !!(detailsValid && datetimeAtEnd && estimatedCatchValid)
-  }
-
-  get estimatedCatchKg() {
-    return 0;
   }
 
   get estimatedCatchValid() {
@@ -95,15 +101,6 @@ export default class TrawlEventHelper {
 
   get NetAtDepthLocationDecimal() {
     return JSONPointToLocation(this.NetAtDepthLocation);
-  }
-
-  get replicatedEstimatedCatch() {
-    return [];
-    if(!this.estimatedCatch) {
-      return [];
-    }
-    return this.estimatedCatch.map(
-      c => Object.assign({}, blankModel(ProductModel), { code: c.code, weightKgs: 0, RAId: uuid() }));
   }
 
   canDelete(latestInTrip) {
@@ -140,8 +137,8 @@ export default class TrawlEventHelper {
       isNetLost: this.isNetLost,
       finishDateTime: this.datetimeAtEnd,
       finishLocation: {
-        "systemDateTime": this.locationAtEndDecimal.timestamp,
-        "systemLocation": {
+        systemDateTime: this.locationAtEndDecimal.timestamp,
+        systemLocation: {
           longitude: this.locationAtEndDecimal.lon,
           latitude: this.locationAtEndDecimal.lat,
         },
@@ -149,16 +146,16 @@ export default class TrawlEventHelper {
       },
       NetAtDepthDateTime: this.NetAtDepthDateTime,
       NetAtDepthLocation: {
-        "systemDateTime": this.NetAtDepthLocationDecimal.timestamp,
-        "systemLocation": {
+        systemDateTime: this.NetAtDepthLocationDecimal.timestamp,
+        systemLocation: {
             longitude: this.NetAtDepthLocationDecimal.lon,
             latitude: this.NetAtDepthLocationDecimal.lat,
         }
       },
       NetLeaveDepthDateTime: this.NetLeaveDepthDateTime,
       NetLeaveDepthLocation: {
-        "systemDateTime": this.NetLeaveDepthLocationDecimal.timestamp,
-        "systemLocation": {
+        systemDateTime: this.NetLeaveDepthLocationDecimal.timestamp,
+        systemLocation: {
           longitude: this.NetLeaveDepthLocationDecimal.lon,
           latitude: this.NetLeaveDepthLocationDecimal.lat,
         },
