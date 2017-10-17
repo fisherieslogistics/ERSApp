@@ -15,7 +15,6 @@ import Validator from '../../utils/Validator';
 import { colors } from '../../styles/styles';
 import FishingEventModel from '../../models/FishingEventModel';
 
-
 /* eslint-disable */
 import speciesCodesDesc from '../../constants/species/speciesDesc';
 /* eslint-enable */
@@ -34,25 +33,15 @@ class EventDetailEditor extends Component{
     this.props.dispatch(toggleOptionalFields());
   }
 
-  onChange(name, value, type){
-    this.onChangeText(name, value);
-  }
-
   shouldCombineDepths(bottomDepth, groundropeDepth) {
     const bottomDepthValid = Validator.valid.greaterThanZero.func(bottomDepth);
     const groundropeDepthValid = Validator.valid.greaterThanZero.func(groundropeDepth);
     return bottomDepthValid && !groundropeDepthValid;
   }
 
-  onChangeText(name, value, type) {
+  onChange(name, value, type) {
     const changes = { [name]: value };
     const { fishingEvent } = this.props;
-
-    /*if(!this.props.showOptionalFields && name === 'bottomDepth') {
-      if(this.shouldCombineDepths(value, fishingEvent.groundropeDepth)) {
-        changes.groundropeDepth = value;
-      }
-    }*/
 
     if(FishingEventModel.find((field) => field.id === name)){
       this.props.db.update(changes, fishingEvent._id);
@@ -119,10 +108,6 @@ class EventDetailEditor extends Component{
     if(!trip.started) {
       return this.renderMessage("Start Trip First");
     }
-
-    //const fieldsToRender = getRenderableTrawlEventDetailModel(fishingEvent, showOptionalFields);
-
-
 
     const showMore = this.renderToggleShowMore(!!fishingEvent);
 
