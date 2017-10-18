@@ -278,8 +278,6 @@ class Trip extends RealmMasterDetail {
       return this.startTrip();
     } else if(this.props.trip.canEnd) {
       return this.endTrip();
-    } else {
-      AsyncStorage.removeItem('refreshToken', () => {})
     }
   }
 
