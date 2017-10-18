@@ -3,6 +3,7 @@ package com.fllreporting;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.avishayil.rnrestart.ReactNativeRestartPackage;
 import io.realm.react.RealmReactPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.github.yamill.orientation.OrientationPackage;
@@ -26,6 +27,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new ReactNativeRestartPackage(),
             new RealmReactPackage(),
             new VectorIconsPackage(),
             new OrientationPackage()

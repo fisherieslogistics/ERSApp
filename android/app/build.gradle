@@ -133,6 +133,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-restart')
     compile project(':realm')
     compile project(':react-native-vector-icons')
     compile project(':react-native-orientation')

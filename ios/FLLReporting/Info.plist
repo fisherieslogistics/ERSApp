@@ -38,7 +38,7 @@
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>Please allow constant location</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string/>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Reporting-App.ttf</string>
