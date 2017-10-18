@@ -10,26 +10,22 @@ import JSONPointToLocation from '../../utils/JSONPointToLocation';
 export default class TrawlEventHelper {
   
   constructor(trawlEvent) {
+    this.fishingEvent = {};
     FishingEventModel.forEach(attr => {
-      this[attr.id] = trawlEvent[attr.id];
+      this.fishingEvent[attr.id] = trawlEvent[attr.id];
     });
-    const eventSpecificDetails = {};
-    TrawlEventModel.forEach(attr => {
-      eventSpecificDetails[attr.id] = trawlEvent[attr.id];
-    });
-    this.eventSpecificDetails = eventSpecificDetails;
   }
 
   datetimeAtStartMoment() {
-    return moment(this.datetimeAtStart);
+    return moment(this.fishingEvent.datetimeAtStart);
   }
 
   get datetimeAtEndMoment() {
-    return moment(this.datetimeAtEnd);
+    return moment(this.fishingEvent.datetimeAtEnd);
   }
 
   get canEnd() {
-    return !this.datetimeAtEnd;
+    return !this.fishingEvent.datetimeAtEnd;
   }
 
   get shouldAddEmptyCatch() {
@@ -42,7 +38,7 @@ export default class TrawlEventHelper {
       locationAtStart,
       datetimeAtStart,
       datetimeAtEnd,
-    } = this;
+    } = this.fishingEvent;
     
     const {
       targetSpecies,
@@ -63,12 +59,8 @@ export default class TrawlEventHelper {
   }
 
   get canSubmit() {
-    const {
-      detailsValid,
-      estimatedCatchValid,
-    } = this.eventSpecificDetails;
-    { datetimeAtEnd } = this;
-    return !!(detailsValid && datetimeAtEnd && estimatedCatchValid)
+    const { datetimeAtEnd } = this.fishingEvent;
+    return !!(this.detailsValid && datetimeAtEnd && this.estimatedCatchValid)
   }
 
   get estimatedCatchValid() {
@@ -88,100 +80,38 @@ export default class TrawlEventHelper {
   }
 
   get locationStartDecimal() {
-    return JSONPointToLocation(this.locationStart);
+    return JSONPointToLocation(this.fishingEvent.locationStart);
   }
 
   get locationAtEndDecimal() {
-    return JSONPointToLocation(this.locationAtEnd);
-  }
-
-  get NetLeaveDepthLocationDecimal() {
-    return JSONPointToLocation(this.NetLeaveDepthLocation);
-  }
-
-  get NetAtDepthLocationDecimal() {
-    return JSONPointToLocation(this.NetAtDepthLocation);
+    return JSONPointToLocation(this.fishingEvent.locationAtEnd);
   }
 
   canDelete(latestInTrip) {
-    return !this.completed && (this.numberInTrip === latestInTrip);
-  }
-
-  get nonFishProtectedsExist() {
-    return !!this.protecteds.length;
+    return !this.fishingEvent.completed && (this.fishingEvent.numberInTrip === latestInTrip);
   }
 
   get fishServeObject() {
-    return {
-      eventHeader: this.eventHeader,
-      method: 'BT',
-      targetSpeciesCode: this.targetSpecies,
-      mitigationDevicesUsed: [],
-      startDateTime: this.datetimeAtStart,
-      locationStart: {
-        "systemDateTime": this.locationStartDecimal.timestamp,
-        "systemLocation": {
-          longitude: this.locationStartDecimal.lon,
-          latitude: this.locationStartDecimal.lat,
-        },
-        isManual: false,
-      },
-      numberOfNets: 3,
-      vesselPairNumber: this.vesselPairNumber,
-      wingSpreadMetres: this.wingSpread,
-      headlineHeightMetres: this.headlineHeight,
-      minMeshSizeMm: this.minMeshSizeMm,
-      groundRopeDepthMetres: this.groundropeDepth,
-      bottomDepthMetres: this.bottomDepth,
-      speedKnots: this.averageSpeed,
-      isNetLost: this.isNetLost,
-      finishDateTime: this.datetimeAtEnd,
-      finishLocation: {
-        systemDateTime: this.locationAtEndDecimal.timestamp,
-        systemLocation: {
-          longitude: this.locationAtEndDecimal.lon,
-          latitude: this.locationAtEndDecimal.lat,
-        },
-        isManual: false
-      },
-      NetAtDepthDateTime: this.NetAtDepthDateTime,
-      NetAtDepthLocation: {
-        systemDateTime: this.NetAtDepthLocationDecimal.timestamp,
-        systemLocation: {
-            longitude: this.NetAtDepthLocationDecimal.lon,
-            latitude: this.NetAtDepthLocationDecimal.lat,
-        }
-      },
-      NetLeaveDepthDateTime: this.NetLeaveDepthDateTime,
-      NetLeaveDepthLocation: {
-        systemDateTime: this.NetLeaveDepthLocationDecimal.timestamp,
-        systemLocation: {
-          longitude: this.NetLeaveDepthLocationDecimal.lon,
-          latitude: this.NetLeaveDepthLocationDecimal.lat,
-        },
-        isManual: false
-      },
-      codendDateTime: this.codendDateTime,
-      estimatedCatchKg: this.estimatedCatchKg,
-      catches: this.estimatedCatch.map(es => ({
-        speciesCode: es.code,
-        greenWeightEstimateKg: es.weightKgs,
-      })),
-      isNonFishOrProtectedSpeciesCatchPresent: this.nonFishProtected,
-      nonFishOrProtectedSpeciesCatches: this.protecteds.map(pr => ({
-        seabirdCaptureDetails: null,
-        estimatedWeightKg: pr.weightKgs,
-        numberUninjured: pr.uninjured,
-        numberInjured: pr.injured,
-        numberDead: pr.dead,
-        tags: []
-      })),
-    }
+    return {};
   }
   
   fieldsToRender() {
     return FishingEventModel.concat(TrawlEventModel).filter(
       field => !!field.display);
+  }
+  
+  changeEvent(name, value) {
+    if(FishingEventModel.find(a => a.id === name)) {
+      this.fishingEvent[name] = value;
+    }
+    else {
+      this.eventSpecificDetails[name] = value;
+    }
+  }
+  
+  get fishingEventValues() {
+    return Object.assign({}, this.fishingEvent,
+      { eventSpecificDetails: JSON.stringify(this.eventSpecificDetails)});
   }
 
   get eventHeader() {

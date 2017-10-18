@@ -41,8 +41,6 @@ class EventDetailEditor extends Component{
 
   onChange(name, value, type) {
     const changes = { [name]: value };
-    const { fishingEvent } = this.props;
-
     if(FishingEventModel.find((field) => field.id === name)){
       this.props.db.update(changes, fishingEvent._id);
     } else {
@@ -124,7 +122,7 @@ class EventDetailEditor extends Component{
           getEditorProps={ this.getEditorProps }
           model={ viewingEventHelper.fieldsToRender() }
           index={ fishingEvent.numberInTrip }
-          modelValues={ viewingEventHelper }
+          modelValues={ viewingEventHelper.fishingEventValues }
           onChange={ this.onChange }
         />
         { showMore }
