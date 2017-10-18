@@ -5,6 +5,7 @@ import {
   AlertIOS,
 } from 'react-native';
 import { ListView } from 'realm/react-native';
+import RNRestart from 'react-native-restart'; // Import package from node modules
 
 import React from 'react';
 import { connect } from 'react-redux';
@@ -44,7 +45,7 @@ const tripDB = new RealmHelper('trip')
 const masterChoices = [
  'Trip',
  'Totals',
- 'Profile',
+ 'Logout',
 // 'Connection Settings',
 ];
 
@@ -146,12 +147,13 @@ class Trip extends RealmMasterDetail {
         { text: 'Cancel', style: 'cancel' },
         { text: 'OK', onPress: () => {
           createTrip(trip, location).then(res => {
+            
             console.log("RESPONSE TRIPID", res);
             this.props.dispatch(startTrip(trip, res.body.id));
             this.props.dispatch(setSelectedTab('fishing'));
           }).catch(err => {
             console.log(err)
-            AlertIOS.alert('please try that again');
+            AlertIOS.alert('please try that again:' + err.message);
           });
         }},
       ]
@@ -167,12 +169,10 @@ class Trip extends RealmMasterDetail {
         { text: 'Cancel', style: 'cancel' },
         { text: 'OK', onPress: () => {
           patchTrip(trip, location).then(res => {
-            console.log(res);
             dispatch(endTrip(trip));
             dispatch(setViewingEventId(null));
           }).catch(err => {
-            console.log(err)
-            AlertIOS.alert('please try that again');
+            AlertIOS.alert('please try that again' + err.message);
           });
         }},
       ]
@@ -230,8 +230,6 @@ class Trip extends RealmMasterDetail {
         return this.renderMessage();
       case 'Totals':
         return this.renderTripsList();
-      default:
-        break;
     }
   }
 
@@ -318,7 +316,21 @@ class Trip extends RealmMasterDetail {
   }
 
   masterListOnPress(choice) {
-    this.props.dispatch(setSelectedTripDetail(choice));
+    if(choice === 'Logout') {
+      AlertIOS.alert(
+        'logout',
+        'Do you wish to logout - you will need to log back in to use the app',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          { text: 'OK', onPress: () => {
+            AsyncStorage.removeItem('refreshToken', () => {});
+            RNRestart.Restart();
+          }}
+        ]
+      );
+    } else {
+      this.props.dispatch(setSelectedTripDetail(choice));
+    }
   }
 
   getDetail() {
@@ -332,6 +344,7 @@ class Trip extends RealmMasterDetail {
     }
     const detail = this.props.selectedDetail;
     switch (detail) {
+      case 'Profile':
       case 'Trip':
         return (
           <StartTripEditor
@@ -342,21 +355,21 @@ class Trip extends RealmMasterDetail {
         );
       case 'Totals':
         return this.renderTotalsListView();
-      /*case 'Profile':
-        return (
+      //case 'Profile':
+        /*return (
           <ProfileEditor
             user={this.props.user}
             vessel={this.props.vessel}
             dispatch={this.props.dispatch}
           />
         );*/
-      case 'Connection Settings':
+      /*case 'Connection Settings':
         return (
           <ConnectionSettingsEditor
             connectionSettings={this.props.connectionSettings}
             dispatch={this.props.dispatch}
           />
-        );
+        );*/
     }
   }
 
