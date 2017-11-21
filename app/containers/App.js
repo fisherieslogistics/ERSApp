@@ -57,12 +57,6 @@ class App extends Component {
   }
 
   componentDidMount() {
-  /*this.iosLocation.addCallbacks((nmeStr) => {
-      
-    },
-    (err) => {
-      
-    });*/
     this.login();
   }
 
@@ -74,21 +68,17 @@ class App extends Component {
         const species = values[1];
         const vessels = values[2];
         const user = jwtDecode(token);
-
         store.dispatch({ type: 'setPorts', payload: { changes: ports.map(
           p => ({ value: p.name, description: ''})) }});
         store.dispatch({ type: 'setSpecies', payload: { changes: species.map(
           p => ({ value: p.code, description: p.description})) }});
         store.dispatch({ type: 'setVessels', payload: { changes: vessels }});
         store.dispatch({ type: 'setUser', payload: { changes: user }});
-
-        store.dispatch(initialize());
+        store.dispatch(initialize(token));
         store.dispatch(startConnection());
-
         this.setState({
           loggedIn: true,
         });
-
       }).catch(err => {
         console.log(err);
         AsyncStorage.removeItem('refreshToken', () => {

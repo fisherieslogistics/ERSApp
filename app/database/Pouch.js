@@ -1,52 +1,58 @@
 import PouchDB from 'pouchdb-react-native';
+import { NativeEventEmitter } from 'react-native';
 import PouchDBFind from 'pouchdb-find';
 PouchDB.plugin(PouchDBFind);
 import { setInitialTrips } from '../actions/TripActions';
 import uuid from 'uuid/v1';
 import { update } from '../reducers/GeneralMethods';
-import { relayErrorMessage } from '../api/RestApi';
+import jwtDecode from 'jwt-decode';
 
-const REMOTE_URI = 'http://localhost:5984/';
+
+const REMOTE_URI = 'https://test.catchhub.com:5984/user_db';
 const APP_STATE_ID = 'AppState';
 
-const toBind = [
-  'setCurrentTrip',
-  'setupReduxState',
-  'setupInitialTrip',
-  'setCurrentFishingEvents',
-];
 
 export default class Pouch {
 
-  constructor(dispatch) {
+  constructor(dispatch, token) {
+    console.log("token");
+    const user = jwtDecode(token);
     this.dispatch = dispatch;
-    this.localDB = new PouchDB('reporting');
-    this.remoteDB = new PouchDB(REMOTE_URI, { auth: {
-      username: 'replicator',
-      password: 'fishplicator'
+    console.log(token, { headers: {
+      'Authorization': token,
     }});
-    toBind.forEach(k => {
-      this[k] = this[k].bind(this);
-    });
+    this.localDB = new PouchDB('user_db');
+    this.remoteDB = new PouchDB(REMOTE_URI, { ajax: {
+      headers: {
+        'Authorization': token,
+      },
+    }});
+    this.setupSync();
   }
 
-  setupSync() {
+  setupSync = () => {
+    console.log("I AM SETUP DB");
+    this.localDB.setMaxListeners(50);
+    this.remoteDB.setMaxListeners(50);
     this.localDB.sync(this.remoteDB, {
       live: true,
-      retry: true
+      retry: true,
+    }).on('change', function (change) {
+      // yo, something changed!
+      console.log('changes', change);
+    }).on('paused', function (info) {
+      console.log('paused', info);
+      // replication was paused, usually because of a lost connection
+    }).on('active', function (info) {
+      console.log('active', info);
+      // replication was resumed
+    }).on('error', function (err) {
+      console.log('err', error);
+      // totally unhandled error (shouldn't happen)
     });
   }
 
-  handleChange(changes) {
-    console.log('changes CHANGE', changes, 'changes CHANGE');
-  }
-
-  handleComplete(changes) {
-
-  }
-
-  setCurrentFishCatches(fishingEvents, resolve, reject) {
-    console.log([...fishingEvents].map(f => f._id));
+  setCurrentFishCatches = (fishingEvents, resolve, reject) => {
     this.localDB.find({
       selector: {
         $and: [
@@ -70,7 +76,7 @@ export default class Pouch {
     });
   }
 
-  setCurrentFishingEvents(trip_id) {
+  setCurrentFishingEvents = (trip_id) => {
 
     const next = (fishingEvents, resolve, reject) => {
       return this.setCurrentFishCatches(fishingEvents, resolve, reject);
@@ -105,28 +111,11 @@ export default class Pouch {
     });
   }
 
-  createFishCatchByEventIdIndex() {
-    return this.localDB.createIndex({
-      index: {
-        fields: ['fishingevent_id', 'document_type'],
-      },
-    });
-  }
-
-  setupListeners() {
-    this.localDB.changes({
-      live: true,
-      include_docs: true
-    }).on('change', this.handleChange.bind(this))
-      .on('complete', this.handleComplete.bind(this))
-      .on('error', console.log.bind(console, '[Change:Error]'))
-  }
-
-  getAllDocIds() {
+  getAllDocIds = () => {
     return this.localDB.allDocs({ include_docs: false });
   }
 
-  setupInitialTrip() {
+  setupInitialTrip = () => {
 
     const newTrip = {
       _id: uuid(),
@@ -158,7 +147,7 @@ export default class Pouch {
 
 
 
-  setItems({ ports, vessels, user, species }) {
+  setItems = ({ ports, vessels, user, species }) => {
     user._id = uuid();
     return this.replaceItems(ports, 'ports').then(() =>
       this.replaceItems(vessels, 'vessels')).then(() =>
@@ -167,18 +156,18 @@ export default class Pouch {
 
   }
 
-  bulkInsert(insertable) {
+  bulkInsert = (insertable) => {
     return this.localDB.bulkDocs(insertable).catch(err =>  { throw(err) })
   }
 
-  replaceItems(items, type){
+  replaceItems = (items, type) => {
     const insertable = items.map(
       i => Object.assign({}, i, { _id: i.id || uuid(), type, }));
 
     return this.deleteAllOfType(type).then(this.bulkInsert(insertable));
   }
 
-  deleteAllOfType(type) {
+  deleteAllOfType = (type) => {
     return this.localDB.allDocs({include_docs: true}).then((allDocs) => {
       const toDel = allDocs.rows.filter(row => row.type === type).map(
         (r) => {
@@ -190,11 +179,11 @@ export default class Pouch {
         .catch(err => { throw(err) }));
   }
 
-  get(_id) {
+  get = (_id) => {
     return this.localDB.get(_id);
   }
 
-  setCurrentTrip(appState) {
+  setCurrentTrip = (appState) => {
     this.localDB.get(appState.currentTrip).then(currentTrip => {
       this.dispatch({ type: 'setCurrentTrip', payload: {
         changes: currentTrip,
@@ -203,7 +192,7 @@ export default class Pouch {
     });
   }
 
-  create(itemToCreate) {
+  create = (itemToCreate) => {
     if(!itemToCreate._id) {
       itemToCreate._id = uuid();
     }
@@ -217,34 +206,34 @@ export default class Pouch {
     });
   }
 
-  dispatchUpdate(doc) {
+  dispatchUpdate = (doc) => {
     this.dispatch({
       type: `update-${doc.document_type}`,
       payload: { changes: doc },
     });
   }
 
-  dispatchCreate(doc) {
+  dispatchCreate = (doc) => {
     this.dispatch({
       type: `create-${doc.document_type}`,
       payload: { changes: doc },
     });
   }
 
-  dispatchDelete(_id, document_type) {
+  dispatchDelete = (_id, document_type) => {
     this.dispatch({
       type: `delete-${document_type}`,
       payload: { changes: _id },
     });
   }
 
-  delete(_id, document_type) {
+  delete = (_id, document_type) => {
     this.localDB.get(_id).then(
       doc => this.localDB.remove(doc).then(
         () => this.dispatchDelete(_id, document_type)));
   }
 
-  update(change, _id) {
+  update = (change, _id) => {
     change._id = _id;
     this.localDB.get(_id).then(doc => {
 
@@ -264,7 +253,7 @@ export default class Pouch {
     });
   }
 
-  setupReduxState() {
+  setupReduxState = () => {
     this.localDB.get(APP_STATE_ID).then(appState => {
       this.setCurrentTrip(appState);
     });

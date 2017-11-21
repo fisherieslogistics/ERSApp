@@ -123,11 +123,6 @@ class ReportingApp extends Component {
           <View style={[styles.col, styles.fill]}>
            { this.props.renderErrors() }
            { this.tabs[tab].render() }
-            <View style={styles.connectionStatus}>
-              <Text style={styles.connectionText}>
-                { `${this.props.connection.dataToSend}` }
-              </Text>
-            </View>
           </View>
       </Icon8.TabBarItemIOS>)
     );
@@ -200,7 +195,6 @@ const select = (state) => {
     viewingForm: view.viewingForm,
     showFormsHistory: view.isShowingHistory,
     suggestBarVisible: view.suggestBarVisible,
-    connection,
     selectedTab: view.selectedTab,
   };
 }

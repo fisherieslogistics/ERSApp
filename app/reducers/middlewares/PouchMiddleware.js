@@ -4,15 +4,11 @@ import ProtectedModel from '../../models/ProtectedModel';
 import { blankModel } from '../../utils/ModelUtils';
 import Pouch from '../../database/Pouch';
 
-const update = (obj, chn) => Object.assign({}, obj, chn);
-
 let db = null;
 
-export const initialize = () => {
+export const initialize = (token) => {
   return (dispatch) => {
-    db = new Pouch(dispatch);
-    db.setupListeners();
-    db.setupSync();
+    db = new Pouch(dispatch, token);
     db.get('AppState')
       .then(db.setupReduxState)
       .catch(db.setupInitialTrip);
