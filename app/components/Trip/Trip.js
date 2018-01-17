@@ -96,9 +96,9 @@ class Trip extends MasterDetail {
   }
 
   componentWillReceiveProps(nextProps) {
-    
+
     this.tripHelper = new TripHelper(nextProps.trip || {})
-    
+
     if(this.props.selectedDetail !== nextProps.selectedDetail ||
        this.props.selectedTab !== nextProps.selectedTab) {
       this.props.dispatch(emptySelectedHistoryTrips());
@@ -140,11 +140,8 @@ class Trip extends MasterDetail {
       [
         { text: 'Cancel', style: 'cancel' },
         { text: 'OK', onPress: () => {
-
-          console.log(this.props.trip._id)
           this.props.db.update({ started: true }, this.props.trip._id);
           this.props.dispatch(setSelectedTab('fishing'));
-
         }},
       ]
     );
@@ -380,7 +377,7 @@ class Trip extends MasterDetail {
 
 const select = (state) => {
   const t = state.trip.currentTrip;
-  
+
   return {
     tripUpdated: state.trip.lastUpdated,
     view: state.view,

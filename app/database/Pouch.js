@@ -3,12 +3,14 @@ import { NativeEventEmitter } from 'react-native';
 import PouchDBFind from 'pouchdb-find';
 PouchDB.plugin(PouchDBFind);
 import { setInitialTrips } from '../actions/TripActions';
+import TrawlEvent from '../models/addons/TrawlEvent';
 import uuid from 'uuid/v1';
 import { update } from '../reducers/GeneralMethods';
 import jwtDecode from 'jwt-decode';
 
 
-const REMOTE_URI = 'https://test.catchhub.com:5984/user_db';
+const REMOTE_URI = 'http://localhost:5985/user_4';//'https://test.catchhub.com:5984/user_4';
+//const REMOTE_URI = 'http://test.catchhub.com:5984/user_db';
 const APP_STATE_ID = 'AppState';
 
 
@@ -18,23 +20,28 @@ export default class Pouch {
     console.log("token");
     const user = jwtDecode(token);
     this.dispatch = dispatch;
-    console.log(token, { headers: {
-      'Authorization': token,
-    }});
+    console.log(user, token);
     this.localDB = new PouchDB('user_db');
-    this.remoteDB = new PouchDB(REMOTE_URI, { ajax: {
-      headers: {
-        'Authorization': token,
-      },
-    }});
-    this.setupSync();
   }
 
-  setupSync = () => {
+  setupSync = (token) => {
     console.log("I AM SETUP DB");
     this.localDB.setMaxListeners(50);
-    this.remoteDB.setMaxListeners(50);
-    this.localDB.sync(this.remoteDB, {
+    const options = {
+      live: true,
+      retry: true,
+      ajax: {
+        headers: {
+          'Authorization': token,
+        },
+      },
+    };
+    this._sync = this.localDB.sync(REMOTE_URI, options)
+      .on('error', error => console.error('Sync Error', error))
+      .on('change', info => console.log('Sync change', info))
+      .on('paused', info => console.log('Sync paused', info))
+      .on('denied', info => console.log('Sync Denied', info));
+    /*this.sync = this.localDB.sync(this.remoteDB, {
       live: true,
       retry: true,
     }).on('change', function (change) {
@@ -50,6 +57,11 @@ export default class Pouch {
       console.log('err', error);
       // totally unhandled error (shouldn't happen)
     });
+    this.sync.then(() => {
+
+    });
+    return this.sync;*/
+    return this._sync;
   }
 
   setCurrentFishCatches = (fishingEvents, resolve, reject) => {
@@ -98,7 +110,7 @@ export default class Pouch {
         this.dispatch({
           type: 'setFishingEvents',
           payload: {
-            changes: results.docs,
+            changes: results.docs.map(d => new TrawlEvent(d)),
           }
         });
 
@@ -195,6 +207,7 @@ export default class Pouch {
   create = (itemToCreate) => {
     if(!itemToCreate._id) {
       itemToCreate._id = uuid();
+      itemToCreate.createdAt = new Date();
     }
     return this.localDB.put(itemToCreate).then((res) => {
       console.log(res);
@@ -235,6 +248,7 @@ export default class Pouch {
 
   update = (change, _id) => {
     change._id = _id;
+    change.updatedAt = new Date();
     this.localDB.get(_id).then(doc => {
 
       const newdoc = update(doc, change);

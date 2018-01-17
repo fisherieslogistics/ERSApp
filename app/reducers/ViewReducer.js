@@ -1,14 +1,17 @@
 import Orientation from 'react-native-orientation';
+import { Dimensions } from 'react-native';
 import {
   update,
 } from './GeneralMethods';
+
+let window = Dimensions.get('window');
 
 let initialState = {
   viewingEvent: null,
   detailView: "forms",
   orientation: 'PORTRAIT',
-  width: 768,
-  height: 1024,
+  width: window.width,
+  height: window.height,
   suggestBarVisible: false,
   suggestBarChoices: [],
   suggestBarValue: null,
@@ -68,13 +71,14 @@ export default (state = initialState, action) => {
 };
 
 function getOrientationDetail(state, orientation){
+  const { width, height } = Dimensions.get('window');
   switch (orientation) {
     case 'PORTRAIT':
     case 'PORTRAITUPSIDEDOWN':
-      return update(state, { width: 768, height: 1024, orientation, lastUpdated: new Date() });
+      return update(state, { width, height, orientation, lastUpdated: new Date() });
     case 'LANDSCAPE':
     case 'LANDSCAPEUPSIDEDOWN':
-      return update(state, { width: 1024, height: 768, orientation, lastUpdated: new Date() });
+      return update(state, { width, height, orientation, lastUpdated: new Date() });
     default:
       return state;
   }

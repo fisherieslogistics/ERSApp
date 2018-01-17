@@ -67,27 +67,18 @@ export default {
       errorMessage: 'Must have a species name',
     },
     productCode: {
-      func: (value = "",  product, otherProps) => {
-        if(otherProps.index === otherProps.fishingEvent.estimatedCatch.length - 1) {
-          return true;
-        }
-        const catches = [ ...otherProps.fishingEvent.estimatedCatch ];
-        const uniqueSpecies = catches.filter(r => r.code === value).length < 2;
-        const valid = uniqueSpecies && speciesCodes.indexOf(value) !== -1;
-        return valid;
+      func: (value = "",  product, catches) => {
+        return catches.every(c => speciesCodes.indexOf(c.code) !== -1);
       },
-      errorMessage: 'Must be a valid species code',
+      errorMessage: 'All catches must have a species',
     },
     stateCode: {
       func: (value = "") => isStateCode(value),
       errorMessage: 'Must be a valid state code',
     },
     productWeight: {
-      func: (value = "", obj) => {
-        if(!obj.code) {
-          return true;
-        }
-        return (isNaN(value) === false) && value > 0;
+      func:  (value = "",  product, catches) => {
+        return catches.every(c => c.weight > 0);
       },
       errorMessage: strings.generic.moreThanZero,
     },
@@ -95,7 +86,7 @@ export default {
         func: () => true
     },
     date: {
-      func: (val) => !(val && val.toString() !== 'Invalid Date'), 
+      func: (val) => !(val && val.toString() !== 'Invalid Date'),
     },
     tripDate: {
       func: () => true,

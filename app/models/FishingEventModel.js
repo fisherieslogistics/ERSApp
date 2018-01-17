@@ -2,8 +2,6 @@
 import Validator from '../utils/Validator';
 
 import TrawlEventModel from './TrawlEventModel';
-import LCERModel from './LCERModel';
-import HandGatheringEventModel from './HandGatheringEventModel';
 import FORM_TYPE from '../constants/MPIFormType';
 import blankModel from '../utils/ModelUtils';
 
@@ -31,6 +29,16 @@ const FishingEventModel = [
     repeating: true,
   },
   {
+    id: 'locationAtStart',
+    valid: valid.alwaysValid,
+    default: null,
+  },
+  {
+    id: 'locationAtEnd',
+    valid: valid.alwaysValid,
+    default: null,
+  },
+  {
     label: 'Start Time - Date',
     id: 'datetimeAtStart',
     valid: valid.anyValue,
@@ -40,7 +48,7 @@ const FishingEventModel = [
       func: Validator.combined.datetimeAtStartValid,
       errorMessage: "start time must be before end time"
     },
-    display: { type: 'combined', siblings: ['locationAtStart'] },
+    display: { type: 'single' },
     optionalRender: true,
   },
   {
@@ -53,27 +61,8 @@ const FishingEventModel = [
       func: Validator.combined.orderedGreaterThan,
       errorMessage: "end time must be after start time"
     },
-    display: { type: 'combined', siblings: ['locationAtEnd'] },
+    display: { type: 'single' },
     optionalRender: true, displayStage: 'Haul',
-  },
-  {
-    label: 'Location at Start',
-    id: 'locationAtStart',
-    valid: valid.locationValid,
-    type: 'location',
-    default: null,
-    display: { type: 'child' },
-    optionalRender: true,
-  },
-  {
-    label: 'Location at End of Haul',
-    id: 'locationAtEnd',
-    valid: valid.locationValid,
-    type: 'location',
-    default: null,
-    display: { type: 'child' },
-    optionalRender: true,
-    displayStage: 'Haul',
   },
   {
     id: 'committed', valid: valid.alwaysValid, default: false,

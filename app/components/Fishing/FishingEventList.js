@@ -10,6 +10,14 @@ import { setViewingEvent } from '../../actions/FishingEventActions';
 
 import { darkColors as colors, iconStyles } from '../../styles/styles';
 
+
+const iconColors = {
+  ok: colors.green,
+  fishing: colors.blue,
+  error: colors.orange,
+  'upload-to-cloud': '#777777',
+}
+
 const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1.id !== r2.id});
 
 class FishingEventList extends MasterListView {
@@ -22,24 +30,12 @@ class FishingEventList extends MasterListView {
   }
 
   eventStatus(fe){
-    let backgroundColor = colors.green;
-    let name = 'ok';
-    if(!fe.datetimeAtEnd){
-      name = 'fishing';
-      backgroundColor = colors.blue;
-    }
-    if(fe.datetimeAtEnd /*&& !(fe.detailsValid && fe.estimatedCatchValid && fe.discardsValid && fe.protectedsValid)*/) {
-      name = 'error';
-      backgroundColor= colors.orange;
-    }
-    if(fe.completed) {
-      name = 'upload-to-cloud';
-      backgroundColor = colors.midGray;
-    }
+    const status = fe.status;
+    const backgroundColor = iconColors[status];
     const sty = Object.assign({}, { backgroundColor }, iconStyles, { left: -50 });
     return {
-      name,
-      style: sty
+      name: status,
+      style: sty,
     };
   }
 
@@ -56,26 +52,26 @@ class FishingEventList extends MasterListView {
   }
 
   getDescription(fishingEvent) {
-    const { targetSpecies, numberInTrip } = fishingEvent;
-    return `${numberInTrip}  ${moment(fishingEvent.datetimeAtStart).format("HH:mm")} ${targetSpecies}`;
+    const { targetSpecies, numberInTrip } = fishingEvent.eventValues;
+    return `#${numberInTrip}  ${targetSpecies || '---'}  ${moment(fishingEvent.datetimeAtStart).format("HH:mm")}`;
   }
 
   isSelected(fishingEvent) {
-    return this.props.viewingEvent._id === fishingEvent._id; 
+    return this.props.viewingEvent.eventValues.numberInTrip === fishingEvent.eventValues.numberInTrip;
   }
 
   onPress(fishingEvent) {
     this.props.dispatch(setViewingEvent(fishingEvent));
-    this.props.dispatch(setSelectedFishingDetail('detail'));
   }
 
 }
 
 const select = (state) => {
+  const  { viewingEvent, fishingEvents } =  state.fishingEvents;
   return {
     lastUpdated: state.trip.lastUpdated,
-    dataSource: ds.cloneWithRows([...state.fishingEvents.fishingEvents].reverse()),
-    viewingEvent: state.fishingEvents.viewingEvent || {},
+    dataSource: ds.cloneWithRows([...fishingEvents].reverse()),
+    viewingEvent: viewingEvent || { eventValues: {}},
   }
 }
 

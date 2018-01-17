@@ -4,7 +4,6 @@ import uuid from 'uuid/v1';
 import { connect } from 'react-redux';
 import { BigButton } from '../../common/Buttons';
 import { colors } from '../../../styles/styles';
-import { setSelectedFishingDetail } from '../../../actions/ViewActions';
 import { setViewingEvent } from '../../../actions/FishingEventActions';
 
 import {
@@ -20,23 +19,22 @@ class ShootButton extends Component {
   }
 
   onPress() {
+    const { trip, lastEvent, location } = this.props;
     if(this.props.enabled){
-      const { trip, lastEvent, location } = this.props;
-      const newEvent = createFishingEvent(trip._id, lastEvent, location);
+      const newEvent = createFishingEvent(trip._id, lastEvent && lastEvent.eventValues, location);
       this.props.db.create(newEvent);
-      //this.props.dispatch(setSelectedFishingDetail('detail'));
     }
   }
 
   render() {
-    
+
     const { green, white, backgrounds } = colors;
     const backgroundColor = this.props.enabled ? green : backgrounds.dark;
     const textColor = this.props.enabled ? white : backgrounds.light;
-    
+
     return (
       <BigButton
-        text={ 'Start' }
+        text={ 'Shoot' }
         backgroundColor={ backgroundColor }
         textColor={ textColor }
         onPress={ this.onPress }
@@ -50,7 +48,7 @@ class ShootButton extends Component {
 const select = (state) => {
   const fevents = state.fishingEvents.fishingEvents;
   const last = fevents[fevents.length - 1];
-  const enabled = !(last && !last.datetimeAtEnd);
+  const enabled = !(last && !last.eventValues.datetimeAtEnd);
   const props = {
     numberOf: fevents.length,
     trip: state.trip.currentTrip,

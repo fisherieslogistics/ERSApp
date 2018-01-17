@@ -15,25 +15,29 @@ class FishingEventCatchesEditor extends Component {
   }
 
   changeItem = (eventAttribute, inputId, value, item) => {
-    const { code, weightKgs } = item;
-    const changes = Object.assign({}, { code, weightKgs }, { [inputId]: value});
-    if(changes.code === item.code && item.weightKgs === changes.weightKgs) {
-      return;
+    const { code, weightKgs, _id } = item;
+
+    //no specices code delete it
+    if(inputId === 'code') {
+      if(_id && !value) {
+        return this.deleteItem(_id, 'fishCatch');
+      }
     }
+
+    const changes = Object.assign({}, { code, weightKgs }, { [inputId]: value});
     if(item._isblank) {
       changes.fishingEvent_id = this.props.viewingEvent._id;
       changes.document_type = 'fishCatch';
       this.props.db.create(changes);
     } else {
-      this.props.db.update(changes, item._id);
+      this.props.db.update(changes, _id);
     }
   }
 
-  deleteItem = (eventAttribute, item) => {
-    if(item._isblank) {
-      return
+  deleteItem = (item_id) => {
+    if(item_id){
+      this.props.db.delete(item_id, 'fishCatch');
     }
-    this.props.db.delete(item._id, 'fishCatch');
   }
 
   render() {
@@ -62,29 +66,10 @@ class FishingEventCatchesEditor extends Component {
           <EventProductsEditor
             {...props}
             model={ ProductModel }
-            dispatch={ dispatch }
             items={ viewingFishCatches }
             viewLastUpdated={ viewLastUpdated }
           />
       );
-      /*case "discards":
-        return (
-          <EventDiscardsEditor
-            { ...props }
-            model={ DiscardModel }
-            items={ /*this.props.viewingEvent.discards }
-            viewLastUpdated={ this.props.viewLastUpdated }
-          />
-        );
-      case "protecteds":
-        return (
-          <EventProtectedsEditor
-            { ...props }
-            model={ ProtectedModel }
-            items={ this.props.viewingEvent.protecteds }
-            viewLastUpdated={ this.props.viewLastUpdated }
-          />
-        );*/
     }
   }
 }

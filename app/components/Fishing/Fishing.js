@@ -7,10 +7,6 @@ import React from 'react';
 import FishingEventList from './FishingEventList';
 import MasterDetail from '../layout/MasterDetail';
 import { connect } from 'react-redux';
-import {
-  deleteFishingEvent,
-  updateFishingEvent,
-} from '../../actions/FishingEventActions';
 import PositionDisplay from './PositionDisplay';
 import EventEditor from './EventEditor';
 import TopMasterButton from './common/TopMasterButton';
@@ -38,20 +34,19 @@ class Fishing extends MasterDetail {
         {text: 'Cancel', onPress: () => null, style: 'Cancel'},
         {text: 'Delete', onPress: (text) => {
           if(text && text.toLowerCase() === 'delete') {
-            
+
             const { viewingEvent, fishingEvents } = this.props;
+
             this.props.db.update({ archived: true }, viewingEvent._id);
             const index = fishingEvents.findIndex(f => f._id === viewingEvent._id);
-            const otherEvents = [...fishingEvents];
-            otherEvents.splice(index, 1);
-            
+            const otherEvents = fishingEvents.filter(f => f._id !== viewingEvent._id);
             const fixedEvents = otherEvents.map(fe => {
-              if(fe.numberInTrip < viewingEvent.numberInTrip) {
+              if(fe.eventValues.numberInTrip < viewingEvent.eventValues.numberInTrip) {
                 return fe;
               }
               return Object.assign({}, fe, { numberInTrip: fe.numberInTrip - 1});
             });
-            
+
             this.props.dispatch({
               type: 'setFishingEvents',
               payload: { changes: fixedEvents },
@@ -101,19 +96,14 @@ class Fishing extends MasterDetail {
       //this.props.viewingEvent.canDelete(this.props.fishingEvents.length);
 
     const rightProps = (
-      <View>
-
       <TextButton
         text={ 'Delete' }
-        style={ [toolbarStyles.textButton,] }
+        style={ [toolbarStyles.textButton] }
         color={ deleteActive ? colors.red : colors.midGray }
         textAlign={ "left"}
         onPress={ this.removeFishingEvent }
         disabled={ !deleteActive }
       />
-
-      </View>
-
     );
     return (
       <DetailToolbar
@@ -125,9 +115,8 @@ class Fishing extends MasterDetail {
   }
 
   renderMasterToolbar(){
-    const { viewingEvent, viewingEventHelper, fishingEventsUpdated } = this.props;
-    const canEndEvent = viewingEvent && viewingEventHelper.canEnd;
-
+    const { viewingEvent, fishingEventsUpdated } = this.props;
+    const canEndEvent = viewingEvent && viewingEvent.canEnd;
     const button = (
       <TopMasterButton
         canEndEvent={ canEndEvent }
@@ -160,7 +149,6 @@ const select = (state) => {
     fishingEvents: state.fishingEvents.fishingEvents,
     signalStrength: state.connection.signalStrength,
     viewingEvent: state.fishingEvents.viewingEvent,
-    viewingEventHelper: state.fishingEvents.viewingEventHelper,
     db: state.database.db,
   };
   return props;

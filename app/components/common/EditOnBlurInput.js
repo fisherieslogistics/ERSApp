@@ -68,7 +68,6 @@ class EditOnBlurInput extends Component {
       case "number":
         const num = parseInt(value);
         if(isNaN(num)){
-          console.log(num, this.props.attribute.id)
           return this.props.attribute.unit ? "0" : "";
         }
         return num.toFixed(0);

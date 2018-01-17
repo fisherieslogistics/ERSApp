@@ -54,7 +54,7 @@ const state = {
 const weightKgs = {
   label: 'Green Weight',
   id: 'weightKgs',
-  valid: valid.productWeight,
+  valid: valid.alwaysValid,
   type: 'number',
   default: 0,
   unit: 'kg',

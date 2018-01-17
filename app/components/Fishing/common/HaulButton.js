@@ -6,10 +6,9 @@ import {
   View,
   Text,
 } from 'react-native';
-import { locationToGeoJSONPoint }from '../../../utils/Helper';
+import { locationToGeoJSONPoint, locationToWKTPoint }from '../../../utils/Helper';
 import { connect } from 'react-redux';
 import { colors } from '../../../styles/styles';
-import { setSelectedFishingDetail } from '../../../actions/ViewActions';
 import { setViewingEvent } from '../../../actions/FishingEventActions';
 import { styles } from '../../common/Buttons/Button';
 
@@ -22,13 +21,15 @@ class HaulButton extends Component {
   }
 
   onPress() {
-    const loc = locationToGeoJSONPoint(this.props.location)
-    
+    const eventSpecific = this.props.viewingEvent.eventSpecificDetails;
+    eventSpecific.NetLeaveDepthLocation = this.props.location;
     const change = {
       datetimeAtEnd: new Date(),
-      locationAtEnd: loc,
+      locationAtEnd: locationToWKTPoint(this.props.location),
       averageSpeed: this.props.averageSpeed,
+      eventSpecificDetails: JSON.stringify(eventSpecific),
     };
+
     AlertIOS.alert(
       "Hauling",
       'Hauling Gear Now?',
@@ -46,9 +47,9 @@ class HaulButton extends Component {
     let backgroundColor = colors.red;
     let textColor = colors.white;
     let onPress = this.onPress;
-    const { viewingEventHelper, viewingEvent } = this.props;
-    
-    if (!(viewingEvent && viewingEventHelper.canEnd)) {
+    const { viewingEvent } = this.props;
+
+    if (!(viewingEvent && viewingEvent.canEnd)) {
       backgroundColor = colors.backgrounds.dark;
       textColor = colors.backgrounds.light;
       onPress = null;
@@ -81,7 +82,6 @@ const select = (state) => {
     viewingEvent: state.fishingEvents.viewingEvent,
     location: state.location,
     averageSpeed: state.location.averagedSpeed.currentAvg,
-    viewingEventHelper: state.fishingEvents.viewingEventHelper,
     db: state.database.db,
     lastUpdated: state.fishingEvents.lastUpdated,
   };

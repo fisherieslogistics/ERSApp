@@ -13,12 +13,6 @@ import speciesDesc from '../../../constants/species/speciesDesc';
 import Icon8 from '../../common/Icon8';
 const styles = StyleSheet.create(Object.assign({}, modelEditorStyles));
 
-const toBind = [
-  'renderDeleteButton',
-  'getEditorProps',
-  'renderEditors',
-  'itemHasError',
-];
 
 const deleteWrap = {
   position: 'absolute',
@@ -27,12 +21,6 @@ const deleteWrap = {
 };
 
 class CatchesEditor extends Component{
-  constructor (props) {
-    super(props);
-    toBind.forEach((mName) => {
-      this[mName] = this[mName].bind(this);
-    });
-  }
 
   getEditorProps(attribute, item, index) {
     const inputId = `${attribute.id}_${item.RAId}`;
@@ -43,19 +31,18 @@ class CatchesEditor extends Component{
     };
   }
 
-  itemHasError(item) {
-    return !item;
-  }
-
   getSuggestions(){
     return speciesDesc;
+  }
+
+  renderEditors() {
+    return [];
   }
 
   renderEditor(item, index, model) {
     const onChange = (inputId, value) => this.props.changeItem(
       this.eventAttribute, inputId, value, item, index);
 
-    const deleteButton = this.renderDeleteButton(item)
     const modelToUse = model || this.props.model;
     return (
       <View
@@ -71,36 +58,8 @@ class CatchesEditor extends Component{
           onChange={ onChange }
           dispatch={ this.props.dispatch }
         />
-        { deleteButton }
       </View>
     )
-  }
-
-  renderDeleteButton(item){
-    const deleteItem = () => this.props.deleteItem(this.eventAttribute, item);
-    const delStyle = [styles.deleteButtonWrapper];
-    return (
-      <View style={deleteWrap}>
-        <TouchableOpacity
-          onPress={ deleteItem }
-          style={ delStyle }
-        >
-          <Icon8
-            name={ 'delete' }
-            size={ 18 }
-            color={ colors.red }
-          />
-        </TouchableOpacity>
-      </View>
-    );
-  }
-
-  renderEditors(){
-    const inputs = [];
-    this.props.items.forEach((p, i) => {
-      inputs.push(this.renderEditor(p, i));
-    });
-    return inputs;
   }
 
   render() {
@@ -118,7 +77,9 @@ class CatchesEditor extends Component{
         <View
           style={ spacer }
         />
-        { itemEditors }
+        <View>
+          { itemEditors }
+        </View>
       </KeyboardAwareScrollView>
     );
   }

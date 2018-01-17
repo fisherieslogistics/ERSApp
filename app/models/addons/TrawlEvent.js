@@ -7,10 +7,11 @@ import uuid from 'uuid/v1';
 import JSONPointToLocation from '../../utils/JSONPointToLocation';
 
 
-export default class TrawlEventHelper {
-  
+export default class TrawlEvent {
+
   constructor(trawlEvent) {
     this.fishingEvent = {};
+    this._id = trawlEvent._id;
     FishingEventModel.forEach(attr => {
       this.fishingEvent[attr.id] = trawlEvent[attr.id];
     });
@@ -32,59 +33,57 @@ export default class TrawlEventHelper {
     return false;
   }
 
+  get eventSpecificDetails() {
+    return JSON.parse(this.fishingEvent.eventSpecificDetails);
+  }
+
   get detailsValid() {
     const {
       locationAtEnd,
-      locationAtStart,
       datetimeAtStart,
       datetimeAtEnd,
-    } = this.fishingEvent;
-    
-    const {
+      locationAtStart,
       targetSpecies,
+    } = this.fishingEvent;
+
+    const {
       wingSpread,
       headlineHeight,
       bottomDepth,
       groundropeDepth,
       averageSpeed,
+      NetAtDepthLocation,
+      NetLeaveDepthLocation,
     } = this.eventSpecificDetails;
 
-    const stage1 = (targetSpecies && wingSpread && headlineHeight && locationAtStart && datetimeAtStart);
+    const stage1 = (targetSpecies && wingSpread && headlineHeight && NetAtDepthLocation && datetimeAtStart);
     if((!datetimeAtEnd && stage1)) {
       return stage1;
     }
     const datesSweet =  !!(datetimeAtStart < datetimeAtEnd);
-    const depths = !!(bottomDepth && groundropeDepth);
-    return !!(stage1 && !!locationAtEnd && !!averageSpeed && depths && datesSweet);
+    const depths = (bottomDepth && groundropeDepth) && (bottomDepth <= groundropeDepth);
+    const is_valid = !!(stage1 && locationAtEnd && averageSpeed && depths && datesSweet && NetLeaveDepthLocation);
+    return is_valid;
+  }
+
+  get status() {
+    const { detailsValid, eventValues } = this;
+    const { datetimeAtEnd, completed } = eventValues;
+    if(completed) {
+      return 'upload-to-cloud';
+    }
+    if(!datetimeAtEnd) {
+      return 'fishing';
+    }
+    if(detailsValid) {
+      return 'ok';
+    }
+    return 'error';
   }
 
   get canSubmit() {
     const { datetimeAtEnd } = this.fishingEvent;
     return !!(this.detailsValid && datetimeAtEnd && this.estimatedCatchValid)
-  }
-
-  get estimatedCatchValid() {
-    //const catchToCheck =  [ ...this.estimatedCatch];
-    //last one is always a blank;
-    return true;
-    //catchToCheck.pop();
-    //return this.estimatedCatch.length && catchToCheck.every(ec => (ec.code && ec.weightKgs));
-  }
-
-  get discardsValid() {
-    return //!this.discards.length || [ ...this.discards ].every(ec => (ec.code && ec.weightKgs));
-  }
-
-  get protectedsValid() {
-    return true;
-  }
-
-  get locationStartDecimal() {
-    return JSONPointToLocation(this.fishingEvent.locationStart);
-  }
-
-  get locationAtEndDecimal() {
-    return JSONPointToLocation(this.fishingEvent.locationAtEnd);
   }
 
   canDelete(latestInTrip) {
@@ -94,12 +93,12 @@ export default class TrawlEventHelper {
   get fishServeObject() {
     return {};
   }
-  
-  fieldsToRender() {
+
+  fieldsToRender(hideOptional) {
     return FishingEventModel.concat(TrawlEventModel).filter(
-      field => !!field.display);
+      field => (!!field.display &! (hideOptional && field.optionalRender)));
   }
-  
+
   changeEvent(name, value) {
     if(FishingEventModel.find(a => a.id === name)) {
       this.fishingEvent[name] = value;
@@ -108,10 +107,9 @@ export default class TrawlEventHelper {
       this.eventSpecificDetails[name] = value;
     }
   }
-  
-  get fishingEventValues() {
-    return Object.assign({}, this.fishingEvent,
-      { eventSpecificDetails: JSON.stringify(this.eventSpecificDetails)});
+
+  get eventValues() {
+    return Object.assign({}, this.fishingEvent, this.eventSpecificDetails);
   }
 
   get eventHeader() {

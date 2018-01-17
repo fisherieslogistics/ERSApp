@@ -2,23 +2,8 @@ import {
   updateWithTimeStamp,
   update,
 } from '../utils/Helper';
-import HandGatheringEventHelper from '../models/addons/HandGatheringEvent';
-//import FishingEventModel from '../models/FishingEventModel';
-import HandGatheringEventModel from '../models/HandGatheringEventModel';
-import TrawlEventModel from '../models/TrawlEventModel';
-import TrawlEventHelper from '../models/addons/TrawlEvent';
 import MPIFormType from '../constants/MPIFormType';
-
-let eventSpecificModel = TrawlEventModel;
-let fishingEventHelper = TrawlEventHelper;
-
-switch (MPIFormType) {
-  case 'HandGatheringEvent':
-    eventSpecificModel = HandGatheringEventModel;
-    fishingEventHelper = HandGatheringEventHelper;
-    break;
-  default:
-}
+import TrawlEvent from '../models/addons/TrawlEvent';
 
 
 const initialState = {
@@ -27,7 +12,7 @@ const initialState = {
   setSelectedCatchesDetail: 'catches',
   fishingEvents: [],
   viewingEvent: null,
-  viewingEventHelper: null,
+  viewingEvent: null,
   selectedDetail: 'detail',
   canStartEvent: true,
   fishCatches: [],
@@ -50,35 +35,39 @@ export default (state = initialState, action) => {
 
   switch(type) {
     case 'update-fishingEvent':
+      if(payload.changes.archived) {
+        return state;
+      }
+      const updateEvent = new TrawlEvent(payload.changes);
       return updateWithTimeStamp(state, {
-          fishingEvents: replaceByArray(payload.changes, fishingEvents),
-          viewingEventHelper: new fishingEventHelper(payload.changes),
-          viewingEvent: payload.changes,
+          fishingEvents: replaceByArray(updateEvent, fishingEvents),
+          viewingEvent: updateEvent,
         });
     case 'create-fishingEvent':
-      fishingEvents.push(payload.changes);
+      const newEvent = new TrawlEvent(payload.changes);
+      fishingEvents.push(newEvent);
       return updateWithTimeStamp(state, {
         fishingEvents: [...fishingEvents],
-        viewingEvent: payload.changes,
-        viewingEventHelper: new fishingEventHelper(payload.changes),
+        viewingEvent: newEvent,
         selectedDetail: 'detail',
         viewingFishCatches: [],
       });
     case 'setFishingEvents':
-      payload.changes.sort((f1, f2) => (f1.numberInTrip > f2.numberInTrip) ? 1 : -1);
+      payload.changes.sort((f1, f2) => (f1.eventValues.numberInTrip > f2.eventValues.numberInTrip) ? 1 : -1);
       return updateWithTimeStamp(state,
         { fishingEvents: payload.changes });
     case 'setFishCatches':
-      payload.changes.sort((f1, f2) => (f1.weightKgs > f2.weightKgs) ? 1 : -1);
-      return updateWithTimeStamp(state,
-        { fishCatches: payload.changes });
+      payload.changes.sort((f1 , f2) => (f1.createdAt < f2.createdAt) ? 1 : -1);
+      return updateWithTimeStamp(state, { fishCatches: payload.changes });
     case 'setViewingEvent':
+      if(!payload.changes) {
+        return updateWithTimeStamp(state, {viewingEvent: null, viewingEvent: null, viewingFishCatches: [] });
+      }
       const catches = fishCatches.filter(
         fc => fc.fishingEvent_id === payload.changes._id);
-      catches.sort((f1, f2) => (f1.weightKgs > f2.weightKgs) ? 1 : -1);
+      catches.sort((f1 , f2) => (f1.createdAt < f2.createdAt) ? 1 : -1);
       return updateWithTimeStamp(state, {
         viewingEvent: payload.changes,
-        viewingEventHelper: new fishingEventHelper(payload.changes),
         viewingFishCatches: catches,
       });
     case 'create-fishCatch':
@@ -95,6 +84,7 @@ export default (state = initialState, action) => {
           fc => fc.fishingEvent_id === state.viewingEvent._id),
         });
     case 'delete-fishCatch':
+      console.log(payload.changes, 'DELETING');
       return updateWithTimeStamp(state, {
         fishCatches: removeById(payload.changes, fishCatches),
         viewingFishCatches: removeById(payload.changes, viewingFishCatches),

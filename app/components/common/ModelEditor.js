@@ -42,19 +42,13 @@ class ModelEditor extends React.Component {
     );*/
   }
 
-  renderLabel(attribute, active) {
-    const tStyle = [styles.labelText];
-    if(active) {
-      tStyle.push({ color: colors.white, fontWeight: '600' });
+  renderLabel({ label, valid }, active, is_valid) {
+    if(is_valid) {
+      return (<Text style={styles.labelError}>{ `${label}  ** ${valid.errorMessage}` }</Text>);
+    } else {
+      const tStyle = active ? styles.activeText : styles.labelText;
+      return (<Text style={[tStyle]}>{ label }</Text>);
     }
-    const label = this.props.noLabelRow ? null : attribute.label;
-    return (
-      <View style={[ styles.row, styles.labelRow ]}>
-        <Text style={ tStyle }>
-          { label }
-        </Text>
-      </View>
-    );
   }
 
   handleBlur() {
@@ -73,52 +67,17 @@ class ModelEditor extends React.Component {
     return `${attribute.id}_input_${this.props.index}`;
   }
 
-  getWrapperStyle(displayType) {
-    if(displayType === 'combined' || displayType === 'child'){
-     return styles.singleInput;
-    }
-    return styles.combinedInput;
-  }
-
-  getErrorMessage({ valid, combinedValid, id, type, fishingEvent }, extraProps) {
-    const { modelValues } = this.props;
-    return false;
-    if (!valid.func(modelValues[id], modelValues, extraProps)) {
-      return valid.errorMessage;
-    }
-    if(combinedValid && !combinedValid.func(combinedValid.attributes, modelValues, extraProps)){
-      return combinedValid.errorMessage;
-    }
-  }
-
   renderInput(attribute, index, numInputs = 1) {
 
+    const { valid, label, display } = attribute;
+    const { modelValues, fishCatches } = this.props;
+    const value = this.props.modelValues[attribute.id];
+    const is_valid = valid && !valid.func(value, modelValues, fishCatches);
     const otherProps = this.props.getEditorProps(attribute, this.props.modelValues, index);
-
-    const inputId = otherProps.inputId;
+    const { inputId } = otherProps;
 
     const isFocused = this.isFocused(inputId);
-    const value = this.props.modelValues[attribute.id];
-    const errorMessage = this.getErrorMessage(attribute, otherProps);
-    let errorView = errorMessage ? this.renderError(errorMessage, isFocused || otherProps.alwaysShowError) : null;
-    const labelView = this.renderLabel(attribute, isFocused);
-
-    const wrapperStyle = [
-      { flex: 1 / numInputs },
-      styles.col,
-      this.getWrapperStyle(attribute.display.type),
-    ];
-
-    if(this.props.noLabelRow){
-      errorView = null;
-    }
-
-    if(errorMessage || otherProps.error){
-      wrapperStyle.push({
-        borderBottomColor: colors.orange,
-        borderBottomWidth: 1,
-      });
-    }
+    const labelText = !this.props.noLabelRow && this.renderLabel(attribute, isFocused, is_valid);
 
     const handlePress = () => {
       this.setFocusedInputId(inputId);
@@ -128,10 +87,11 @@ class ModelEditor extends React.Component {
       <TouchableOpacity
         key={ inputId }
         onPress={ handlePress }
-        style= { wrapperStyle }
+        style= { [ styles.col, styles.singleInput] }
       >
-        { errorView }
-        { labelView }
+        <View style={[ styles.row, styles.labelRow ]}>
+          { labelText }
+        </View>
         <AttributeEditor
           attribute={ attribute }
           handleBlur={ this.handleBlur }
@@ -209,6 +169,7 @@ const select = (state) => ({
   fishingEventUpdated: state.fishingEvents.lastUpdated,
   focusedInputId: state.view.focusedInputId,
   lastUpdated: state.view.lastUpdated,
+  fishCatches: state.fishingEvents.viewingFishCatches,
 });
 
 export default connect(select)(ModelEditor);

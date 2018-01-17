@@ -27,10 +27,11 @@ class EventDetailEditor extends Component{
     this.getEditorProps = this.getEditorProps.bind(this);
     this.renderToggleShowMore = this.renderToggleShowMore.bind(this);
     this.toggleOptionalFields = this.toggleOptionalFields.bind(this);
+    this.state = {};
   }
 
-  toggleOptionalFields() {
-    this.props.dispatch(toggleOptionalFields());
+  toggleOptionalFields = () => {
+    this.setState({ hideOptionalFields: !this.state.hideOptionalFields })
   }
 
   shouldCombineDepths(bottomDepth, groundropeDepth) {
@@ -41,20 +42,22 @@ class EventDetailEditor extends Component{
 
   onChange(name, value, type) {
     const changes = { [name]: value };
-    if(FishingEventModel.find((field) => field.id === name)){
-      this.props.db.update(changes, fishingEvent._id);
+    const { fishingEvent, db } = this.props;
+    if(FishingEventModel.find((field) => field.id === name)) {
+      db.update(changes, fishingEvent._id);
     } else {
-      const eventDetails = JSON.parse(fishingEvent.eventSpecificDetails);
+      const eventDetails = fishingEvent.eventSpecificDetails;
       eventDetails[name] = value;
       const specificChanges = { eventSpecificDetails: JSON.stringify(eventDetails) };
-      this.props.db.update(specificChanges, fishingEvent._id);
+      db.update(specificChanges, fishingEvent._id);
     }
-  
+
   }
 
   getEditorProps(attribute){
     const extraProps = {};
-    const inputId = `${attribute.id}_${this.props.fishingEvent._id}`;
+    const { fishingEvent } = this.props;
+    const inputId = `${attribute.id}_${fishingEvent._id}`;
     if(attribute.id === 'targetSpecies') {
       extraProps.autoCapitalize = 'characters';
       extraProps.maxLength = 3;
@@ -67,7 +70,7 @@ class EventDetailEditor extends Component{
       attribute,
       extraProps,
       inputId,
-      fishingEvent: this.props.viewingEventHelper,
+      fishingEvent: fishingEvent.eventValues,
     };
   }
 
@@ -89,7 +92,7 @@ class EventDetailEditor extends Component{
       >
         <View>
           <Text style={textStyle}>
-            { this.props.showOptionalFields ? 'Less' : 'More' }
+            { this.state.hideOptionalFields ? 'More' : 'Less' }
           </Text>
         </View>
       </TouchableOpacity>
@@ -97,8 +100,8 @@ class EventDetailEditor extends Component{
   }
 
   render() {
-    const { fishingEvent, trip, showOptionalFields, viewingEventHelper } = this.props;
-
+    const { fishingEvent, trip, hideOptionalFields } = this.props;
+    const { eventValues } = fishingEvent;
     if(!fishingEvent) {
       return this.renderMessage("No shots to edit");
     }
@@ -108,7 +111,6 @@ class EventDetailEditor extends Component{
     }
 
     const showMore = this.renderToggleShowMore(!!fishingEvent);
-
     const spacer = { height: 50 };
     return (
       <KeyboardAwareScrollView
@@ -120,9 +122,9 @@ class EventDetailEditor extends Component{
       >
         <ModelEditor
           getEditorProps={ this.getEditorProps }
-          model={ viewingEventHelper.fieldsToRender() }
-          index={ fishingEvent.numberInTrip }
-          modelValues={ viewingEventHelper.fishingEventValues }
+          model={ fishingEvent.fieldsToRender(this.state.hideOptionalFields) }
+          index={ eventValues.numberInTrip }
+          modelValues={ eventValues }
           onChange={ this.onChange }
         />
         { showMore }
@@ -133,11 +135,9 @@ class EventDetailEditor extends Component{
 const select = (state) => {
   const props = {
     fishingEvent: state.fishingEvents.viewingEvent,
-    viewingEventHelper: state.fishingEvents.viewingEventHelper,
     trip: state.trip.currentTrip,
     viewLastUpdated: state.view.lastUpdated,
     fishingEventUpdated: state.fishingEvents.lastUpdated,
-    showOptionalFields: state.fishingEvents.showOptionalFields,
     species: state.species.all,
     db: state.database.db,
   };

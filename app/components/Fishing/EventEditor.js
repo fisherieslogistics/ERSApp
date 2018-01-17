@@ -2,6 +2,7 @@
 import {
   View,
   AlertIOS,
+  Text,
 } from 'react-native';
 
 import React, { Component } from 'react';
@@ -48,23 +49,14 @@ class EventEditor extends Component {
 
   addItem(eventAttribute) {
     console.log(eventAttribute);
-    //this.props.dispatch(addItemToEvent(this.props.viewingEvent, eventAttribute));
   }
 
   changeItem(eventAttribute, inputId, value, item) {
     console.log(eventAttribute);
-    /*const { code, weightKgs } = item;
-    const changes = Object.assign({}, { code, weightKgs }, { [inputId]: value});
-    this.props.dispatch(changeItemInEvent(this.props.viewingEvent, item, changes, eventAttribute));
-    if(eventAttribute === 'estimatedCatch' && inputId === 'code' &&
-      this.props.viewingEvent.shouldAddEmptyCatch) {
-      this.addItem(eventAttribute);
-    }*/
   }
 
   deleteItem(eventAttribute, item) {
     console.log(item);
-    //this.props.dispatch(deleteItemInEvent(this.props.viewingEvent, item, eventAttribute));
   }
 
   renderDetailEditor() {
@@ -120,7 +112,7 @@ class EventEditor extends Component {
     });
   }
 
-  renderButton({ text, onPress, color, wrapstyle, hasError, active, enabled }) {
+  renderButton({ text, onPress, color, wrapstyle, active, enabled }) {
     const opacStyle = { opacity: enabled ? 1 : 0.35 };
     return (
       <View style={ [wrapstyle, opacStyle] } key={`_eventEditor_${text}_button`}>
@@ -130,21 +122,19 @@ class EventEditor extends Component {
           active={ active }
           disabled={ !enabled }
           onPress={ onPress }
-          error={ hasError }
         />
       </View>
     );
   }
 
   renderDetailViewButtons() {
-    const { viewingEvent, viewingEventHelper } = this.props;
-    const catchesEnabled = !!viewingEvent.datetimeAtEnd;
+    const { viewingEvent } = this.props;
+    const catchesEnabled = !!viewingEvent.eventValues.datetimeAtEnd;
     return [
-      this.renderDetailViewButton((catchesEnabled && !viewingEventHelper.detailsValid), 'detail', true, 0),
-      this.renderDetailViewButton(false, 'catches', catchesEnabled, ''/*fEvent.estimatedCatch.length - 1*/),
-      //this.renderDetailViewButton(!fEvent.discardsValid, 'discards', catchesEnabled, fEvent.discards.length),
-      //this.renderDetailViewButton(false, 'protecteds', catchesEnabled, fEvent.protecteds.length),
+      this.renderDetailViewButton((catchesEnabled && !viewingEvent.detailsValid), 'detail', true, 0),
+      this.renderDetailViewButton(false, 'catches', catchesEnabled),
       this.renderSubmitButton(),
+      (<View key={'33'} style={{padding: 15}}><Text style={{fontSize:  22, color: colors.green}}>{ `Shot# ${viewingEvent.eventValues.numberInTrip}` }</Text></View>),
     ];
   }
 
@@ -191,11 +181,11 @@ class EventEditor extends Component {
   }
 
   render(){
-    const { viewingEvent, selectedDetail, viewingEventHelper } = this.props;
+    const { viewingEvent, selectedDetail } = this.props;
     if(!viewingEvent) {
       return null;
     }
-    const { datetimeAtEnd, committed } = viewingEvent;
+    const { datetimeAtEnd, committed } = viewingEvent.eventValues;
     if(committed) {
       return this.renderMessage("Shot has been signed off and cannot be edited");
     }
@@ -218,7 +208,7 @@ class EventEditor extends Component {
           { addButton }
 
         </View>
-        <View style={ [styles.row, { flex: 0.94 } ] }>
+        <View style={ [styles.row, { flex: 0.94, paddingTop: 15 } ] }>
 
           { detailView }
 
@@ -232,8 +222,7 @@ class EventEditor extends Component {
 const select = (state) => {
   const props = {
     fishingEventsUpdated: state.fishingEvents.lastUpdated,
-    viewingEvent: state.fishingEvents.viewingEventHelper,
-    viewingEventHelper: state.fishingEvents.viewingEventHelper,
+    viewingEvent: state.fishingEvents.viewingEvent,
     selectedDetail: state.view.selectedFishingDetail,
     lastUpdated: state.view.lastUpdated,
     db: state.database.db,
