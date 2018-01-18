@@ -3,7 +3,7 @@ import colors from './darkColors';
 export default {
   addProduct: {
     marginLeft: 10,
-    backgroundColor: colors.blue,
+    backgroundColor: colors.pastelGreen,
   },
   buttonWrapper: {
     width: 360,

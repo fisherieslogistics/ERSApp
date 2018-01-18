@@ -18,7 +18,7 @@ export default class EventProductsEditor extends CatchesEditor {
     this.eventAttribute = 'estimatedCatch';
   }
 
-  renderEditors(){
+  renderEditors = () => {
     const inputs = [];
     const num = 10 - this.props.items.length;
     this.props.items.forEach((p, i) => {
@@ -54,7 +54,7 @@ export default class EventProductsEditor extends CatchesEditor {
     return this.props.species.map(s => ({ value: s.code, description: s.fullName }));
   }
 
-  getEditorProps(attribute, item, index) {
+  getEditorProps = (attribute, item, index) => {
     const inputId = `${attribute.id}_${item._id}_${index}`;
     const props = {
       attribute,
@@ -69,6 +69,9 @@ export default class EventProductsEditor extends CatchesEditor {
         break;
       case 'weightKgs':
         props.extraProps = { persistKeyboard: true };
+        if(!item.code) {
+          props.extraProps.nullInput = true;
+        }
         break;
       default:
     }

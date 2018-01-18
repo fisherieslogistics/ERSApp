@@ -8,12 +8,12 @@ import {
 import React, { Component } from 'react';
 import DatePicker from 'react-native-datepicker';
 import { inputStyles } from '../../styles/styles';
-import LocationEditor from '../LocationEdit/LocationEditor';
 import SuggestPicker from './SuggestPicker';
 import DayPicker from './DayPicker';
 import ProductCodePicker from '../Fishing/ProductCodePicker';
 import EditOnBlurInput from './EditOnBlurInput';
 import JSONPointToLocation from '../../utils/JSONPointToLocation';
+import LocationEditor from './LocationEditor';
 import Label from './Label';
 
 const styles = {
@@ -191,24 +191,12 @@ class AttributeEditor extends Component {
         let loc;
         const locFields = [
           'locationAtEnd',
-          'locationAtStart',
+          'NetAtDepthLocation',
           'NetAtDepthLocation',
           'NetLeaveDepthLocation',
         ];
-        
-        if(locFields.includes(attribute.id)) {
-          
-          loc = JSONPointToLocation(fishingEvent[attribute.id]);
-          
-        }
         return (
-          <LocationEditor
-            attribute={ attribute }
-            value={ loc || { lat: 0, lon: 0 } }
-            onChange={ onChange }
-            inputId={ inputId }
-            editingCallback={editingCallback}
-          />
+          <LocationEditor fishingEvent={fishingEvent} value={value} attribute={ attribute } />
         );
       case "bool":
         const boolVal = !!value

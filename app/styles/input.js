@@ -10,8 +10,8 @@ export default {
   textInput: {
     fontSize: 18,
     flex: 1,
-    color: colors.green,
     height: 28,
+    color: colors.white,
     marginTop: 8,
   },
   locationContainer: {
