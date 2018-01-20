@@ -27,8 +27,8 @@ const styles = {
     padding: 5,
   },
   label: {
-    width: 30,
     padding: 5,
+    width: 200,
   },
 };
 
@@ -208,7 +208,7 @@ class AttributeEditor extends Component {
           />
         );
       case "label":
-        const wrap = { width: 70 };
+        const wrap = { width: 200 };
         return (<Label value={value} style={wrap} />);
       case "number":
       case "float":

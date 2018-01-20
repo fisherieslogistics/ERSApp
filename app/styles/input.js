@@ -4,7 +4,7 @@ export default {
   dateText: {
     fontSize: 18,
     flex: 1,
-    color: colors.green,
+    color: colors.white,
     textAlign: 'left'
   },
   textInput: {
