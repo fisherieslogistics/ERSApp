@@ -94,10 +94,10 @@ export function tripCanStart(trip) {
     return false;
   }
   return [
-    'leavingPort',
+    'leavingPort_id',
     'datetimeAtStart',
     'datetimeAtEnd',
-    'unloadPort',
+    'unloadPort_id',
     'headlineHeight',
     'wingSpread'
   ].every(key => !!trip[key]);
@@ -107,8 +107,8 @@ export function createHistoryTrip(trip, fishingEvents){
   const {
     datetimeAtStart,
     datetimeAtEnd,
-    leavingPort,
-    unloadPort,
+    leavingPort_id,
+    unloadPort_id,
     id,
   } = trip;
 
@@ -122,8 +122,8 @@ export function createHistoryTrip(trip, fishingEvents){
 
   return {
     datetimeAtStart,
-    leavingPort,
-    unloadPort,
+    leavingPort_id,
+    unloadPort_id,
     datetimeAtEnd,
     fishingEvents: newEvents,
     id,
