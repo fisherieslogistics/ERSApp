@@ -58,14 +58,14 @@ const TripModel = [
   },
   {
    label: 'Sailing From',
-   id: 'leavingPort',
+   id: 'leavingPort_id',
    valid: Validator.valid.anyValue,
    type: 'picker',
    display: { type: 'single'},
   },
   {
    label: 'Expected Unload Port',
-   id: 'unloadPort',
+   id: 'unloadPort_id',
    valid: Validator.valid.anyValue,
    type: 'picker',
    display: { type: 'single'},
