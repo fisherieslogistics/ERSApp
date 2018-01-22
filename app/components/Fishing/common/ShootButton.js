@@ -1,5 +1,6 @@
 'use strict';
 import React, { Component } from 'react';
+import { AlertIOS } from 'react-native';
 import uuid from 'uuid/v1';
 import { connect } from 'react-redux';
 import { BigButton } from '../../common/Buttons';
@@ -15,15 +16,27 @@ class ShootButton extends Component {
 
   constructor(props) {
     super(props);
-    this.onPress = this.onPress.bind(this);
   }
 
-  onPress() {
+  startEvent = () => {
     const { trip, lastEvent, location } = this.props;
-    if(this.props.enabled){
-      const newEvent = createFishingEvent(trip._id, lastEvent && lastEvent.eventValues, location);
-      this.props.db.create(newEvent);
+    const newEvent = createFishingEvent(trip._id, lastEvent && lastEvent.eventValues, location);
+    this.props.db.create(newEvent);
+  }
+
+  onPress = () => {
+
+    if(!this.props.trip) {
+      AlertIOS.alert('Start Trip First', 'Start Trip then start fishing');
+      return;
     }
+
+    if(this.props.location) {
+      this.startEvent();
+    } else {
+      AlertIOS.alert('No Location Available', 'please go to settings > privacy > catchhub > location always.');
+    }
+
   }
 
   render() {

@@ -32,6 +32,7 @@ class SuggestPickerClass extends Component {
       this.setState({
         value: props.value,
       });
+      console.log("SET STATE", props.value, "setstate props *********************");
       return;
     }
     if(props.suggestBarValue) {
@@ -74,7 +75,7 @@ class SuggestPickerClass extends Component {
   }
 
   render () {
-    const style = [inputStyles.textInput, this.props.styles];
+    const style = [inputStyles.textInput, this.props.styles, { color: '#fff' }];
     return(
       <FocusOnDemandPickerInput
         style={ style }

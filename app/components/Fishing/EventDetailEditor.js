@@ -83,8 +83,8 @@ class EventDetailEditor extends Component{
   }
 
   renderToggleShowMore(enabled){
-    const viewStyle = {position: 'absolute', right: 0, top: 0, height: 30, width: 65};
-    const textStyle = {fontSize: 22, color: enabled ? colors.green : colors.midGray };
+    const viewStyle = {position: 'absolute', right: 0, top: -15, height: 30, width: 65};
+    const textStyle = {fontSize: 26, color: enabled ? colors.green : colors.midGray };
     return (
       <TouchableOpacity
         style={viewStyle}
@@ -106,12 +106,12 @@ class EventDetailEditor extends Component{
       return this.renderMessage("No shots to edit");
     }
 
-    if(!trip.started) {
+    if(!trip.values().started) {
       return this.renderMessage("Start Trip First");
     }
 
     const showMore = this.renderToggleShowMore(!!fishingEvent);
-    const spacer = { height: 50 };
+    const spacer = { height: 65 };
     return (
       <KeyboardAwareScrollView
         viewIsInsideTabBar
