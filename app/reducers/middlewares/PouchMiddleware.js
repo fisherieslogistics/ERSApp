@@ -6,15 +6,16 @@ import Pouch from '../../database/Pouch';
 
 let db = null;
 
-export const initialize = (token) => {
-  return (dispatch) => {
+export const initialize = async (token) => {
+
+  return async (dispatch) => {
     db = new Pouch(dispatch, token);
-    console.log(db);
     const g = db.setupSync(token);
-    console.log(g);
-    db.get('AppState')
+    await db.get('AppState')
       .then(db.setupReduxState)
       .catch(db.setupInitialTrip);
+    await db.setupMasterData();
     dispatch({ type: 'setDatabase', payload: { db }});
   }
+
 }
