@@ -4,10 +4,10 @@ export default {
   wrapper: {
     alignSelf: 'stretch',
     flex: 1,
-    marginTop: 4,
+    marginTop: 2,
   },
   innerWrapper: {
-    paddingBottom: 3,
+    paddingBottom: 2,
   },
   col:{
     flexDirection: 'column',
@@ -17,7 +17,7 @@ export default {
   },
   singleInput: {
     margin: 4,
-    height: 60,
+    height: 55,
     flex: 1,
   },
   fill: {

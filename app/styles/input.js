@@ -11,8 +11,8 @@ export default {
     fontSize: 22,
     flex: 1,
     color: colors.white,
-    height: 40,
-    marginTop: 8,
+    height: 36,
+    marginTop: 5,
   },
   locationContainer: {
     backgroundColor: colors.backgrounds.dark,

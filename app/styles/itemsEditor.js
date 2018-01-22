@@ -22,7 +22,7 @@ export default {
   innerWrapper: {
    paddingTop: 2,
    paddingLeft: 20,
-   paddingBottom: 5,
+   paddingBottom: 2,
   },
   outerWrapper: {
     marginTop: 5,
