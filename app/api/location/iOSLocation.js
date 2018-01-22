@@ -5,7 +5,10 @@ import {
 import moment from 'moment';
 import nmea0183 from 'nmea-0183';
 import { createSentence } from '../parsers/nmea';
+import { GPGGAUpdate, GPVTGUpdate } from '../../actions/LocationActions';
+
 const { comCLController } = NativeModules;
+
 
 export function getNMEA(location, callback) {
   const {
@@ -38,8 +41,7 @@ export function getNMEA(location, callback) {
       course,
     });
     const gpvtg = createSentence(`$GPVTG,${course},T,,M,0${speedKts.toFixed(1)},N,000.0,K,A`);
-    callback(null, { data: gpgga, timestamp: date });
-    callback(null, { data: gpvtg, timestamp: date });
+    callback(null, { gpgga, timestamp: date, gpvtg });
   } catch (err) {
     callback(err, null);
   }
@@ -48,41 +50,41 @@ export function getNMEA(location, callback) {
 
 export default class iOSLocation {
 
-  constructor() {
-    this.addCallbacks = this.addCallbacks.bind(this);
-    this.removeListeners = this.removeListeners.bind(this);
-    this.stopTracking = this.stopTracking.bind(this);
-    this.startTracking = this.startTracking.bind(this);
+  constructor(dispatch) {
+    this._dispatch = dispatch;
     this._eventEmitter = new NativeEventEmitter(comCLController);
     this.latestLocation = null;
+    this.addCallbacks();
+    this.startTracking();
   }
 
-  startTracking() {
+  startTracking = () => {
     comCLController.start();
   }
 
-  stopTracking() {
+  stopTracking = () => {
     comCLController.stop();
   }
 
-  addCallbacks(messageCallback, errorCallback) {
+  addCallbacks = () => {
     this._eventEmitter.addListener('locationUpdated', (location) => {
-      getNMEA(location, (err, nmeaString) => {
+      getNMEA(location, (err, nmeas) => {
         if(!err) {
-          this.latestLocation = nmeaString;
-          messageCallback(nmeaString);
+          this.latestLocation = nmeas;
+          this._dispatch(GPGGAUpdate(nmeas.gpgga));
+          this._dispatch(GPVTGUpdate(nmeas.gpvtg));
         }
       });
     });
     this._locationTimingInterval = setInterval(() => {
-       if(!this.testLocation()){
-         errorCallback('Old Location');
+       if(!this.testLocation()) {
+         this._dispatch(GPGGAUpdate(null));
        }
     }, 10000);
-    this._eventEmitter.addListener('error', errorCallback);
+    this._eventEmitter.addListener('error', () =>  this._dispatch(GPGGAUpdate(null)));
   }
 
-  testLocation() {
+  testLocation = () => {
     if(!(this.latestLocation && this.latestLocation.date)) {
       return false;
     }
@@ -94,7 +96,7 @@ export default class iOSLocation {
     return true;
   }
 
-  removeListeners() {
+  removeListeners = () => {
     this._eventEmitter.removeAllListeners();
   }
 

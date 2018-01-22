@@ -112,14 +112,4 @@ export default class TrawlEvent {
     return Object.assign({}, this.fishingEvent, this.eventSpecificDetails);
   }
 
-  get eventHeader() {
-    //const vessel = getLastRecord('vessel');
-    return {
-      //eventID: this.RAId,
-      //vesselNumber: vessel.registration,
-      isVesselUsed: true,
-      notes: 'Create By FLL Reporting',
-    }
-  }
-
 }

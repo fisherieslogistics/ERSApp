@@ -6,8 +6,8 @@ export function locationToWKTPoint(location) {
   return 'POINT ({o} {a})'.replace('{o}', lon).replace('{a}', lat);
 }
 
-export function update(obj, change) {
-  return Object.assign({}, obj, change);
+export function update(obj, change, more={}) {
+  return Object.assign({}, obj, change, more);
 }
 
 export function updateWithTimeStamp(obj, change){

@@ -10,11 +10,9 @@ export const initialize = async (token) => {
 
   return async (dispatch) => {
     db = new Pouch(dispatch, token);
-    const g = db.setupSync(token);
-    await db.get('AppState')
-      .then(db.setupReduxState)
-      .catch(db.setupInitialTrip);
+    db.setupSync(token);
     await db.setupMasterData();
+    await db.setupReduxState();
     dispatch({ type: 'setDatabase', payload: { db }});
   }
 
