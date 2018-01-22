@@ -11,7 +11,7 @@ const TrawlEventModel = [
   },
   {
     label: 'Shot Location',
-    hint: '  ** press shoot when you put the brakes on the winches',
+    hint: '  *press shoot when you put the brakes on the winches',
     id: 'NetAtDepthLocation',
     valid: valid.locationValid,
     type: 'location',
@@ -20,7 +20,7 @@ const TrawlEventModel = [
   },
   {
     label: 'Hauling Location',
-    hint: '** press Haul once you engage winches',
+    hint: '*press Haul once you engage winches',
     id: 'NetLeaveDepthLocation',
     valid: valid.locationValid,
     type: 'location',
@@ -60,7 +60,6 @@ const TrawlEventModel = [
     default: 0,
     display: { type: 'single'},
     unit: 'kt',
-    optionalRender: true,
     displayStage: 'Haul',
   },
   {

@@ -22,12 +22,12 @@ export default class TripEvent {
     const { trip } = this;
     if(ports) {
 
-      const leavingPort = ports.find(p => p._id === trip.leavingPort);
-      const unloadPort = ports.find(p => p._id === trip.unloadPort);
+      const leavingPort_id = ports.find(p => p._id === trip.leavingPort_id);
+      const unloadPort_id = ports.find(p => p._id === trip.unloadPort_id);
 
       return Object.assign({}, trip, {
-        leavingPort: leavingPort && leavingPort.value,
-        unloadPort: unloadPort && unloadPort.value,
+        leavingPort_id: leavingPort_id && leavingPort_id.value,
+        unloadPort_id: unloadPort_id && unloadPort_id.value,
       });
 
     }
@@ -51,7 +51,7 @@ export default class TripEvent {
   }
 
   get canStart() {
-    return this.trip.started === false && this.trip.leavingPort && this.trip.unloadPort &&
+    return this.trip.started === false && this.trip.leavingPort_id && this.trip.unloadPort_id &&
            this.trip.ETA;
   }
 

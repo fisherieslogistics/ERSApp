@@ -104,7 +104,7 @@ class EventEditor extends Component {
       onPress: () => this.setSelectedDetail(detailName),
       color: colors.blue,
       wrapstyle: {
-        flex: 0.20
+        flex: 0.40,
       },
       hasError: error && enabled, enabled,
       active: this.props.selectedDetail === detailName
@@ -132,8 +132,12 @@ class EventEditor extends Component {
     return [
       this.renderDetailViewButton((catchesEnabled && !viewingEvent.detailsValid), 'detail', true, 0),
       this.renderDetailViewButton(false, 'catches', catchesEnabled),
-      this.renderSubmitButton(),
-      (<View key={'33'} style={{padding: 15}}><Text style={{fontSize:  22, color: colors.green}}>{ `Shot# ${viewingEvent.eventValues.numberInTrip}` }</Text></View>),
+      //this.renderSubmitButton(),
+      (<View key={'33'} style={{ padding: 15 }}>
+        <Text style={{fontSize:  22, color: colors.green}}>
+          { `Shot# ${viewingEvent.eventValues.numberInTrip}` }
+        </Text>
+      </View>),
     ];
   }
 

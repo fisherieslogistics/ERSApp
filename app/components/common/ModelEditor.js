@@ -44,7 +44,7 @@ class ModelEditor extends React.Component {
 
   renderLabel({ label, valid }, active, is_valid) {
     if(is_valid) {
-      return (<Text style={styles.labelError}>{ `${label}  ** ${valid.errorMessage}` }</Text>);
+      return (<Text style={styles.labelError}>{ `${label}  *${valid.errorMessage}` }</Text>);
     } else {
       const tStyle = active ? styles.activeText : styles.labelText;
       return (<Text style={[tStyle]}>{ label }</Text>);

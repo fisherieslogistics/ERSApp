@@ -33,7 +33,7 @@ class StartTripEditor extends Component {
       changes[name] = value;
     }
 
-    if(name === 'leavingPort' || name === 'unloadPort') {
+    if(name === 'leavingPort_id' || name === 'unloadPort_id') {
       const port = ports.find(p => p.value === value);
       changes[name] = port && port._id;
     }
@@ -72,8 +72,8 @@ class StartTripEditor extends Component {
       value: val,
     };
     switch (attribute.id) {
-      case "leavingPort":
-      case "unloadPort":
+      case "leavingPort_id":
+      case "unloadPort_id":
         const portName = trip.values(ports)[attribute.id];
         extraProps.view = 'ports';
         extraProps.choices = ports;

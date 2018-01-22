@@ -46,7 +46,7 @@ class Trip extends MasterDetail {
       ${vessel.registration}
 
       Leaving Port:
-      ${trip.values(ports).leavingPort}
+      ${trip.values(ports).leavingPort_id}
     `;
     AlertIOS.alert(
       title,
@@ -70,7 +70,7 @@ class Trip extends MasterDetail {
     }
 
     AlertIOS.alert(
-      `Heading to ${trip.values(ports).unloadPort}`,
+      `Heading to ${trip.values(ports).unloadPort_id}`,
       `Arriving in about ${trip.datetimeAtEndMoment.fromNow(true)}`,
       [
         { text: 'Cancel', style: 'cancel' },
