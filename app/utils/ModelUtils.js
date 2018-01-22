@@ -1,6 +1,7 @@
 import FishingEventModel from '../models/FishingEventModel';
 import TrawlEventModel from '../models/TrawlEventModel';
 import Validator from './Validator';
+import uuid from 'uuid/v1';
 
 
 function attributeShouldRender(attr) {
@@ -24,6 +25,8 @@ export function blankModel(model) {
   model.forEach(attribute => {
     blank[attribute.id] = attribute.default;
   });
+  blank._id = uuid();
+  blank.id = blank._id;
   return blank;
 }
 
