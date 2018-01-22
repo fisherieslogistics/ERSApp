@@ -24,11 +24,11 @@ const styles = {
   },
   style: {
     width: 200,
-    padding: 5,
+    padding: 10,
   },
   label: {
-    padding: 5,
     width: 200,
+    padding: 7,
   },
 };
 
@@ -44,12 +44,14 @@ class AttributeEditor extends Component {
     this.renderLabel = this.renderLabel.bind(this);
   }
 
-  shouldComponentUpdate(nextProps) {
-    if(this.props.isFocused || (nextProps.value !== this.props.value) || (nextProps.isFocused !== this.props.isFocused)){
+  /*shouldComponentUpdate(nextProps) {
+    return true;
+    if(this.props.isFocused || (nextProps.value !== this.props.value) || (nextProps.isFocused !== this.props.isFocused) ||
+       (nextProps.extraProps.value !== nextProps.extraProps.value)) {
       return true;
     }
     return false;
-  }
+  }*/
 
   onDateChange(dateAsString, datetime) {
     return this.props.onChange(this.props.attribute.id, datetime, dateAsString);
@@ -65,7 +67,6 @@ class AttributeEditor extends Component {
         val = parseFloat(value);
         break;
     }
-    console.log(val, "on change")
     this.props.onChange(this.props.attribute.id, val);
   }
 
@@ -73,7 +74,7 @@ class AttributeEditor extends Component {
     this.props.setFocusedInputId(this.props.inputId);
   }
 
-  renderLabel(height, marginTop) {
+  renderLabel(height, marginTop, val='') {
     const style = [{ height, marginTop }, this.props.styles];
     return (
       <TouchableOpacity
@@ -81,14 +82,15 @@ class AttributeEditor extends Component {
         onPress={ this.labelPress }
         focusedInputId={ this.props.focusedInputId }
       >
-          <Text style={ inputStyles.dateText }>
-            {`${this.props.value}`}
+          <Text style={ [inputStyles.dateText, { color: '#ffffff' } ]}>
+            { `${ val }` }
           </Text>
       </TouchableOpacity>
     );
   }
 
   render() {
+
     const {
       attribute,
       value,
@@ -105,16 +107,18 @@ class AttributeEditor extends Component {
       fishingEvent,
     } = this.props;
 
+    if(extraProps.nullInput) {
+      return null;
+    }
     switch (attribute.type) {
-      case "datetime":
+      case 'datetime':
 
         //TODO make sure we only passing around dates or moments - not both
         let date = (value || new Date());
         if(value && value._isAMomentObject) {
-          console.warn("PASSING A MOMENT");
           date = value.toDate();
         }
-        
+
         if(typeof value === 'string') {
           date = new Date(value);
         }
@@ -122,23 +126,21 @@ class AttributeEditor extends Component {
         if(!value) {
           return null;
         }
-
         return (
           <DatePicker
             date={ date }
-            mode="datetime"
+            mode='datetime'
             confirmBtnText="Confirm"
             cancelBtnText="Cancel"
             customStyles={ styles.custom }
             style={ styles.style }
             onDateChange={ this.onDateChange }
             format={ datePickerFormat }
-            { ...extraProps }
           />
         );
       case "productCodePicker":
         if(inputId !== focusedInputId) {
-          return this.renderLabel(18, 8);
+          return this.renderLabel(18, 8, value || extraProps.value);
         }
         return (
           <ProductCodePicker
@@ -155,7 +157,7 @@ class AttributeEditor extends Component {
         );
       case "picker":
         if(inputId !== focusedInputId) {
-          return this.renderLabel(28, 4);
+          return this.renderLabel(28, 4, value || extraProps.value);
         }
         return (
           <SuggestPicker
@@ -172,7 +174,7 @@ class AttributeEditor extends Component {
         );
       case 'day_picker':
         if(inputId !== focusedInputId) {
-          return this.renderLabel(28, 4);
+          return this.renderLabel(28, 4, value || extraProps.value);
         }
         return (
           <DayPicker
