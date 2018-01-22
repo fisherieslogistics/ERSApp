@@ -6,7 +6,7 @@ import React, { Component } from 'react';
 import moment from 'moment';
 import TripModel from '../../models/TripModel';
 import ModelEditor from '../common/ModelEditor';
-import ports from '../../constants/ports';
+import { connect } from 'react-redux';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 
@@ -20,20 +20,23 @@ class StartTripEditor extends Component {
     this.state = {};
   }
 
-  onChange(name, value){
-    const trip = this.props.trip;
-    const changes = {};
-    if(name === 'datetimeAtEnd' || name === 'ETA') {
+  onChange = (name, value) => {
+    const { trip, ports } = this.props;
+    let changes = {};
+    if(name === 'startTime' || name === 'ETA') {
       const datetimeAtStart = new Date();
       const datetimeAtEnd = moment(datetimeAtStart).clone().add(parseInt(value) || 0, "days");
-      changes.datetimeAtEnd = datetimeAtEnd.toDate();
+      changes.endTime = datetimeAtEnd.toDate();
       changes.ETA = datetimeAtEnd.toDate();
-      changes.datetimeAtStart = datetimeAtStart;
+      changes.startTime = datetimeAtStart;
     } else {
       changes[name] = value;
     }
-    changes._id = trip._id;
-    changes._rev = trip._rev;
+
+    if(name === 'leavingPort' || name === 'unloadPort') {
+      const port = ports.find(p => p.value === value);
+      changes[name] = port && port._id;
+    }
     this.props.db.update(changes, trip._id);
   }
 
@@ -62,24 +65,24 @@ class StartTripEditor extends Component {
   }
 
   getExtraProps(attribute){
-    const extraProps = {
+    const { trip, ports, vessel } = this.props;
+    const val = trip.values(ports)[attribute.id];
+    let extraProps = {
       inputId: `${attribute.id}__tripstart__`,
-      value: this.props.trip[attribute.id] || "",
+      value: val,
     };
     switch (attribute.id) {
       case "leavingPort":
       case "unloadPort":
+        const portName = trip.values(ports)[attribute.id];
         extraProps.view = 'ports';
-        extraProps.choices = this.props.ports;
-      break;
-      case "datetimeAtStart":
-        extraProps.mode = "date";
-        extraProps.format = "Do MM YYYY";
+        extraProps.choices = ports;
+        extraProps.value = val;
       break;
       case "ETA":
-        const { datetimeAtEnd, datetimeAtStart, ETA } = this.props.trip;
-        const startDate = moment(datetimeAtStart || new Date());
-        const endDate = moment(datetimeAtEnd || new Date());
+        const { startTime, endTime, ETA } = this.props.trip.values();
+        const startDate = moment(startTime || new Date());
+        const endDate = moment(endTime || new Date());
         extraProps.sortResultsBy = (a, b) => parseInt(a.value) - parseInt(b.value);
         extraProps.choices = this.getDayChoices(startDate.clone());
         const days = moment.duration(endDate.diff(startDate)).asDays();
@@ -91,18 +94,18 @@ class StartTripEditor extends Component {
   }
 
   render() {
-
+    const { ports, trip } = this.props;
     const styleGap = {
       marginTop: 20,
       flex: 1,
     }
-
+    const vals = trip.values(ports);
     return (
       <View style={styleGap}>
         <ModelEditor
           getEditorProps={ this.getEditorProps }
           model={ TripModel }
-          modelValues={ this.props.trip }
+          modelValues={ vals }
           index={ 1 }
           onChange={ this.onChange }
           dispatch={ this.props.dispatch }
@@ -112,4 +115,14 @@ class StartTripEditor extends Component {
   }
 }
 
-export default StartTripEditor;
+const select = (state) => {
+  return {
+    tripUpdated: state.trip.lastUpdated,
+    trip: state.trip.currentTrip,
+    vessel: state.vessel.selected,
+    ports: state.ports.all,
+    db: state.database.db,
+  };
+}
+
+export default connect(select)(StartTripEditor);

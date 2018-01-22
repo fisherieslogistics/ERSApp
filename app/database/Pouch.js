@@ -3,7 +3,6 @@ import { AlertIOS } from 'react-native';
 import { NativeEventEmitter } from 'react-native';
 import PouchDBFind from 'pouchdb-find';
 PouchDB.plugin(PouchDBFind);
-import { setInitialTrips } from '../actions/TripActions';
 import TrawlEvent from '../models/addons/TrawlEvent';
 import uuid from 'uuid/v1';
 import { update } from '../reducers/GeneralMethods';
@@ -45,29 +44,37 @@ export default class Pouch {
       },
     };
 
-    this._sync = this.localDB.sync(USER_REMOTE_URI, options)
+    this._sync = this.localDB.replicate.to(USER_REMOTE_URI, options)
       .on('error', error => console.error('Sync Error', error))
-      .on('change', info => console.log('Sync change', info))
       .on('paused', info => console.log('Sync paused', info))
       .on('completed', info => console.log('Sync completed', info))
       .on('denied', info => console.log('Sync Denied', info))
-      .on('active', info => console.log('Sync active', info));
+      .on('active', info => console.log('Sync active', info))
+      .on('change', info => {
+        //console.log('Sync change', info);
+      });
 
-    this._orgSync = this.orgDB.sync(ORG_REMOTE_URI, options)
+    this._orgSync = this.orgDB.replicate.from(ORG_REMOTE_URI, options)
       .on('error', error => console.error('Sync ORG Error', error))
-      .on('change', info => console.log('Sync  ORG change', info))
       .on('paused', info => console.log('Sync ORG paused', info))
       .on('completed', info => console.log('Sync org completed', info))
       .on('denied', info => console.log('Sync ORG Denied', info))
-      .on('active', info => console.log('Sync active', info));
+      .on('active', info => console.log('Sync active', info))
+      .on('change', info =>  {
+        this.setVessels();
+        this.setPorts();
+      });
 
-    this._masterSync = this.masterDB.sync(MASTER_REMOTE_URI, options)
+
+    this._masterSync = this.masterDB.replicate.from(MASTER_REMOTE_URI, options)
       .on('error', error => console.error('Sync MASTER Error', error))
-      .on('change', info => console.log('Sync MASTER change', info))
       .on('paused', info => console.log('Sync MASTER paused', info))
       .on('completed', info => console.log('Sync master completed', info))
       .on('denied', info => console.log('Sync MASTER Denied', info))
-      .on('active', info => console.log('Sync active', info));
+      .on('active', info => console.log('Sync active', info))
+      .on('change', info => {
+        this.setSpecies();
+      });
 
     return this._sync;
   }
@@ -97,21 +104,37 @@ export default class Pouch {
   }
 
   setupMasterData() {
-    return Promise.all([this.getPorts(), this.getSpecies(), this.getVessels()]).then(data => {
-      console.log(data);
-      const species = data[1].docs.map(
-        p => ({ value: p.code, description: p.description, _id: p._id}));
+    return Promise.all([this.setPorts(), this.setSpecies(), this.setVessels()]);
+  }
 
-      const ports = data[0].docs.map(
-        p => ({ value: p.name, description: '', _id: p._id}));
+  setPorts() {
+    return new Promise((resolve, reject) => {
+      this.getPorts().then(data => {
+        const ports = data.docs.map(
+          p => ({ value: p.name, description: '', _id: p._id, id: p.id }));
+        this.dispatch({ type: 'setPorts', payload: { changes: ports }});
+        resolve(ports);
+      });
+    });
+  }
 
-      const vessels = data[2].docs.map(r => r.doc);
+  setVessels() {
+    return new Promise((resolve, reject) => {
+      return this.getVessels().then(data => {
+        resolve(data.docs);
+        this.dispatch({ type: 'setVessels', payload: { changes: data.docs }});
+      });
+    });
+  }
 
-      console.log("DATA", data);
-
-      this.dispatch({ type: 'setSpecies', payload: { changes: species }});
-      this.dispatch({ type: 'setPorts', payload: { changes: ports }});
-      this.dispatch({ type: 'setVessels', payload: { changes: vessels }})
+  setSpecies() {
+    return new Promise((resolve, reject) => {
+      this.getSpecies().then(data => {
+        const species = data.docs.map(
+          p => ({ value: p.code, description: p.description, _id: p._id, id: p.id }));
+        this.dispatch({ type: 'setSpecies', payload: { changes: species }});
+        resolve(species);
+      });
     });
   }
 
@@ -120,7 +143,7 @@ export default class Pouch {
     return this.orgDB.find(selector);
   }
 
-  getVessels = () => {
+  getVessels = async () => {
     const selector = { selector: { table_name: { $eq: 'reporting_vessel' }}};
     return this.orgDB.find(selector);
   }
@@ -159,7 +182,6 @@ export default class Pouch {
         next(results.docs, resolve, reject);
 
       }).catch(err => {
-        console.log(err);
         reject(err);
       });
     });
@@ -169,47 +191,20 @@ export default class Pouch {
     return this.localDB.allDocs({ include_docs: false });
   }
 
-  setupInitialTrip = () => {
-
-    this.getVessels().then(results => {
-      const vessel = results.docs[0];
-      const newTrip = blankModel(TripModel);
-      const { user_id, username, organisation_id } = this.user;
-
-      const values = {
-        personInCharge: username,
-        ETA: null,
-        organisation_id,
-        datetimeAtStart: null,
-        datetimeAtEnd: null,
-        startLocation: null,
-        endLocation: null,
-        leavingPort: null,
-        unloadPort: null,
-        vessel: vessel._id,
-        vesselName: vessel.name,
-        document_type: 'trip',
-        active: 'true',
-      };
-
-      const appState = {
-        _id: APP_STATE_ID,
-        currentTrip: newTrip._id,
-        vessel: vessel,
-        currentFishingEvents: [],
-      };
-
-      return Promise.all([
-        this.create(Object.assign({}, newTrip, values)),
-        this.localDB.put(appState),
-      ]).then(results => {
-        this.setupReduxState(vessel);
-      });
-
-    });
+  setupInitialTrip = async () => {
+    const vessels = await this.getVessels();
+    const vessel = vessels.docs[0] || { name: 'no vessel', registration: '0', _id: '000' };
+    const newTrip = blankModel(TripModel);
+    const { user_id, username } = this.user;
+    const values = {
+      personInCharge: username,
+      vessel_id: vessel.id,
+      document_type: 'trip',
+      active: 'true',
+    };
+    const trip = await this.create(Object.assign({}, newTrip, values));
+    return trip;
   }
-
-
 
   setItems = ({ ports, vessels, user, species }) => {
     user._id = uuid();
@@ -252,7 +247,6 @@ export default class Pouch {
       this.dispatch({ type: 'setCurrentTrip', payload: {
         changes: currentTrip,
       }});
-      
       this.setCurrentFishingEvents(currentTrip.id);
     });
   }
@@ -265,13 +259,14 @@ export default class Pouch {
     itemToCreate.creator = this.user.id;
     itemToCreate.id = itemToCreate._id;
     itemToCreate.organisation_id = this.user.organisation_id;
-    return this.localDB.put(itemToCreate).then((res) => {
 
-      this.localDB.get(res.id).then(newestdoc => {
-        this.dispatchCreate(newestdoc);
+    return new Promise((resolve, reject) => {
+      this.localDB.put(itemToCreate).then((res) => {
+        this.localDB.get(res.id).then(newestdoc => {
+          this.dispatchCreate(newestdoc);
+          resolve(newestdoc);
+        });
       });
-    }).catch(err => {
-      relayErrorMessage(err);
     });
   }
 
@@ -297,7 +292,7 @@ export default class Pouch {
   }
 
   delete = (_id, document_type) => {
-    this.localDB.get(_id).then(
+    return this.localDB.get(_id).then(
       doc => this.localDB.remove(doc).then(
         () => this.dispatchDelete(_id, document_type)));
   }
@@ -305,12 +300,12 @@ export default class Pouch {
   update = (change, _id) => {
     change._id = _id;
     change.updatedAt = new Date();
-    this.localDB.get(_id).then(doc => {
+    return this.localDB.get(_id).then(doc => {
 
       const newdoc = update(doc, change);
       return this.localDB.put(newdoc).then((res) => {
 
-        this.localDB.get(res.id).then(newestdoc => {
+        return this.localDB.get(res.id).then(newestdoc => {
           this.dispatchUpdate(newestdoc);
         });
 
@@ -320,9 +315,32 @@ export default class Pouch {
     });
   }
 
+  createNewState = async () => {
+    const trip = await this.setupInitialTrip();
+    const vessels = await this.getVessels();
+    const appState = {
+      _id: APP_STATE_ID,
+      currentTrip: trip._id,
+      vessel: vessels[0],
+      currentFishingEvents: [],
+    };
+    await this.delete(APP_STATE_ID);
+    await this.localDB.put(appState);
+    return this.setCurrentTrip(appState);
+  }
+
   setupReduxState = () => {
-    this.localDB.get(APP_STATE_ID).then(appState => {
-      this.setCurrentTrip(appState);
+    return this.localDB.get(APP_STATE_ID).then((appState) => {
+      return this.localDB.get(appState.currentTrip).then((trip) => {
+        if(trip) {
+          return this.setCurrentTrip(appState);
+        }
+      }).catch((err) => {
+        return this.createNewState();
+      });
+
+    }).catch((err) => {
+      return this.createNewState();
     });
   }
 

@@ -84,7 +84,6 @@ export default (state = initialState, action) => {
           fc => fc.fishingEvent_id === state.viewingEvent._id),
         });
     case 'delete-fishCatch':
-      console.log(payload.changes, 'DELETING');
       return updateWithTimeStamp(state, {
         fishCatches: removeById(payload.changes, fishCatches),
         viewingFishCatches: removeById(payload.changes, viewingFishCatches),

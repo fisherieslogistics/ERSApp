@@ -16,24 +16,15 @@ import jwtDecode from 'jwt-decode';
 import request from 'superagent';
 import ReportingApp from './ReportingApp';
 import SplashScreen from '../components/SplashScreen';
-import ConnectionMiddleware from '../reducers/middlewares/ConnectionMiddleware';
-
 import PouchMiddleware, { initialize } from '../reducers/middlewares/PouchMiddleware';
-
 import AddUsefulToActions from '../reducers/middlewares/AddUsefulToActions';
-import { startConnection } from '../actions/ConnectionActions';
-import { updateUser } from '../actions/UserActions';
 import iOSLocation from '../api/location/iOSLocation';
-import { getPorts, getSpecies, getVessels } from '../api/RestApi';
-import { updatePorts } from '../actions/PortActions';
-import { updateSpecies } from '../actions/SpeciesActions';
-import { updateVessels } from '../actions/VesselActions';
 
 //import ErrorUtils from 'ErrorUtils';
 import { reducers } from '../reducers/main';
 import serverURL from '../constants/ServerURL';
 
-const createStoreWithMiddleware = applyMiddleware(thunk, AddUsefulToActions, ConnectionMiddleware)(createStore);
+const createStoreWithMiddleware = applyMiddleware(thunk, AddUsefulToActions)(createStore);
 const reducer = combineReducers(reducers);
 const store = createStoreWithMiddleware(reducer);
 const blackBack = { backgroundColor: 'black' };
@@ -53,40 +44,29 @@ class App extends Component {
     this.renderErrors = this.renderErrors.bind(this);
     this.onLoggedIn = this.onLoggedIn.bind(this);
     this.getRefreshToken = this.getRefreshToken.bind(this);
-    this.iosLocation = new iOSLocation();
+    this.iosLocation = new iOSLocation(store.dispatch);
   }
 
   componentDidMount() {
     this.login();
   }
 
-  onLoggedIn(token, username) {
-    AsyncStorage.setItem('refreshToken', token, () => {
-      Promise.all([getPorts(token), getSpecies(token), getVessels(token)]).then((values) => {
-
-        const ports = values[0];
-        const species = values[1];
-        const vessels = values[2];
-        const user = jwtDecode(token);
-        store.dispatch({ type: 'setPorts', payload: { changes: ports.map(
-          p => ({ value: p.name, description: ''})) }});
-        store.dispatch({ type: 'setSpecies', payload: { changes: species.map(
-          p => ({ value: p.code, description: p.description})) }});
-        store.dispatch({ type: 'setVessels', payload: { changes: vessels }});
-        store.dispatch({ type: 'setUser', payload: { changes: user }});
-        store.dispatch(initialize(token));
-        store.dispatch(startConnection());
+  onLoggedIn = async (token, username) => {
+    return AsyncStorage.setItem('refreshToken', token, async () => {
+      const user = jwtDecode(token);
+      store.dispatch({ type: 'setUser', payload: { changes: user }});
+      const db = await initialize(token);
+      store.dispatch(db);
+      this.setState({
+        loggedIn: true,
+      });
+    }).catch(err => {
+      console.log(err);
+      AsyncStorage.removeItem('refreshToken', () => {
         this.setState({
-          loggedIn: true,
+          loggedIn: false,
         });
-      }).catch(err => {
-        console.log(err);
-        AsyncStorage.removeItem('refreshToken', () => {
-          this.setState({
-            loggedIn: false,
-          });
-          this.login();
-        });
+        this.login();
       });
     });
   }
