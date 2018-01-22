@@ -34,6 +34,10 @@ const LCERFields = [
 
 const TripModel = [
   {
+    id: 'document_type',
+    default: 'trip',
+  },
+  {
     id: 'id',
     default: null,
   },
@@ -110,11 +114,11 @@ export class TripHelper {
   get values() {
     return this.trip;
   }
-  
+
   setFishingEvents(fishingEvents) {
     this.fishingEvents = fishingEvents;
   }
-  
+
   setValues(values) {
     this.trip = Object.assign({}, this.trip, values);
   }
