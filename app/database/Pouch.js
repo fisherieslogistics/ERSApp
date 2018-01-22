@@ -206,15 +206,6 @@ export default class Pouch {
     return trip;
   }
 
-  setItems = ({ ports, vessels, user, species }) => {
-    user._id = uuid();
-    return this.replaceItems(ports, 'ports').then(() =>
-      this.replaceItems(vessels, 'vessels')).then(() =>
-        this.replaceItems(species, 'species')).then(() =>
-          this.replaceItems([user], 'users'));
-
-  }
-
   bulkInsert = (insertable) => {
     return this.localDB.bulkDocs(insertable).catch(err =>  { throw(err) })
   }
@@ -252,10 +243,8 @@ export default class Pouch {
   }
 
   create = (itemToCreate) => {
-    if(!itemToCreate._id) {
-      itemToCreate._id = uuid();
-      itemToCreate.createdAt = new Date();
-    }
+    itemToCreate._id = uuid();
+    itemToCreate.createdAt = new Date();
     itemToCreate.creator = this.user.id;
     itemToCreate.id = itemToCreate._id;
     itemToCreate.organisation_id = this.user.organisation_id;

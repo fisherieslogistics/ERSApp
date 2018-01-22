@@ -25,8 +25,6 @@ export function blankModel(model) {
   model.forEach(attribute => {
     blank[attribute.id] = attribute.default;
   });
-  blank._id = uuid();
-  blank.id = blank._id;
   return blank;
 }
 
