@@ -1,4 +1,5 @@
 import PouchDB from 'pouchdb-react-native';
+import { AlertIOS } from 'react-native';
 import { NativeEventEmitter } from 'react-native';
 import PouchDBFind from 'pouchdb-find';
 PouchDB.plugin(PouchDBFind);
@@ -7,9 +8,16 @@ import TrawlEvent from '../models/addons/TrawlEvent';
 import uuid from 'uuid/v1';
 import { update } from '../reducers/GeneralMethods';
 import jwtDecode from 'jwt-decode';
+import TripModel from '../models/TripModel';
+import { blankModel } from '../utils/ModelUtils';
 
 
-const REMOTE_URI = 'http://localhost:5985/user_4';//'https://test.catchhub.com:5984/user_4';
+const USER_REMOTE_URI = 'http://localhost:5985/user_4';
+//this contains: species
+const MASTER_REMOTE_URI = 'http://localhost:5985/master_data';
+//this contains: vessels, ports
+const ORG_REMOTE_URI = 'http://localhost:5985/org_4e5f23bc-f1e0-4845-aee0-f2b2a26b004b';
+//'https://test.catchhub.com:5984/user_4';
 //const REMOTE_URI = 'http://test.catchhub.com:5984/user_db';
 const APP_STATE_ID = 'AppState';
 
@@ -17,15 +25,15 @@ const APP_STATE_ID = 'AppState';
 export default class Pouch {
 
   constructor(dispatch, token) {
-    console.log("token");
     const user = jwtDecode(token);
+    this.user = user;
     this.dispatch = dispatch;
-    console.log(user, token);
     this.localDB = new PouchDB('user_db');
+    this.masterDB = new PouchDB('master_data');
+    this.orgDB = new PouchDB('org_db');
   }
 
   setupSync = (token) => {
-    console.log("I AM SETUP DB");
     this.localDB.setMaxListeners(50);
     const options = {
       live: true,
@@ -36,31 +44,31 @@ export default class Pouch {
         },
       },
     };
-    this._sync = this.localDB.sync(REMOTE_URI, options)
+
+    this._sync = this.localDB.sync(USER_REMOTE_URI, options)
       .on('error', error => console.error('Sync Error', error))
       .on('change', info => console.log('Sync change', info))
       .on('paused', info => console.log('Sync paused', info))
-      .on('denied', info => console.log('Sync Denied', info));
-    /*this.sync = this.localDB.sync(this.remoteDB, {
-      live: true,
-      retry: true,
-    }).on('change', function (change) {
-      // yo, something changed!
-      console.log('changes', change);
-    }).on('paused', function (info) {
-      console.log('paused', info);
-      // replication was paused, usually because of a lost connection
-    }).on('active', function (info) {
-      console.log('active', info);
-      // replication was resumed
-    }).on('error', function (err) {
-      console.log('err', error);
-      // totally unhandled error (shouldn't happen)
-    });
-    this.sync.then(() => {
+      .on('completed', info => console.log('Sync completed', info))
+      .on('denied', info => console.log('Sync Denied', info))
+      .on('active', info => console.log('Sync active', info));
 
-    });
-    return this.sync;*/
+    this._orgSync = this.orgDB.sync(ORG_REMOTE_URI, options)
+      .on('error', error => console.error('Sync ORG Error', error))
+      .on('change', info => console.log('Sync  ORG change', info))
+      .on('paused', info => console.log('Sync ORG paused', info))
+      .on('completed', info => console.log('Sync org completed', info))
+      .on('denied', info => console.log('Sync ORG Denied', info))
+      .on('active', info => console.log('Sync active', info));
+
+    this._masterSync = this.masterDB.sync(MASTER_REMOTE_URI, options)
+      .on('error', error => console.error('Sync MASTER Error', error))
+      .on('change', info => console.log('Sync MASTER change', info))
+      .on('paused', info => console.log('Sync MASTER paused', info))
+      .on('completed', info => console.log('Sync master completed', info))
+      .on('denied', info => console.log('Sync MASTER Denied', info))
+      .on('active', info => console.log('Sync active', info));
+
     return this._sync;
   }
 
@@ -86,6 +94,40 @@ export default class Pouch {
       console.log(err);
       reject(err);
     });
+  }
+
+  setupMasterData() {
+    return Promise.all([this.getPorts(), this.getSpecies(), this.getVessels()]).then(data => {
+      console.log(data);
+      const species = data[1].docs.map(
+        p => ({ value: p.code, description: p.description, _id: p._id}));
+
+      const ports = data[0].docs.map(
+        p => ({ value: p.name, description: '', _id: p._id}));
+
+      const vessels = data[2].docs.map(r => r.doc);
+
+      console.log("DATA", data);
+
+      this.dispatch({ type: 'setSpecies', payload: { changes: species }});
+      this.dispatch({ type: 'setPorts', payload: { changes: ports }});
+      this.dispatch({ type: 'setVessels', payload: { changes: vessels }})
+    });
+  }
+
+  getPorts = () => {
+    const selector = { selector: { table_name: { $eq: 'reporting_port' }}};
+    return this.orgDB.find(selector);
+  }
+
+  getVessels = () => {
+    const selector = { selector: { table_name: { $eq: 'reporting_vessel' }}};
+    return this.orgDB.find(selector);
+  }
+
+  getSpecies = () => {
+    const selector = { selector: { table_name: { $eq: 'reporting_species' }}};
+    return this.masterDB.find(selector);
   }
 
   setCurrentFishingEvents = (trip_id) => {
@@ -129,31 +171,41 @@ export default class Pouch {
 
   setupInitialTrip = () => {
 
-    const newTrip = {
-      _id: uuid(),
-      personInCharge: 'Ian',
-      ETA: null,
-      datetimeAtStart: null,
-      datetimeAtEnd: null,
-      startLocation: null,
-      endLocation: null,
-      leavingPort: null,
-      unloadPort: null,
-      vessel: null,
-      document_type: 'trip',
-    };
+    this.getVessels().then(results => {
+      const vessel = results.docs[0];
+      const newTrip = blankModel(TripModel);
+      const { user_id, username, organisation_id } = this.user;
 
-    const appState = {
-      _id: APP_STATE_ID,
-      currentTrip: newTrip._id,
-      currentFishingEvents: [],
-    };
+      const values = {
+        personInCharge: username,
+        ETA: null,
+        organisation_id,
+        datetimeAtStart: null,
+        datetimeAtEnd: null,
+        startLocation: null,
+        endLocation: null,
+        leavingPort: null,
+        unloadPort: null,
+        vessel: vessel._id,
+        vesselName: vessel.name,
+        document_type: 'trip',
+        active: 'true',
+      };
 
-    return Promise.all([
-      this.localDB.put(newTrip),
-      this.localDB.put(appState),
-    ]).then(results => {
-      this.setupReduxState();
+      const appState = {
+        _id: APP_STATE_ID,
+        currentTrip: newTrip._id,
+        vessel: vessel,
+        currentFishingEvents: [],
+      };
+
+      return Promise.all([
+        this.create(Object.assign({}, newTrip, values)),
+        this.localDB.put(appState),
+      ]).then(results => {
+        this.setupReduxState(vessel);
+      });
+
     });
   }
 
@@ -200,6 +252,7 @@ export default class Pouch {
       this.dispatch({ type: 'setCurrentTrip', payload: {
         changes: currentTrip,
       }});
+      
       this.setCurrentFishingEvents(currentTrip.id);
     });
   }
@@ -209,8 +262,11 @@ export default class Pouch {
       itemToCreate._id = uuid();
       itemToCreate.createdAt = new Date();
     }
+    itemToCreate.creator = this.user.id;
+    itemToCreate.id = itemToCreate._id;
+    itemToCreate.organisation_id = this.user.organisation_id;
     return this.localDB.put(itemToCreate).then((res) => {
-      console.log(res);
+
       this.localDB.get(res.id).then(newestdoc => {
         this.dispatchCreate(newestdoc);
       });
@@ -255,10 +311,7 @@ export default class Pouch {
       return this.localDB.put(newdoc).then((res) => {
 
         this.localDB.get(res.id).then(newestdoc => {
-
-          console.log('dispatchUpdate')
           this.dispatchUpdate(newestdoc);
-
         });
 
       }).catch((err) => {
