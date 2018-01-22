@@ -6,7 +6,6 @@ import VesselReducer from './VesselReducer';
 import ViewReducer from './ViewReducer';
 import TripReducer from './TripReducer';
 import LocationReducer from './LocationReducer';
-import ConnectionReducer from './ConnectionReducer';
 import PortReducer from './PortReducer';
 import SpeciesReducer from './SpeciesReducer';
 import DatabaseReducer from './DatabaseReducer';
@@ -21,7 +20,6 @@ export const reducers = {
   view: ViewReducer,
   trip: TripReducer,
   location: LocationReducer,
-  connection: ConnectionReducer,
   database: DatabaseReducer,
 }
 

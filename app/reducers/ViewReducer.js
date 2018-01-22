@@ -35,7 +35,6 @@ export default (state = initialState, action) => {
   switch (type) {
 
     case 'toggleSuggestBar':
-      console.log(payload)
       return update(state, {
                              suggestBarSearchTerm: null,
                              suggestBarValue: null,

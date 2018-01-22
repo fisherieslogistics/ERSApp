@@ -14,9 +14,6 @@ export default StyleSheet.create({
     fontFamily: 'System',
   },
   light: {
-    color: colors.lightBlue,
-  },
-  dark: {
     color: colors.green,
   },
   black: {
