@@ -9,7 +9,6 @@ import { inputStyles } from '../../styles/styles';
 export default class LocationEditor extends Component {
 
   onPressLabel = () => {
-    console.log(this.props.fishingEvent);
   }
 
   render() {

@@ -38,7 +38,6 @@ class HaulButton extends Component {
         {text: 'Haul', onPress: () => {
           this.props.db.update(change, this.props.viewingEvent._id);
         }}
-
       ]
     );
   }
@@ -60,7 +59,7 @@ class HaulButton extends Component {
       styles.bigButtonText,
     ];
     const buttonStyle = [ styles.bigButton];
-    const innerStyle = { height: 70,backgroundColor }
+    const innerStyle = { height: 95, backgroundColor }
 
     return (
       <TouchableOpacity onPress={ onPress } style={buttonStyle}>

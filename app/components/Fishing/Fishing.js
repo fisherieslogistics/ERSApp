@@ -147,7 +147,6 @@ const select = (state) => {
     location: state.location,
     averageSpeed: state.location.averagedSpeed.currentAvg,
     fishingEvents: state.fishingEvents.fishingEvents,
-    signalStrength: state.connection.signalStrength,
     viewingEvent: state.fishingEvents.viewingEvent,
     db: state.database.db,
   };

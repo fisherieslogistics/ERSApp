@@ -21,7 +21,6 @@ import {
   commitFishingEvent,
 } from '../../actions/FishingEventActions';
 
-import { createFishingEvent } from '../../api/RestApi';
 import { setSelectedFishingDetail } from '../../actions/ViewActions';
 
 const toBind = [

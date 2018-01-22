@@ -20,7 +20,7 @@ export default class LongButton extends Component {
     if(disabled){
       textColor = colors.transparent;
     }
-    const txtStyle = { color: textColor, fontSize: 16 };
+    const txtStyle = { color: textColor, fontSize: 21 };
     if(active){
       txtStyle.fontWeight = '600';
     }

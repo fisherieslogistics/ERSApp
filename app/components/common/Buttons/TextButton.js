@@ -12,7 +12,7 @@ export default class TextButton extends Component {
     const textStyle = getTextStyle(color, disabled);
     const content = (
       <View style={style}>
-        <Text style={textStyle}>
+        <Text style={[textStyle, { fontSize: 26 }]}>
           {text}
         </Text>
       </View>

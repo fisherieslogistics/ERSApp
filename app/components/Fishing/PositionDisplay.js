@@ -9,7 +9,7 @@ import Sexagesimal from 'sexagesimal';
 import {textStyles, colors} from '../../styles/styles';
 
 const viewStyle = {flex: 1, marginBottom: 20, marginLeft: 4, height: 50, marginTop: 0};
-const textStyle = [textStyles.font, {fontSize: 15, color: colors.green}];
+const textStyle = [textStyles.font, {fontSize: 20, color: colors.blue}];
 
 class PositionDisplay extends React.Component{
 

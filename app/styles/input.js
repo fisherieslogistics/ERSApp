@@ -8,10 +8,10 @@ export default {
     textAlign: 'left'
   },
   textInput: {
-    fontSize: 18,
+    fontSize: 22,
     flex: 1,
-    height: 28,
     color: colors.white,
+    height: 40,
     marginTop: 8,
   },
   locationContainer: {
@@ -25,10 +25,8 @@ export default {
   },
   dateInput: {
     borderWidth: 0,
-    height: 27,
+    width: 200,
     flex: 1,
-    paddingBottom: 10,
-    flexDirection: 'row',
   },
   dateInputInvisible: {
     height: 0,
@@ -38,6 +36,6 @@ export default {
   label:{
     fontWeight: "500",
     color: "#b0b0b0",
-    fontSize: 19,
+    fontSize: 20,
   }
 }

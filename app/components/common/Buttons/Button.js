@@ -8,16 +8,16 @@ import { textStyles, colors } from '../../../styles/styles';
 
 export const styles = StyleSheet.create({
   longButton: {
-    borderWidth: 1,
-    height: 40,
+    borderWidth: 2,
+    height: 55,
     alignItems: 'center',
     justifyContent: 'center',
   },
   bigButtonText: {
-    fontSize: 30,
+    fontSize: 35,
     fontWeight: '500',
     textAlign: 'center',
-    marginTop: 20,
+    marginTop: 25,
   },
   BigButtonInner: {
     alignItems: 'center',
