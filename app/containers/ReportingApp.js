@@ -3,6 +3,7 @@ import {
   View,
   TabBarIOS,
   Text,
+  AlertIOS,
 } from 'react-native';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -87,7 +88,11 @@ class ReportingApp extends Component {
   }
 
   setTab(tab) {
-    this.props.dispatch(setSelectedTab(tab));
+    if(this.props.trip.values().started) {
+      this.props.dispatch(setSelectedTab(tab));
+    } else {
+      AlertIOS.alert("start trip first");
+    }
   }
 
   orientationDidChange(orientation) {
