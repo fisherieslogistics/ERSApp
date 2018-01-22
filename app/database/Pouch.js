@@ -281,10 +281,12 @@ export default class Pouch {
   }
 
   delete = (_id, document_type) => {
-    return this.localDB.get(_id).then(
-      doc => this.localDB.remove(doc).then(
-        () => this.dispatchDelete(_id, document_type)));
-  }
+    return this.localDB.get(_id)
+               .then(
+                 doc => this.localDB.remove(doc).then(
+                   () => this.dispatchDelete(_id, document_type)))
+               .catch((err) => console.log(err, _id, "not founf dor delete"));
+}
 
   update = (change, _id) => {
     change._id = _id;
@@ -299,14 +301,16 @@ export default class Pouch {
         });
 
       }).catch((err) => {
-        console.log(err);
+        console.log("update etrr", err, change, _id);
       });
     });
   }
 
   createNewState = async () => {
     const trip = await this.setupInitialTrip();
+    console.log("got trip");
     const vessels = await this.getVessels();
+    console.log("got vessels");
     const appState = {
       _id: APP_STATE_ID,
       currentTrip: trip._id,
@@ -314,6 +318,8 @@ export default class Pouch {
       currentFishingEvents: [],
     };
     await this.delete(APP_STATE_ID);
+    console.log("deleted app state");
+
     await this.localDB.put(appState);
     return this.setCurrentTrip(appState);
   }
@@ -325,10 +331,12 @@ export default class Pouch {
           return this.setCurrentTrip(appState);
         }
       }).catch((err) => {
+        console.log("no trip");
         return this.createNewState();
       });
 
     }).catch((err) => {
+      console.log("no appp state");
       return this.createNewState();
     });
   }
