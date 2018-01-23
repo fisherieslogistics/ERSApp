@@ -10,12 +10,20 @@ import jwtDecode from 'jwt-decode';
 import TripModel from '../models/TripModel';
 import { blankModel } from '../utils/ModelUtils';
 
+const SERVER = 'https://test.catchhub.com:5985/';
 
-const USER_REMOTE_URI = 'http://localhost:5985/user_4';
+const USER_REMOTE_URI = SERVER + 'user_db';
 //this contains: species
-const MASTER_REMOTE_URI = 'http://localhost:5985/master_data';
+const MASTER_REMOTE_URI = SERVER + 'master_db';
 //this contains: vessels, ports
-const ORG_REMOTE_URI = 'http://localhost:5985/org_4e5f23bc-f1e0-4845-aee0-f2b2a26b004b';
+const ORG_REMOTE_URI = SERVER + 'org_db';
+//'https://test.catchhub.com:5984/user_4';
+
+//const USER_REMOTE_URI = 'http://localhost:5985/user_4';
+//this contains: species
+//const MASTER_REMOTE_URI = 'http://localhost:5985/master_data';
+//this contains: vessels, ports
+//const ORG_REMOTE_URI = 'http://localhost:5985/org_4e5f23bc-f1e0-4845-aee0-f2b2a26b004b';
 //'https://test.catchhub.com:5984/user_4';
 //const REMOTE_URI = 'http://test.catchhub.com:5984/user_db';
 const APP_STATE_ID = 'AppState';
