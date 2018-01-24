@@ -11,7 +11,7 @@ import TripModel from '../models/TripModel';
 import { blankModel } from '../utils/ModelUtils';
 
 const SERVER = 'https://test.catchhub.com:5985/';
-
+//
 const USER_REMOTE_URI = SERVER + 'user_db';
 //this contains: species
 const MASTER_REMOTE_URI = SERVER + 'master_db';
@@ -33,6 +33,7 @@ export default class Pouch {
 
   constructor(dispatch, token) {
     const user = jwtDecode(token);
+    console.log(token);
     this.user = user;
     this.dispatch = dispatch;
     this.localDB = new PouchDB('user_db');
@@ -43,8 +44,9 @@ export default class Pouch {
   setupSync = (token) => {
     this.localDB.setMaxListeners(50);
     const options = {
-      live: true,
-      retry: true,
+      live: false,
+      //retry: true,
+      //gzip: true,
       ajax: {
         headers: {
           'Authorization': token,
@@ -67,10 +69,11 @@ export default class Pouch {
       .on('paused', info => console.log('Sync ORG paused', info))
       .on('completed', info => console.log('Sync org completed', info))
       .on('denied', info => console.log('Sync ORG Denied', info))
-      .on('active', info => console.log('Sync active', info))
+      .on('active', info => console.log('Sync ORG active', info))
       .on('change', info =>  {
-        this.setVessels();
-        this.setPorts();
+        console.log("org sync change");
+        //this.setVessels();
+        //this.setPorts();
       });
 
 
