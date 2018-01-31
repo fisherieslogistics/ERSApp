@@ -31,7 +31,7 @@ class ShootButton extends Component {
       return;
     }
 
-    if(this.props.location) {
+    if(this.props.location.location) {
       this.startEvent();
     } else {
       AlertIOS.alert('No Location Available', 'please go to settings > privacy > catchhub > location always.');
