@@ -212,6 +212,7 @@ export default class Pouch {
       vessel_id: vessel.id,
       document_type: 'trip',
       active: 'true',
+      active: true,
     };
     const trip = await this.create(Object.assign({}, newTrip, values));
     return trip;
