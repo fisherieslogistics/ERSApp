@@ -186,7 +186,7 @@ const select = (state) => {
     user: state.user.user,
     fishingEvents: state.fishingEvents,
     ports: state.ports.all,
-    location: state.location,
+    location: state.location.location,
     db: state.database.db,
   };
 }
