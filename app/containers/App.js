@@ -97,6 +97,7 @@ class App extends Component {
   }
 
   promptUsername(msg=null) {
+    navigator.geolocation.requestAuthorization();
     AlertIOS.prompt('Enter Username', msg, [
       { text: 'No', style: 'destructive',
         onPress: () => this.promptUsername('you gotta do it')},
