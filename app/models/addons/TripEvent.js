@@ -51,12 +51,12 @@ export default class TripEvent {
   }
 
   get canStart() {
-    return this.trip.started === false && this.trip.leavingPort_id && this.trip.unloadPort_id &&
+    return this.trip.active === false && this.trip.leavingPort_id && this.trip.unloadPort_id &&
            this.trip.ETA;
   }
 
   canEnd = (fishingEvents) => {
-    return !!this.trip.started;// && fishingEvents.every(fe => !!fe.completed);
+    return !!this.trip.active;// && fishingEvents.every(fe => !!fe.completed);
   }
 
 }

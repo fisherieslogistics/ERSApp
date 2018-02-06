@@ -89,7 +89,7 @@ const TripModel = [
    display: { type: 'single'},
   },
   {
-    id: 'started',
+    id: 'active',
     default: false,
   },
 ];

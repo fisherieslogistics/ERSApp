@@ -21,7 +21,7 @@ const FishingEventModel = [
     type: 'number',
   },
   {
-    id: 'targetSpecies', valid: valid.targetSpecies,
+    id: 'targetSpecies_id', valid: valid.targetSpecies_id,
     'label': 'Target Species',
     type: 'productCodePicker',
     default: "",
@@ -65,9 +65,6 @@ const FishingEventModel = [
     optionalRender: true, displayStage: 'Haul',
   },
   {
-    id: 'committed', valid: valid.alwaysValid, default: false,
-  },
-  {
     id: 'trip_id',
   },
   {
@@ -86,16 +83,19 @@ const FishingEventModel = [
     id: 'creator',
   },
   {
-    id: 'archived',
+    id: 'archived', default: false,
   },
   {
     id: 'notes',
   },
   {
-    id: 'isVesselUsed',
+    id: 'isVesselUsed', default: true,
   },
   {
     id: 'lineString',
+  },
+  {
+    id: 'committed', default: false,
   },
 ];
 

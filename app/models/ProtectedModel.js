@@ -16,7 +16,7 @@ const commonAttrs = [
     label: 'Type', id: 'type', valid: valid.anyValue, default: "", type: 'string',
   },
   {
-    label: 'Species', id: 'code', valid: valid.protectedSpecies, default: "", type:"picker",
+    label: 'Species', id: 'species_id', valid: valid.protectedSpecies, default: "", type:"picker",
     display: { type: 'combined', siblings: ['weightKgs', 'uninjured', 'injured', 'dead'] },
   },
 ];

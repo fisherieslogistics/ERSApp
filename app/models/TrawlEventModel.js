@@ -130,9 +130,6 @@ const TrawlEventModel = [
   {
     id: 'formType', default: 'TrawlEvent',
   },
-  {
-    id: 'committed', default: false,
-  }
 ];
 
 export default TrawlEventModel;
