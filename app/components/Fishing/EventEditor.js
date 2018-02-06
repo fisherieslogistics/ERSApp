@@ -25,12 +25,10 @@ import { setSelectedFishingDetail } from '../../actions/ViewActions';
 
 const toBind = [
   'renderDetailViewButtons',
-  'renderSubmitButton',
   'setSelectedDetail',
   'addItem',
   'deleteItem',
   'changeItem',
-  'commit',
 ];
 
 const addButtonProps = { text: "Add", color: colors.green, wrapstyle: { flex: 0.20 }  }
@@ -94,19 +92,15 @@ class EventEditor extends Component {
     this.props.dispatch(setSelectedFishingDetail(selectedDetail));
   }
 
-  getButtonLabel(label, count) {
-    return label;//count > 0 ? `${label}(${count})` : label;
-  }
-
-  renderDetailViewButton(error, detailName, enabled = true, count){
+  renderDetailViewButton(error, detailName, enabled = true){
     return this.renderButton({
-      text: this.getButtonLabel(detailName.capitalize(), count),
+      text: detailName.capitalize(),
       onPress: () => this.setSelectedDetail(detailName),
       color: colors.blue,
       wrapstyle: {
-        flex: 0.40,
+        flex: 0.30,
       },
-      hasError: error && enabled, enabled,
+      enabled,
       active: this.props.selectedDetail === detailName
     });
   }
@@ -128,11 +122,14 @@ class EventEditor extends Component {
 
   renderDetailViewButtons() {
     const { viewingEvent } = this.props;
-    const catchesEnabled = !!viewingEvent.eventValues.datetimeAtEnd;
+    const { committed, datetimeAtEnd } = viewingEvent.eventValues;
+    const catchesEnabled = !!datetimeAtEnd;
+    console.log(committed, "COMMMIOTIITTESGRSDRGSDRGSDRG", catchesEnabled && !committed && viewingEvent.detailsValid, catchesEnabled, viewingEvent.detailsValid);
+
     return [
-      this.renderDetailViewButton((catchesEnabled && !viewingEvent.detailsValid), 'detail', true, 0),
+      this.renderDetailViewButton((catchesEnabled), 'detail', true, 0),
       this.renderDetailViewButton(false, 'catches', catchesEnabled),
-      //this.renderSubmitButton(),
+      this.renderSubmitButton(catchesEnabled && !committed && viewingEvent.detailsValid),
       (<View key={'33'} style={{ padding: 15 }}>
         <Text style={{fontSize:  22, color: colors.green}}>
           { `Shot# ${viewingEvent.eventValues.numberInTrip}` }
@@ -141,38 +138,38 @@ class EventEditor extends Component {
     ];
   }
 
-  renderSubmitButton() {
-    const { canSubmit } = this.props.viewingEvent;
-    const sty = { flex: 0.20, opacity: canSubmit ? 1 : 0.35 }
-    return (
-      <View style={ sty } key={`_eventEditor_submit_button`}>
-        <LongButton
-          bgColor={ colors.blue }
-          text={ 'submit' }
-          active={ canSubmit }
-          disabled={ !canSubmit }
-          onPress={ this.commit }
-          error={ false }
-        />
-      </View>
-    );
-  }
-
-  commit() {
+  submitEvent = async () => {
     AlertIOS.alert(
-      "Commit",
-      'Commit This Event Now?',
+      "Save and Commit This Event",
+      'Have you entered all details and catches for this event?',
       [
         {text: 'Cancel', onPress: () => null, style: 'cancel'},
-        {text: 'Commit', onPress: () => {
-          this.props.db.update({ committed: true }, this.props.viewingEvent._id);
+        {text: "I'm Ready to save.", onPress: async () => {
+          const appState = await this.props.db.get('AppState');
+          this.props.db.update({ committed: true, documentReady: true, vesselNumber: appState.vessel.registration }, this.props.viewingEvent._id);
+          this.props.fishCatches.forEach((fc) => {
+            this.props.db.update({ documentReady: true }, fc._id);
+          });
         }}
       ]
     );
   }
 
+  renderSubmitButton(enabled) {
+    return this.renderButton({
+      text: 'SAVE',
+      onPress: () => enabled && this.submitEvent(),
+      color: colors.red,
+      wrapstyle: {
+        flex: 0.30,
+      },
+      enabled,
+      active: !!enabled,
+    });
+  }
+
   renderMessage(message){
-    const style = { padding: 15, marginTop: 30, flex: 1, height: 180, background: 'red' };
+    const style = { padding: 15, marginTop: 30, flex: 1, height: 180 };
     return (
       <View style={style}>
         <PlaceholderMessage

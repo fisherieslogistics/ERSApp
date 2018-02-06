@@ -32,7 +32,6 @@ class StartTripEditor extends Component {
     } else {
       changes[name] = value;
     }
-
     if(name === 'leavingPort_id' || name === 'unloadPort_id') {
       const port = ports.find(p => p.value === value);
       changes[name] = port && port._id;

@@ -32,7 +32,7 @@ class FishingEventList extends MasterListView {
   eventStatus(fe){
     const status = fe.status;
     const backgroundColor = iconColors[status];
-    const sty = Object.assign({}, { backgroundColor }, iconStyles, { left: -50 });
+    const sty = Object.assign({}, { backgroundColor }, iconStyles, { left: -40 });
     return {
       name: status,
       style: sty,
@@ -52,8 +52,8 @@ class FishingEventList extends MasterListView {
   }
 
   getDescription(fishingEvent) {
-    const { targetSpecies, numberInTrip } = fishingEvent.eventValues;
-    return `#${numberInTrip}  ${targetSpecies || '---'}  ${moment(fishingEvent.datetimeAtStart).format("HH:mm")}`;
+    const { targetSpecies_id, numberInTrip, datetimeAtStart } = fishingEvent.eventValues;
+    return `#${numberInTrip}  ${targetSpecies_id || '---'}  ${moment(datetimeAtStart).format("HH:mm")}`;
   }
 
   isSelected(fishingEvent) {

@@ -20,26 +20,38 @@ class HaulButton extends Component {
     this.onPress = this.onPress.bind(this);
   }
 
-  onPress() {
-    const eventSpecific = this.props.viewingEvent.eventSpecificDetails;
-    eventSpecific.NetLeaveDepthLocation = this.props.location;
+  endEvent = () => {
+    const { viewingEvent, location, averageSpeed } = this.props;
+
+    const eventSpecific = viewingEvent.eventSpecificDetails;
+    eventSpecific.NetLeaveDepthLocation = location;
+    eventSpecific.averageSpeed = averageSpeed;
     const change = {
       datetimeAtEnd: new Date(),
-      locationAtEnd: locationToWKTPoint(this.props.location),
-      averageSpeed: this.props.averageSpeed,
+      locationAtEnd: locationToWKTPoint(location),
       eventSpecificDetails: JSON.stringify(eventSpecific),
     };
-
     AlertIOS.alert(
       "Hauling",
       'Hauling Gear Now?',
       [
         {text: 'Cancel', onPress: () => null, style: 'cancel'},
         {text: 'Haul', onPress: () => {
-          this.props.db.update(change, this.props.viewingEvent._id);
+          this.props.db.update(change, viewingEvent._id);
         }}
       ]
     );
+  }
+
+  onPress() {
+    const { location } = this.props;
+
+    if(location && location.lat && location.lon) {
+      this.endEvent();
+    } else {
+      AlertIOS.alert('No Location Available', 'please go to settings > privacy > catchhub > location always.');
+    }
+
   }
 
   render() {

@@ -25,13 +25,13 @@ class ShootButton extends Component {
   }
 
   onPress = () => {
-
-    if(!this.props.trip) {
+    const { trip, location } = this.props;
+    if(!trip && trip.active) {
       AlertIOS.alert('Start Trip First', 'Start Trip then start fishing');
       return;
     }
 
-    if(this.props.location.location) {
+    if(location && location.lat && location.lon) {
       this.startEvent();
     } else {
       AlertIOS.alert('No Location Available', 'please go to settings > privacy > catchhub > location always.');

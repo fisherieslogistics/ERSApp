@@ -58,7 +58,7 @@ class EventDetailEditor extends Component{
     const extraProps = {};
     const { fishingEvent } = this.props;
     const inputId = `${attribute.id}_${fishingEvent._id}`;
-    if(attribute.id === 'targetSpecies') {
+    if(attribute.id === 'targetSpecies_id') {
       extraProps.autoCapitalize = 'characters';
       extraProps.maxLength = 3;
     }
@@ -106,7 +106,7 @@ class EventDetailEditor extends Component{
       return this.renderMessage("No shots to edit");
     }
 
-    if(!trip.values().started) {
+    if(!trip.values().active) {
       return this.renderMessage("Start Trip First");
     }
 

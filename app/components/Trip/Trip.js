@@ -25,10 +25,9 @@ const padStyle = { padding: 5, flex: 1 };
 
 class Trip extends MasterDetail {
 
-  startTrip(){
+  startTrip = async () => {
 
     const { user, trip, vessel, location, ports } = this.props;
-
     if(!location) {
       AlertIOS.alert('No Location Available', 'please go to settings > privacy > catchhub > location always.');
       return;
@@ -53,8 +52,9 @@ class Trip extends MasterDetail {
       body,
       [
         { text: 'Cancel', style: 'cancel' },
-        { text: 'OK', onPress: () => {
-          const changes = { started: true, startLocation: locationToWKTPoint(location), vessel_id: vessel.id };
+        { text: 'OK', onPress: async () => {
+          const wkt = locationToWKTPoint(location);
+          const changes = { active: true, startLocation: wkt, endLocation: wkt, vessel_id: vessel.id, documentReady: true };
           this.props.db.update(changes, trip._id);
           this.props.dispatch(setSelectedTab('fishing'));
         }},
@@ -123,7 +123,7 @@ class Trip extends MasterDetail {
       text = "Start Trip";
     }
 
-    if(trip.values().started && trip.canEnd(fishingEvents.fishingEvents)) {
+    if(trip.values().active && trip.canEnd(fishingEvents.fishingEvents)) {
       backgroundColor = colors.red;
       textColor = colors.white;
       text = "End Trip";
@@ -186,7 +186,7 @@ const select = (state) => {
     user: state.user.user,
     fishingEvents: state.fishingEvents,
     ports: state.ports.all,
-    location: state.location.location,
+    location: state.location,
     db: state.database.db,
   };
 }

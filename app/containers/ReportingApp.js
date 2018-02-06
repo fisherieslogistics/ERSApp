@@ -88,7 +88,7 @@ class ReportingApp extends Component {
   }
 
   setTab(tab) {
-    if(this.props.trip.values().started) {
+    if(this.props.trip.values().active) {
       this.props.dispatch(setSelectedTab(tab));
     } else {
       AlertIOS.alert("start trip first");
