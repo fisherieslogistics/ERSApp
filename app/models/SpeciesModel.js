@@ -5,7 +5,7 @@ import Validator from '../utils/Validator';
 const model = [
   {
     label: 'Code',
-    id: 'code',
+    id: 'species_id',
     valid: Validator.valid.anyValue,
     type: 'string',
     display: { type: 'single' },

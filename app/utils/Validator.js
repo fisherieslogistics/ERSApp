@@ -44,7 +44,7 @@ export default {
       func: (value) => !!isNaN(value),
       errorMessage: "Value must be a number",
     },
-    targetSpecies: {
+    targetSpecies_id: {
       func: (value) => {
         if(!value){
           return false;
@@ -68,7 +68,7 @@ export default {
     },
     productCode: {
       func: (value = "",  product, catches) => {
-        return catches.every(c => speciesCodes.indexOf(c.code) !== -1);
+        return catches.every(c => speciesCodes.indexOf(c.species_id) !== -1);
       },
       errorMessage: 'All catches must have a species',
     },
@@ -119,8 +119,8 @@ export default {
     validSpeciesAndState: (orderedAttributes, obj, { fishingEvent }) => {
       let valid = true;
       const usedSpeciesStateCodes = fishingEvent.estimatedCatch.map(
-        (product) => `${product.code}${product.state}`);
-      const speciesState = `${obj.code}${obj.state}`;
+        (product) => `${product.species_id}${product.state}`);
+      const speciesState = `${obj.species_id}${obj.state}`;
       if (usedSpeciesStateCodes.filter(code => code === speciesState).length > 1) {
         valid = false;
       }

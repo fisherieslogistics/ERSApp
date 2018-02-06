@@ -56,7 +56,7 @@ class EventProtectedsEditor extends CatchesEditor {
       inputId,
       choices,
     };
-    if(attribute.id === 'code') {
+    if(attribute.id === 'species_id') {
       props.extraProps.choices = choices;
       props.extraProps.autoCapitalize = 'characters';
     }

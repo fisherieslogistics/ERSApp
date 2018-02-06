@@ -5,7 +5,7 @@ const valid = Validator.valid;
 
 const species = {
   label: 'Species',
-  id: 'code',
+  id: 'species_id',
   valid: valid.productCode,
   default: "",
   type: "productCodePicker",
@@ -13,20 +13,20 @@ const species = {
 
 };
 
-const speciesWithState = {
+/*const speciesWithState = {
   label: 'Species',
-  id: 'code',
+  id: 'species_id',
   valid: valid.productCode,
   default: "",
   type: "productCodePicker",
   display: { type: 'combined', siblings: ['weightKgs' ] },
   /*combinedValid: {
-    attributes: ['code'],
+    attributes: ['species_id'],
     func: Validator.combined.validSpeciesAndState,
     errorMessage: 'Duplicate species codes must have unique state codes',
   },*/
 
-};
+//};
 
 const qma = {
   label: 'QMA',
@@ -36,7 +36,7 @@ const qma = {
 
 };
 
-const state = {
+/*const state = {
   label: 'State',
   id: 'state',
   valid: valid.stateCode,
@@ -44,12 +44,12 @@ const state = {
   type: "productCodePicker",
   display: { type: 'child '},
   combinedValid: {
-    attributes: ['code', 'state'],
+    attributes: ['species_id', 'state'],
     func: Validator.combined.validSpeciesAndState,
     errorMessage: 'Duplicate species codes must have unique state codes',
   },
 
-};
+};*/
 
 const weightKgs = {
   label: 'Green Weight',

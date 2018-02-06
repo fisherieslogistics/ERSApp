@@ -32,7 +32,7 @@ class TotalsList extends MasterListView {
       color: color ? colors[color] : colors.green,
       fontSize: 18,
     };
-    return [total.code, total.weightKgs].map((detail, i) => (
+    return [total.species_id, total.weightKgs].map((detail, i) => (
       <View
         style={ [listViewStyles.listRowItemNarrow, {backgroundColor: colors.transparent}] }
         key={"totals_list" + i}

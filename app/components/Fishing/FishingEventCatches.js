@@ -18,7 +18,7 @@ class FishingEventCatchesEditor extends Component {
     const { code, weightKgs, _id } = item;
 
     //no specices code delete it
-    if(inputId === 'code') {
+    if(inputId === 'species_id') {
       if(_id && !value) {
         return this.deleteItem(_id, 'fishCatch');
       }

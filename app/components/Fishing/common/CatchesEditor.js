@@ -47,7 +47,7 @@ class CatchesEditor extends Component{
     const modelToUse = model || this.props.model;
     return (
       <View
-        key={`item_editor_${index}_${item.code}_${item.RAId}_${this.props.fishingEvent.RAId}`}
+        key={`item_editor_${index}_${item.species_id}_${item.RAId}_${this.props.fishingEvent.RAId}`}
       >
         <ModelEditor
           getEditorProps={ this.getEditorProps }

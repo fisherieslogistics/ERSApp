@@ -81,16 +81,16 @@ export function geoJSONPointToWKTPoint(geoJSONPoint) {
 
 export function getTotals(estimatedCatch) {
   const totals = {};
-  [...estimatedCatch].filter(p => p.code && p.weightKgs).forEach((p) => {
+  [...estimatedCatch].filter(p => p.species_id && p.weightKgs).forEach((p) => {
     if(p.weightKgs){
-      totals[p.code] = ((totals[p.code] || 0) + parseInt(p.weightKgs));
+      totals[p.species_id] = ((totals[p.species_id] || 0) + parseInt(p.weightKgs));
     }
   });
   return Object.keys(totals).map((k) => ({code: k, weightKgs: parseInt(totals[k])}));
 };
 
 export function tripCanStart(trip) {
-  if(trip.started) {
+  if(trip.active) {
     return false;
   }
   return [
@@ -115,8 +115,8 @@ export function createHistoryTrip(trip, fishingEvents){
   const newEvents = fishingEvents.map(fe => {
     const { discards, estimatedCatch } = fe;
     return {
-      discards: discards.map(d => ({ code: d.code, weightKgs: d.weightKgs })),
-      estimatedCatch: estimatedCatch.map(d => ({ code: d.code, weightKgs: d.weightKgs })),
+      discards: discards.map(d => ({ code: d.species_id, weightKgs: d.weightKgs })),
+      estimatedCatch: estimatedCatch.map(d => ({ code: d.species_id, weightKgs: d.weightKgs })),
     }
   });
 

@@ -11,7 +11,7 @@ class ProductCodePicker extends SuggestPickerClass {
 
   filterChoices() {
     const { favourites, fishingEvent, fishCatches, species } = this.props;
-    const usedCodes = fishCatches.map(p => p.code);
+    const usedCodes = fishCatches.map(p => p.species_id);
     const faves = [...favourites];
     const filteredChoices = species.filter(c => !usedCodes.includes(c.value) || c.value === this.props.value);
     return filteredChoices.sort((c1, c2) => compare(faves.indexOf(c2.value), faves.indexOf(c1.value)));

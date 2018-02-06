@@ -51,7 +51,7 @@ export default class EventProductsEditor extends CatchesEditor {
       });
       return stateCodes;
     }
-    return this.props.species.map(s => ({ value: s.code, description: s.fullName }));
+    return this.props.species.map(s => ({ value: s.species_id, description: s.fullName }));
   }
 
   getEditorProps = (attribute, item, index) => {
@@ -63,13 +63,13 @@ export default class EventProductsEditor extends CatchesEditor {
     };
 
     switch (attribute.id) {
-      case 'code':
+      case 'species_id':
       case 'state':
         props.extraProps = this.getExtraProps(item, attribute, index);
         break;
       case 'weightKgs':
         props.extraProps = { persistKeyboard: true };
-        if(!item.code) {
+        if(!item.species_id) {
           props.extraProps.nullInput = true;
         }
         break;
@@ -79,7 +79,7 @@ export default class EventProductsEditor extends CatchesEditor {
   }
 
   itemHasError(item) {
-    return this.props.items.map(pt => pt.code).indexOf(item.code) !== -1;
+    return this.props.items.map(pt => pt.species_id).indexOf(item.species_id) !== -1;
   }
 
 }
