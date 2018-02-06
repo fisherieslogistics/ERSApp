@@ -43,7 +43,7 @@ export default class TrawlEvent {
       datetimeAtStart,
       datetimeAtEnd,
       locationAtStart,
-      targetSpecies,
+      targetSpecies_id,
     } = this.fishingEvent;
 
     const {
@@ -56,20 +56,20 @@ export default class TrawlEvent {
       NetLeaveDepthLocation,
     } = this.eventSpecificDetails;
 
-    const stage1 = (targetSpecies && wingSpread && headlineHeight && NetAtDepthLocation && datetimeAtStart);
+    const stage1 = (targetSpecies_id && wingSpread && headlineHeight && NetAtDepthLocation && datetimeAtStart);
     if((!datetimeAtEnd && stage1)) {
       return stage1;
     }
-    const datesSweet =  !!(datetimeAtStart < datetimeAtEnd);
-    const depths = (bottomDepth && groundropeDepth) && (bottomDepth <= groundropeDepth);
-    const is_valid = !!(stage1 && locationAtEnd && averageSpeed && depths && datesSweet && NetLeaveDepthLocation);
+    const datesSweet =  moment(datetimeAtStart).isBefore(datetimeAtEnd);
+    const depths = (bottomDepth && groundropeDepth) && (bottomDepth >= groundropeDepth);
+    const is_valid = !!(stage1 && locationAtEnd && (!isNaN(averageSpeed)) && depths && datesSweet && NetLeaveDepthLocation);
     return is_valid;
   }
 
   get status() {
     const { detailsValid, eventValues } = this;
-    const { datetimeAtEnd, completed } = eventValues;
-    if(completed) {
+    const { datetimeAtEnd, committed } = eventValues;
+    if(committed) {
       return 'upload-to-cloud';
     }
     if(!datetimeAtEnd) {
