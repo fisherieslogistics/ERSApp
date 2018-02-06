@@ -33,35 +33,34 @@ export default class Pouch {
 
   constructor(dispatch, token) {
     const user = jwtDecode(token);
-    console.log(token);
     this.user = user;
     this.dispatch = dispatch;
+    this.orgDB = new PouchDB('org_db');
     this.localDB = new PouchDB('user_db');
     this.masterDB = new PouchDB('master_data');
-    this.orgDB = new PouchDB('org_db');
   }
 
   setupSync = (token) => {
     this.localDB.setMaxListeners(50);
     const options = {
-      live: false,
-      //retry: true,
-      //gzip: true,
+      live: true,
+      retry: true,
       ajax: {
         headers: {
+          gzip: true,
           'Authorization': token,
         },
       },
     };
 
-    this._sync = this.localDB.replicate.to(USER_REMOTE_URI, options)
+    this._sync = this.localDB.sync(USER_REMOTE_URI, options)
       .on('error', error => console.error('Sync Error', error))
       .on('paused', info => console.log('Sync paused', info))
       .on('completed', info => console.log('Sync completed', info))
       .on('denied', info => console.log('Sync Denied', info))
       .on('active', info => console.log('Sync active', info))
       .on('change', info => {
-        //console.log('Sync change', info);
+        console.log('Sync change', info);
       });
 
     this._orgSync = this.orgDB.replicate.from(ORG_REMOTE_URI, options)
@@ -71,11 +70,9 @@ export default class Pouch {
       .on('denied', info => console.log('Sync ORG Denied', info))
       .on('active', info => console.log('Sync ORG active', info))
       .on('change', info =>  {
-        console.log("org sync change");
-        //this.setVessels();
-        //this.setPorts();
+        this.setVessels();
+        this.setPorts();
       });
-
 
     this._masterSync = this.masterDB.replicate.from(MASTER_REMOTE_URI, options)
       .on('error', error => console.error('Sync MASTER Error', error))
@@ -121,7 +118,7 @@ export default class Pouch {
   setPorts() {
     return new Promise((resolve, reject) => {
       this.getPorts().then(data => {
-        const ports = data.docs.map(
+        const ports = data.map(
           p => ({ value: p.name, description: '', _id: p._id, id: p.id }));
         this.dispatch({ type: 'setPorts', payload: { changes: ports }});
         resolve(ports);
@@ -132,8 +129,8 @@ export default class Pouch {
   setVessels() {
     return new Promise((resolve, reject) => {
       return this.getVessels().then(data => {
-        resolve(data.docs);
-        this.dispatch({ type: 'setVessels', payload: { changes: data.docs }});
+        resolve(data);
+        this.dispatch({ type: 'setVessels', payload: { changes: data }});
       });
     });
   }
@@ -141,7 +138,7 @@ export default class Pouch {
   setSpecies() {
     return new Promise((resolve, reject) => {
       this.getSpecies().then(data => {
-        const species = data.docs.map(
+        const species = data.map(
           p => ({ value: p.code, description: p.description, _id: p._id, id: p.id }));
         this.dispatch({ type: 'setSpecies', payload: { changes: species }});
         resolve(species);
@@ -149,19 +146,22 @@ export default class Pouch {
     });
   }
 
-  getPorts = () => {
+  getPorts = async () => {
     const selector = { selector: { table_name: { $eq: 'reporting_port' }}};
-    return this.orgDB.find(selector);
+    const results = await this.orgDB.find(selector);
+    return results.docs;
   }
 
   getVessels = async () => {
     const selector = { selector: { table_name: { $eq: 'reporting_vessel' }}};
-    return this.orgDB.find(selector);
+    const results = await this.orgDB.find(selector);
+    return results.docs;
   }
 
-  getSpecies = () => {
+  getSpecies = async () => {
     const selector = { selector: { table_name: { $eq: 'reporting_species' }}};
-    return this.masterDB.find(selector);
+    const results = await this.masterDB.find(selector);
+    return results.docs;
   }
 
   setCurrentFishingEvents = (trip_id) => {
@@ -202,22 +202,6 @@ export default class Pouch {
     return this.localDB.allDocs({ include_docs: false });
   }
 
-  setupInitialTrip = async () => {
-    const vessels = await this.getVessels();
-    const vessel = vessels.docs[0] || { name: 'no vessel', registration: '0', _id: '000' };
-    const newTrip = blankModel(TripModel);
-    const { user_id, username } = this.user;
-    const values = {
-      personInCharge: username,
-      vessel_id: vessel.id,
-      document_type: 'trip',
-      active: 'true',
-      active: true,
-    };
-    const trip = await this.create(Object.assign({}, newTrip, values));
-    return trip;
-  }
-
   bulkInsert = (insertable) => {
     return this.localDB.bulkDocs(insertable).catch(err =>  { throw(err) })
   }
@@ -254,8 +238,10 @@ export default class Pouch {
     });
   }
 
-  create = (itemToCreate) => {
-    itemToCreate._id = uuid();
+  create = (itemToCreate, has_id) => {
+    if(!itemToCreate._id) {
+      itemToCreate._id = uuid();
+    }
     itemToCreate.createdAt = new Date();
     itemToCreate.creator = this.user.id;
     itemToCreate.id = itemToCreate._id;
@@ -304,7 +290,7 @@ export default class Pouch {
     change._id = _id;
     change.updatedAt = new Date();
     return this.localDB.get(_id).then(doc => {
-
+      console.log(doc, 'IS UPDATEN WITH ', change);
       const newdoc = update(doc, change);
       return this.localDB.put(newdoc).then((res) => {
 
@@ -318,11 +304,29 @@ export default class Pouch {
     });
   }
 
+  setupInitialTrip = async () => {
+    const vessels = await this.getVessels();
+    const ports = await this.getPorts();
+    const vessel = vessels[0] || { name: 'no vessel', registration: '0', _id: '000' };
+    const newTrip = blankModel(TripModel);
+    const { user_id, username } = this.user;
+    const values = {
+      personInCharge: username,
+      vessel_id: vessel.id,
+      document_type: 'trip',
+      active: false,
+      ETA: new Date(),
+      startTime: new Date(),
+      documentReady: false,
+      _id: uuid(),
+    };
+
+    return Object.assign(newTrip, values);
+  }
+
   createNewState = async () => {
     const trip = await this.setupInitialTrip();
-    console.log("got trip");
     const vessels = await this.getVessels();
-    console.log("got vessels");
     const appState = {
       _id: APP_STATE_ID,
       currentTrip: trip._id,
@@ -330,9 +334,8 @@ export default class Pouch {
       currentFishingEvents: [],
     };
     await this.delete(APP_STATE_ID);
-    console.log("deleted app state");
-
     await this.localDB.put(appState);
+    await this.create(trip);
     return this.setCurrentTrip(appState);
   }
 
@@ -343,12 +346,11 @@ export default class Pouch {
           return this.setCurrentTrip(appState);
         }
       }).catch((err) => {
-        console.log("no trip");
         return this.createNewState();
       });
 
     }).catch((err) => {
-      console.log("no appp state");
+      console.warn("fuck", err)
       return this.createNewState();
     });
   }
