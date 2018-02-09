@@ -344,7 +344,7 @@ export default class Pouch {
       });
 
     }).catch((err) => {
-      console.warn("fuck", err)
+      console.warn("Error: ", err)
       return this.createNewState();
     });
   }
