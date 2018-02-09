@@ -29,8 +29,8 @@ export default class Pouch {
     const user = jwtDecode(token);
     this.user = user;
     this.dispatch = dispatch;
-    this.orgDB = new PouchDB('org_db');
-    this.localDB = new PouchDB('user_db');
+    this.orgDB = new PouchDB('org_db_' + user.organisation_id);
+    this.localDB = new PouchDB('user_db' + user.user_id);
     this.masterDB = new PouchDB('master_data');
   }
 
@@ -344,7 +344,6 @@ export default class Pouch {
       });
 
     }).catch((err) => {
-      console.warn("Error: ", err)
       return this.createNewState();
     });
   }
