@@ -32,7 +32,6 @@ class SuggestPickerClass extends Component {
       this.setState({
         value: props.value,
       });
-      console.log("SET STATE", props.value, "setstate props *********************");
       return;
     }
     if(props.suggestBarValue) {

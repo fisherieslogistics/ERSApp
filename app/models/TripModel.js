@@ -85,7 +85,7 @@ const TripModel = [
    label: 'Estimated Days Left In Trip',
    id: 'ETA',
    valid: Validator.valid.tripDate,
-   type: 'picker', unit: '',
+   type: 'int',
    display: { type: 'single'},
   },
   {

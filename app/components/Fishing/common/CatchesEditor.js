@@ -24,7 +24,6 @@ class CatchesEditor extends Component{
 
   getEditorProps(attribute, item, index) {
     const inputId = `${attribute.id}_${item.RAId}`;
-    console.log(attribute.id);
     return {
       attribute,
       index,

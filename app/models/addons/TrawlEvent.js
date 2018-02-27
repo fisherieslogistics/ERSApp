@@ -95,8 +95,12 @@ export default class TrawlEvent {
   }
 
   fieldsToRender(hideOptional) {
-    return FishingEventModel.concat(TrawlEventModel).filter(
+    let toShow = FishingEventModel.concat(TrawlEventModel).filter(
       field => (!!field.display &! (hideOptional && field.optionalRender)));
+    if(!this.eventValues.datetimeAtEnd) {
+      return toShow.filter(attr => !(attr.displayStage && attr.displayStage === 'Haul'));
+    }
+    return toShow;
   }
 
   changeEvent(name, value) {

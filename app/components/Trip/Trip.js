@@ -114,7 +114,7 @@ class Trip extends MasterDetail {
   renderMasterToolbar = () => {
     const { trip, fishingEvents } = this.props;
     let backgroundColor = colors.backgrounds.dark;
-    let text = "FLL";
+    let text = "Enter Detail";
     let textColor = 'rgba(255, 255, 255, 0.2)';
 
     if(trip.canStart) {

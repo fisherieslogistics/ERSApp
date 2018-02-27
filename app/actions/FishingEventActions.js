@@ -34,8 +34,7 @@ export function setSelectedCatchesDetail(name) {
   }
 }
 
-export function createFishingEvent(trip_id, previousEvent, location) {
-
+export function createFishingEvent(trip_id, previousEvent, location, wingSpread, headlineHeight) {
   const newEvent = blankModel(FishingEventModel);
   const eventSpecificDetails = blankModel(TrawlEventModel);
 
@@ -70,6 +69,8 @@ export function createFishingEvent(trip_id, previousEvent, location) {
       }
     });
   }
+  eventSpecificDetails.wingSpread = wingSpread;
+  eventSpecificDetails.headlineHeight = headlineHeight;
 
   newEvent.eventSpecificDetails = JSON.stringify(eventSpecificDetails);
   return newEvent;
