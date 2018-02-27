@@ -16,7 +16,7 @@ const TrawlEventModel = [
     valid: valid.locationValid,
     type: 'location',
     default: null,
-    display: { type: 'single' },
+    //display: { type: 'single' },
   },
   {
     label: 'Hauling Location',
@@ -25,7 +25,7 @@ const TrawlEventModel = [
     valid: valid.locationValid,
     type: 'location',
     default: null,
-    display: { type: 'single' },
+    //display: { type: 'single' },
   },
   {
     label: 'Bottom Depth',
@@ -42,7 +42,6 @@ const TrawlEventModel = [
     valid: valid.greaterThanZero,
     type: 'number',
     default: 0,
-    copyFrom: 'bottomDepth',
     combinedValid:
       {
         attributes: ["groundropeDepth", "bottomDepth"],
@@ -67,11 +66,11 @@ const TrawlEventModel = [
     id: 'estimatedCatchKg',
     valid: valid.anyValue,
     type: 'number',
-    default: 0,
+    default: 100,
     displayStage: 'Haul',
     unit: 'kg',
-    display: { type: 'single' },
-    optionalRender: true,
+    //display: { type: 'single' },
+    //optionalRender: true,
 
   },
   {

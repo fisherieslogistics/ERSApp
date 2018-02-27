@@ -20,7 +20,7 @@ class ShootButton extends Component {
 
   startEvent = () => {
     const { trip, lastEvent, location } = this.props;
-    const newEvent = createFishingEvent(trip._id, lastEvent && lastEvent.eventValues, location);
+    const newEvent = createFishingEvent(trip._id, lastEvent && lastEvent.eventValues, location, trip.trip.wingSpread, trip.trip.headlineHeight);
     this.props.db.create(newEvent);
   }
 

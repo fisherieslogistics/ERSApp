@@ -124,7 +124,6 @@ class EventEditor extends Component {
     const { viewingEvent } = this.props;
     const { committed, datetimeAtEnd } = viewingEvent.eventValues;
     const catchesEnabled = !!datetimeAtEnd;
-    console.log(committed, "COMMMIOTIITTESGRSDRGSDRGSDRG", catchesEnabled && !committed && viewingEvent.detailsValid, catchesEnabled, viewingEvent.detailsValid);
 
     return [
       this.renderDetailViewButton((catchesEnabled), 'detail', true, 0),
@@ -145,7 +144,7 @@ class EventEditor extends Component {
       [
         {text: 'Cancel', onPress: () => null, style: 'cancel'},
         {text: "I'm Ready to save.", onPress: async () => {
-          const appState = await this.props.db.get('AppState');
+          const appState = await this.props.db.get('AppStateLocalStatus');
           this.props.db.update({ committed: true, documentReady: true, vesselNumber: appState.vessel.registration }, this.props.viewingEvent._id);
           this.props.fishCatches.forEach((fc) => {
             this.props.db.update({ documentReady: true }, fc._id);

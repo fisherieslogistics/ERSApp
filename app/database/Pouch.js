@@ -20,7 +20,7 @@ const ORG_REMOTE_URI = SERVER + 'org_db';
 const MASTER_REMOTE_URI = 'http://localhost:5985/master_data';
 const ORG_REMOTE_URI = 'http://localhost:5985/org_4e5f23bc-f1e0-4845-aee0-f2b2a26b004b';*/
 
-const APP_STATE_ID = 'AppState';
+const APP_STATE_ID = 'AppStateLocalStatus';
 
 
 export default class Pouch {
@@ -284,7 +284,6 @@ export default class Pouch {
     change._id = _id;
     change.updatedAt = new Date();
     return this.localDB.get(_id).then(doc => {
-      console.log(doc, 'IS UPDATEN WITH ', change);
       const newdoc = update(doc, change);
       return this.localDB.put(newdoc).then((res) => {
 
@@ -321,10 +320,11 @@ export default class Pouch {
   createNewState = async () => {
     const trip = await this.setupInitialTrip();
     const vessels = await this.getVessels();
+    console.log(vessels);
     const appState = {
       _id: APP_STATE_ID,
       currentTrip: trip._id,
-      vessel: vessels[0],
+      vessel: vessels[0] || {},
       currentFishingEvents: [],
     };
     await this.delete(APP_STATE_ID);
@@ -334,19 +334,36 @@ export default class Pouch {
   }
 
   setupReduxState = () => {
-    return this.localDB.get(APP_STATE_ID).then((appState) => {
-      return this.localDB.get(appState.currentTrip).then((trip) => {
-        if(trip) {
-          return this.setCurrentTrip(appState);
-        }
+    return this.localDB.sync(USER_REMOTE_URI).on('complete', () => {
+      return this.localDB.get(APP_STATE_ID).then((appState) => {
+        return this.localDB.get(appState.currentTrip).then((trip) => {
+          if(trip) {
+            return this.setCurrentTrip(appState);
+          }
+        }).catch((err) => {
+          return this.createNewState();
+        });
+
       }).catch((err) => {
+        console.warn("fuck", err)
         return this.createNewState();
       });
+    }).on('error', (err) => {
+      return this.localDB.get(APP_STATE_ID).then((appState) => {
+        return this.localDB.get(appState.currentTrip).then((trip) => {
+          if(trip) {
+            return this.setCurrentTrip(appState);
+          }
+        }).catch((err) => {
+          return this.createNewState();
+        });
 
-    }).catch((err) => {
-      console.warn("fuck", err)
-      return this.createNewState();
+      }).catch((err) => {
+        console.warn("fuck", err)
+        return this.createNewState();
+      });
     });
+
   }
 
 }
