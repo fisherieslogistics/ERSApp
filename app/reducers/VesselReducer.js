@@ -1,6 +1,3 @@
-import moment from 'moment';
-import VesselModel from '../models/VesselModel';
-import { blankModel } from '../utils/ModelUtils';
 import { updateWithTimeStamp } from '../utils/Helper';
 
 const initialState = {
