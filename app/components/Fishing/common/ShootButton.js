@@ -19,8 +19,8 @@ class ShootButton extends Component {
   }
 
   startEvent = () => {
-    const { trip, lastEvent, location } = this.props;
-    const newEvent = createFishingEvent(trip._id, lastEvent && lastEvent.eventValues, location, trip.trip.wingSpread, trip.trip.headlineHeight);
+    const { trip, lastEvent, location, vessel } = this.props;
+    const newEvent = createFishingEvent(trip._id, lastEvent && lastEvent.eventValues, location, trip.trip.wingSpread, trip.trip.headlineHeight, vessel);
     this.props.db.create(newEvent);
   }
 
@@ -47,11 +47,11 @@ class ShootButton extends Component {
 
     return (
       <BigButton
-        text={ 'Shoot' }
-        backgroundColor={ backgroundColor }
-        textColor={ textColor }
-        onPress={ this.onPress }
-        disabled={ !this.props.enabled }
+        text={'Shoot'}
+        backgroundColor={backgroundColor}
+        textColor={textColor}
+        onPress={this.onPress}
+        disabled={!this.props.enabled}
       />
     );
   }
@@ -70,8 +70,9 @@ const select = (state) => {
     location: state.location,
     enabled,
     db: state.database.db,
+    vessel: state.vessel.selected,
   };
   return props;
-}
+};
 
 export default connect(select)(ShootButton);
