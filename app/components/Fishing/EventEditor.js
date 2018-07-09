@@ -14,13 +14,6 @@ import styles from './FishingStyle';
 import { LongButton } from '../common/Buttons';
 import { colors } from '../../styles/styles';
 
-import {
-  changeItemInEvent,
-  deleteItemInEvent,
-  addItemToEvent,
-  commitFishingEvent,
-} from '../../actions/FishingEventActions';
-
 import { setSelectedFishingDetail } from '../../actions/ViewActions';
 
 const toBind = [
@@ -31,13 +24,14 @@ const toBind = [
   'changeItem',
 ];
 
-const addButtonProps = { text: "Add", color: colors.green, wrapstyle: { flex: 0.20 }  }
+const addButtonProps = { text: 'Add', color: colors.green, wrapstyle: { flex: 0.20 }  };
+
 
 class EventEditor extends Component {
 
   constructor (props){
     super(props);
-    toBind.forEach(funcName => {this[funcName] = this[funcName].bind(this)});
+    toBind.forEach(funcName => {this[funcName] = this[funcName].bind(this);});
   }
 
   isDetailSelected(choice) {
@@ -58,22 +52,22 @@ class EventEditor extends Component {
 
   renderDetailEditor() {
     switch (this.props.selectedDetail) {
-      case "catches":
-      case "protecteds":
-      case "discards":
+      case 'catches':
+      case 'protecteds':
+      case 'discards':
         return (
           <FishingEventCatchesEditor
-            selectedDetail={ this.props.selectedDetail }
-            addItem={ this.addItem }
-            changeItem={ this.changeItem }
-            deleteItem={ this.deleteItem }
-            species={ this.props.species }
+            selectedDetail={this.props.selectedDetail}
+            addItem={this.addItem}
+            changeItem={this.changeItem}
+            deleteItem={this.deleteItem}
+            species={this.props.species}
           />
         );
       default:
         return (
           <EventDetailEditor />
-       );
+        );
     }
   }
 
@@ -101,20 +95,20 @@ class EventEditor extends Component {
         flex: 0.30,
       },
       enabled,
-      active: this.props.selectedDetail === detailName
+      active: this.props.selectedDetail === detailName,
     });
   }
 
   renderButton({ text, onPress, color, wrapstyle, active, enabled }) {
     const opacStyle = { opacity: enabled ? 1 : 0.35 };
     return (
-      <View style={ [wrapstyle, opacStyle] } key={`_eventEditor_${text}_button`}>
+      <View style={[wrapstyle, opacStyle]} key={`_eventEditor_${text}_button`}>
         <LongButton
-          bgColor={ color }
-          text={ text.capitalize() }
-          active={ active }
-          disabled={ !enabled }
-          onPress={ onPress }
+          bgColor={color}
+          text={text.capitalize()}
+          active={active}
+          disabled={!enabled}
+          onPress={onPress}
         />
       </View>
     );
@@ -139,17 +133,16 @@ class EventEditor extends Component {
 
   submitEvent = async () => {
     AlertIOS.alert(
-      "Save and Commit This Event",
+      'Save and Commit This Event',
       'Have you entered all details and catches for this event?',
       [
         {text: 'Cancel', onPress: () => null, style: 'cancel'},
-        {text: "I'm Ready to save.", onPress: async () => {
-          const appState = await this.props.db.get('AppStateLocalStatus');
-          this.props.db.update({ committed: true, documentReady: true, vesselNumber: appState.vessel.registration }, this.props.viewingEvent._id);
-          this.props.fishCatches.forEach((fc) => {
+        {text: 'I\'m Ready to save.', onPress: async () => {
+          await this.props.db.update({ committed: true, documentReady: true }, this.props.viewingEvent._id);
+          await this.props.fishCatches.forEach((fc) => {
             this.props.db.update({ documentReady: true }, fc._id);
           });
-        }}
+        }},
       ]
     );
   }
@@ -186,7 +179,7 @@ class EventEditor extends Component {
     }
     const { datetimeAtEnd, committed } = viewingEvent.eventValues;
     if(committed) {
-      return this.renderMessage("Shot has been signed off and cannot be edited");
+      return this.renderMessage('Shot has been signed off and cannot be edited');
     }
     let detailAttribute = selectedDetail;
     if(selectedDetail === 'catches') {
@@ -197,17 +190,16 @@ class EventEditor extends Component {
     this.renderAddButton(detailAttribute, !!(canAdd && datetimeAtEnd));
     const detailView = this.renderDetailEditor();
     const viewButtons = this.renderDetailViewButtons();
-    const detailRowStyle = [];
 
     return(
-      <View style={ [styles.fill, styles.col] }>
-        <View style={[styles.row, { flex: 0.06 }] }>
+      <View style={[styles.fill, styles.col]}>
+        <View style={[styles.row, { flex: 0.06 }]}>
 
           { viewButtons }
           { addButton }
 
         </View>
-        <View style={ [styles.row, { flex: 0.94, paddingTop: 15 } ] }>
+        <View style={[styles.row, { flex: 0.94, paddingTop: 15 } ]}>
 
           { detailView }
 
@@ -229,6 +221,6 @@ const select = (state) => {
     species: state.species.all,
   };
   return props;
-}
+};
 
 export default connect(select)(EventEditor);

@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 export function setSuggestSearchTerm(text) {
   return {
@@ -6,7 +6,7 @@ export function setSuggestSearchTerm(text) {
     payload: {
       text,
     },
-  }
+  };
 }
 
 
@@ -16,7 +16,7 @@ export function setSuggestBarValue(value) {
     payload: {
       value,
     },
-  }
+  };
 }
 
 export function setSuggestChoices(choices) {
@@ -25,7 +25,7 @@ export function setSuggestChoices(choices) {
     payload: {
       choices,
     },
-  }
+  };
 }
 
 export function orientation(orientation){
@@ -34,7 +34,7 @@ export function orientation(orientation){
     payload: {
       orientation,
     },
-  }
+  };
 }
 
 export function toggleSuggestBar(visible, inputId) {
@@ -44,9 +44,9 @@ export function toggleSuggestBar(visible, inputId) {
       changes: {
         visible,
         inputId,
-      }
+      },
     },
-  }
+  };
 }
 
 export function setFocusedInputId(inputId) {
@@ -55,7 +55,7 @@ export function setFocusedInputId(inputId) {
     payload: {
       inputId,
     },
-  }
+  };
 }
 
 export function setSelectedTab(tab) {
@@ -64,7 +64,7 @@ export function setSelectedTab(tab) {
     payload: {
       tab,
     },
-  }
+  };
 }
 
 export function setSelectedFishingDetail(name) {
@@ -73,7 +73,7 @@ export function setSelectedFishingDetail(name) {
     payload: {
       name,
     },
-  }
+  };
 }
 
 

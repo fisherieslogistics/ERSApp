@@ -28,7 +28,7 @@ const styles = {
     borderTopWidth: 1,
     backgroundColor: colors.white,
     borderTopColor: colors.lightestGray,
-    padding: 8
+    padding: 8,
   },
   resultText: {
     color: '#000',
@@ -39,10 +39,10 @@ const styles = {
     fontWeight: '600',
   },
   resultTextSelected: {
-    color: '#000'
+    color: '#000',
   },
   resultBackgroundSelected: {
-    backgroundColor: colors.green
+    backgroundColor: colors.green,
   },
   resultBackground: {
     backgroundColor: colors.green,
@@ -71,10 +71,10 @@ class SuggestBar extends Component {
     this.onChangeText = this.onChangeText.bind(this);
     this.state = {
       results: [],
-    }
+    };
   }
 
-  getSearchResults(term = "") {
+  getSearchResults(term = '') {
     if(!this.props || !this.props.choices) {
       return [];
     }
@@ -111,8 +111,8 @@ class SuggestBar extends Component {
     this.props.dispatch(setSuggestBarValue(value));
   }
 
-  renderResult(resultValue = "", description = "", i){
-    const text = this.props.text || "";
+  renderResult(resultValue = '', description = '', i){
+    const text = this.props.text || '';
     const isSelected = (resultValue.toString().toUpperCase() === text.toUpperCase()) || (this.state.results === 1);
     const resultTextStyle = isSelected ? styles.resultTextSelected : styles.resultText;
     let backgroundStyle = isSelected ? styles.resultBackgroundSelected : styles.resultBackground;
@@ -121,7 +121,7 @@ class SuggestBar extends Component {
     }
     const onPress = () => this.onResultPress(resultValue);
     return (
-      <TouchableOpacity key={i + "_Suggest_" + resultValue }
+      <TouchableOpacity key={`${i  }_Suggest_${  resultValue}`}
         onPress={onPress}
         style={[styles.result, backgroundStyle]}
       >
@@ -136,10 +136,10 @@ class SuggestBar extends Component {
   }
 
   renderResults(){
-    if(this.props.searchTerm){
-      return this.state.results.map(({ value, description }, i) => this.renderResult(value, description, i));
-    }
-    return this.getSearchResults().map(({ value, description }, i) => this.renderResult(value, description, i));
+    const { searchTerm } = this.props;
+    const results = searchTerm ? this.state.results : this.getSearchResults();
+    return results.map(
+      ({ value, description }, i) => this.renderResult(value, description || '', i));
   }
 
   render () {
@@ -153,8 +153,8 @@ class SuggestBar extends Component {
     const wrap = [styles.resultsBarWrapper, { bottom: keyboardplace }];
     const inner = [styles.resultsBar, { width: this.props.width } ];
     return (
-      <View style={ wrap }>
-        <View style={ inner }>
+      <View style={wrap}>
+        <View style={inner}>
           { this.renderResults() }
         </View>
       </View>
@@ -177,6 +177,6 @@ const select = (state) => {
     inputId: suggestBarInputId,
     selectedValue: suggestBarValue,
   };
-}
+};
 
-export default connect(select)(SuggestBar)
+export default connect(select)(SuggestBar);

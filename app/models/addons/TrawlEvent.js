@@ -2,10 +2,6 @@ import moment from 'moment';
 import TrawlEventModel from '../../models/TrawlEventModel';
 import FishingEventModel from '../../models/FishingEventModel';
 
-import { blankModel } from '../../utils/ModelUtils';
-import uuid from 'uuid/v1';
-import JSONPointToLocation from '../../utils/JSONPointToLocation';
-
 
 export default class TrawlEvent {
 
@@ -56,7 +52,7 @@ export default class TrawlEvent {
       NetLeaveDepthLocation,
     } = this.eventSpecificDetails;
 
-    const stage1 = (targetSpecies_id && wingSpread && headlineHeight && NetAtDepthLocation && datetimeAtStart);
+    const stage1 = (targetSpecies_id && wingSpread && headlineHeight && NetAtDepthLocation && datetimeAtStart && locationAtStart);
     if((!datetimeAtEnd && stage1)) {
       return stage1;
     }
@@ -83,7 +79,7 @@ export default class TrawlEvent {
 
   get canSubmit() {
     const { datetimeAtEnd } = this.fishingEvent;
-    return !!(this.detailsValid && datetimeAtEnd && this.estimatedCatchValid)
+    return !!(this.detailsValid && datetimeAtEnd && this.estimatedCatchValid);
   }
 
   canDelete(latestInTrip) {

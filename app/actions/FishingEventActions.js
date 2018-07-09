@@ -1,21 +1,16 @@
-"use strict";
+'use strict';
 import uuid from 'uuid/v1';
-import {
-  calculateStatArea,
-} from '../reducers/GeneralMethods';
 import { blankModel } from '../utils/ModelUtils';
 import { locationToWKTPoint } from '../utils/Helper';
 import FishingEventModel from '../models/FishingEventModel';
 import TrawlEventModel from '../models/TrawlEventModel';
-import TrawlEvent from '../models/addons/TrawlEvent';
-import MPIFormType from '../constants/MPIFormType';
 
 
 export function toggleOptionalFields() {
   return {
     type: 'toggleOptionalFields',
-    payload: {}
-  }
+    payload: {},
+  };
 }
 
 export function setViewingEvent(fishingEvent) {
@@ -24,17 +19,17 @@ export function setViewingEvent(fishingEvent) {
     payload: {
       changes: fishingEvent,
     },
-  }
+  };
 }
 
 export function setSelectedCatchesDetail(name) {
   return {
     type: 'setSelectedCatchesDetail',
     payload: { name },
-  }
+  };
 }
 
-export function createFishingEvent(trip_id, previousEvent, location, wingSpread, headlineHeight) {
+export function createFishingEvent(trip_id, previousEvent, location, wingSpread, headlineHeight, vessel) {
   const newEvent = blankModel(FishingEventModel);
   const eventSpecificDetails = blankModel(TrawlEventModel);
 
@@ -71,7 +66,7 @@ export function createFishingEvent(trip_id, previousEvent, location, wingSpread,
   }
   eventSpecificDetails.wingSpread = wingSpread;
   eventSpecificDetails.headlineHeight = headlineHeight;
-
+  newEvent.vesselNumber = vessel.registration;
   newEvent.eventSpecificDetails = JSON.stringify(eventSpecificDetails);
   return newEvent;
 }
@@ -82,6 +77,6 @@ export function deleteFishingEvent(fishingEvent) {
 
     payload: {
       RAId: fishingEvent.RAId,
-    }
+    },
   };
 }

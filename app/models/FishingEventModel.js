@@ -1,10 +1,6 @@
 
 import Validator from '../utils/Validator';
 
-import TrawlEventModel from './TrawlEventModel';
-import FORM_TYPE from '../constants/MPIFormType';
-import blankModel from '../utils/ModelUtils';
-
 const valid = Validator.valid;
 
 const FishingEventModel = [
@@ -24,7 +20,7 @@ const FishingEventModel = [
     id: 'targetSpecies_id', valid: valid.targetSpecies_id,
     'label': 'Target Species',
     type: 'productCodePicker',
-    default: "",
+    default: '',
     display: { type: 'single' },
     repeating: true,
   },
@@ -46,7 +42,7 @@ const FishingEventModel = [
     combinedValid: {
       attributes: ['datetimeAtStart', 'datetimeAtEnd'],
       func: Validator.combined.datetimeAtStartValid,
-      errorMessage: "start time must be before end time"
+      errorMessage: 'start time must be before end time',
     },
     display: { type: 'single' },
     optionalRender: true,
@@ -57,9 +53,9 @@ const FishingEventModel = [
     valid: valid.anyValue,
     type: 'datetime',
     combinedValid: {
-      attributes: ["datetimeAtEnd", "datetimeAtStart"],
+      attributes: ['datetimeAtEnd', 'datetimeAtStart'],
       func: Validator.combined.orderedGreaterThan,
-      errorMessage: "end time must be after start time"
+      errorMessage: 'end time must be after start time',
     },
     display: { type: 'single' },
     optionalRender: true, displayStage: 'Haul',
@@ -96,6 +92,9 @@ const FishingEventModel = [
   },
   {
     id: 'committed', default: false,
+  },
+  {
+    id: 'vesselNumber', default: 999,
   },
 ];
 
